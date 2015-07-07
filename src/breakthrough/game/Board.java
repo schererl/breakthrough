@@ -55,11 +55,11 @@ public class Board {
         // now build the initial hash
         zbHash = 0;
         for (int i = 0; i < 8 * 8; i++) {
-            if(board[i] == '.')
+            if (board[i] == '.')
                 zbHash ^= zbnums[i][0];
-            else if(board[i] == 'w')
+            else if (board[i] == 'w')
                 zbHash ^= zbnums[i][1];
-            else if(board[i] == 'b')
+            else if (board[i] == 'b')
                 zbHash ^= zbnums[i][2];
         }
         zbHash ^= whiteHash;
@@ -89,8 +89,8 @@ public class Board {
         }
 
         // check for a win
-        if (playerToMove == 1 && (to / 8 == 0 || pieces2 == 0)) winner = 1;
-        else if (playerToMove == 2 && (to / 8 == 7 || pieces1 == 0)) winner = 2;
+        if (playerToMove == 1 && (to / 8 == startR || pieces2 == 0)) winner = 1;
+        else if (playerToMove == 2 && (to / 8 == (endR - 1) || pieces1 == 0)) winner = 2;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
@@ -158,12 +158,44 @@ public class Board {
     }
 
     int startC = 0, endC = 8, startR = 0, endR = 8;
+
     public void startSubGame() {
-        startC = startR = Options.r.nextInt(2);
-        endC = endR = 4 + Options.r.nextInt(2);
-        while(getPlayoutMoves().size() == 0) {
-            startC = startR = Options.r.nextInt(4);
-            endC = endR = 6 + Options.r.nextInt(2);
+        startC = startR = Options.r.nextInt(3);
+        endC = endR = 8 - Options.r.nextInt(3);
+        while (getPlayoutMoves().size() == 0) {
+            startC = startR = Options.r.nextInt(3);
+            endC = endR = 8 - Options.r.nextInt(3);
+        }
+//        for (int r = startR; r < endR; r++) {
+//            for (int c = startC; c < endC; c++) {
+//                System.out.print(board[r * 8 + c]);
+//            }
+//            System.out.print("\n");
+//        }
+//        System.out.println();
+    }
+
+    public void increaseSubGame() {
+//        for (int r = startR; r < endR; r++) {
+//            for (int c = startC; c < endC; c++) {
+//                System.out.print(board[r * 8 + c]);
+//            }
+//            System.out.print("\n");
+//        }
+//        System.out.println();
+        boolean start = Options.r.nextBoolean();
+        if (start && startC > 0 && startR > 0) {
+            startC--; // left up
+            startR--;
+        } else if (start && startC > 0 && endR < 8) {
+            startC--; // left down
+            endR++;
+        } else if (startR > 0 && endC < 8) {
+            startR--; // right up
+            endC++;
+        } else if (endC < 8 && endR < 8) {
+            endR++; // up left
+            endC++;
         }
 //        for (int r = startR; r < endR; r++) {
 //            for (int c = startC; c < endC; c++) {
@@ -275,8 +307,8 @@ public class Board {
         int c = move[0] % 8, cp = move[1] % 8;
         int r = move[0] / 8, rp = move[1] / 8;
 
-        char cc = (char)(c + 97);
-        char cpc = (char)(cp + 97);
-        return String.format("%c%d%c%d", cc, 8-r, cpc, 8-rp);
+        char cc = (char) (c + 97);
+        char cpc = (char) (cp + 97);
+        return String.format("%c%d%c%d", cc, 8 - r, cpc, 8 - rp);
     }
 }

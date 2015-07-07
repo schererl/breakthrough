@@ -194,7 +194,7 @@ public class UCTNode {
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
             if(moves.size() == 0)
-                winner = 3 - board.getPlayerToMove();
+                board.increaseSubGame();
             else {
                 move = moves.get(Options.r.nextInt(moves.size()));
                 board.doMove(move);
