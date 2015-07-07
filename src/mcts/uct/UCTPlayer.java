@@ -38,7 +38,7 @@ public class UCTPlayer implements AIPlayer {
                 if (Math.abs(root.MCTS(board.clone())) == State.INF)
                     break; // Break if you find a winning move
 
-                if (options.debug && simulations % 5000 == 0)
+                if (options.debug && simulations % 10000 == 0)
                     System.out.println("PV: " + root.getPV());
             }
         } else {
@@ -55,8 +55,7 @@ public class UCTPlayer implements AIPlayer {
         // Return the best move found
         UCTNode bestChild = root.getBestChild();
         bestMove = bestChild.move;
-        // Pack the transpositions
-        int removed = tt.pack(1);
+
         // show information on the best move
         if (options.debug) {
             System.out.println("- PV: " + root.getPV());
@@ -64,10 +63,13 @@ public class UCTPlayer implements AIPlayer {
             System.out.println("- Did " + simulations + " simulations");
             System.out.println("- Best child: " + bestChild);
             System.out.println("- " + (int) Math.round((1000. * simulations) / (endT - startT)) + " playouts per sec.");
-            System.out.println(":: Pack cleaned: " + removed + " transpositions");
             System.out.println(":: Collisions: " + tt.collisions + ", tps: " + tt.positions);
             System.out.println(":: Recoveries: " + tt.recoveries);
         }
+        // Pack the transpositions
+        int removed = tt.pack(1);
+        if(options.debug)
+            System.out.println(":: Pack cleaned: " + removed + " transpositions");
         // Set the root to the best child, so in the next move, the opponent's move can become the new root
         root = null;
     }

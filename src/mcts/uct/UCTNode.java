@@ -187,12 +187,19 @@ public class UCTNode {
         int winner = board.checkWin();
         int[] move;
 
+        if(options.subGame)
+            board.startSubGame();
+
         MoveList moves;
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
-            move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
-            winner = board.checkWin();
+            if(moves.size() == 0)
+                winner = 3 - board.getPlayerToMove();
+            else {
+                move = moves.get(Options.r.nextInt(moves.size()));
+                board.doMove(move);
+                winner = board.checkWin();
+            }
         }
 
         double score;
@@ -231,7 +238,8 @@ public class UCTNode {
             sb.append(Board.getMoveString(child.move)).append(" v: ").append(df2.format(child.getValue())).append(" ");
             child = child.getBestChild();
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if(sb.length() > 0)
+            sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 

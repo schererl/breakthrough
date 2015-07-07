@@ -1,6 +1,7 @@
 package breakthrough.game;
 
 import framework.MoveList;
+import framework.Options;
 
 import java.util.Random;
 
@@ -156,12 +157,75 @@ public class Board {
         return allMoves;
     }
 
+    int startC = 0, endC = 8, startR = 0, endR = 8;
+    public void startSubGame() {
+        startC = startR = Options.r.nextInt(2);
+        endC = endR = 4 + Options.r.nextInt(2);
+        while(getPlayoutMoves().size() == 0) {
+            startC = startR = Options.r.nextInt(4);
+            endC = endR = 6 + Options.r.nextInt(2);
+        }
+//        for (int r = startR; r < endR; r++) {
+//            for (int c = startC; c < endC; c++) {
+//                System.out.print(board[r * 8 + c]);
+//            }
+//            System.out.print("\n");
+//        }
+//        System.out.println();
+    }
+
     public MoveList getPlayoutMoves() {
-        return getExpandMoves();
+        MoveList allMoves = new MoveList(96);
+        int from, to;
+        for (int r = startR; r < endR; r++) {
+            for (int c = startC; c < endC; c++) {
+                from = r * 8 + c;
+                if (playerToMove == 1 && board[from] == 'w') {
+                    if (inBounds(r - 1, c - 1)) {
+                        to = (r - 1) * 8 + (c - 1);
+                        // northwest
+                        if (board[to] != 'w')
+                            allMoves.add(from, to);
+                    }
+                    if (inBounds(r - 1, c + 1)) {
+                        to = (r - 1) * 8 + (c + 1);
+                        // northeast
+                        if (board[to] != 'w')
+                            allMoves.add(from, to);
+                    }
+                    if (inBounds(r - 1, c)) {
+                        to = (r - 1) * 8 + c;
+                        // north
+                        if (board[to] == '.')
+                            allMoves.add(from, to);
+                    }
+                } else if (playerToMove == 2 && board[from] == 'b') {
+                    if (inBounds(r + 1, c - 1)) {
+                        to = (r + 1) * 8 + (c - 1);
+                        // southwest
+                        if (board[to] != 'b')
+                            allMoves.add(from, to);
+                    }
+                    if (inBounds(r + 1, c + 1)) {
+                        to = (r + 1) * 8 + (c + 1);
+                        // southeast
+                        if (board[to] != 'b')
+                            allMoves.add(from, to);
+                    }
+                    if (inBounds(r + 1, c)) {
+                        to = (r + 1) * 8 + c;
+                        // south
+                        if (board[to] == '.')
+                            allMoves.add(from, to);
+                    }
+                }
+            }
+        }
+        return allMoves;
     }
 
     private boolean inBounds(int r, int c) {
-        return (r >= 0 && c >= 0 && r < 8 && c < 8);
+        return (r >= startR && c >= startC && r < endR && c < endC);
     }
 
     public int checkWin() {
