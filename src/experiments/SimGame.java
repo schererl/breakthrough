@@ -55,6 +55,8 @@ public class SimGame {
                 Options.r.setSeed(seed);
             } else if (args[i].equals("--printboard")) {
                 printBoard = true;
+            } else if (args[i].equals("--game")) {
+                i++;
             } else {
                 throw new RuntimeException("Unknown option: " + args[i]);
             }

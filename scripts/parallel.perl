@@ -126,7 +126,7 @@ sub get_cmd
   my $alg2 = shift;
   my $seed = shift;
 
-  my $cmd = "scripts/run.sh experiments.SimGame --p1 $alg1 --p2 $alg2 --seed $seed --timelimit $tl";
+  my $cmd = "scripts/run.sh experiments.SimGame --game $game --p1 $alg1 --p2 $alg2 --seed $seed --timelimit $tl";
   
   return $cmd;
 }
