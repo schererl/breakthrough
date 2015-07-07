@@ -2,11 +2,10 @@ package breakthrough.game;
 
 import framework.MoveList;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
-    public static final int P1 = 1, P2 = 2, NONE_WIN = -1;
+    public static final int P1 = 1, NONE_WIN = -1;
     private static final String rowLabels = "87654321";
     private static final String colLabels = "abcdefgh";
     // Zobrist stuff

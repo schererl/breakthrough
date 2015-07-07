@@ -66,7 +66,7 @@ public class TransposTable {
                         ps.next = s.next;
                         positions--;
                         ps = s;
-                    } else if (ps == null) {
+                    } else {
                         positions--;
                         states[i] = s.next;
                         ps = null;
@@ -79,24 +79,6 @@ public class TransposTable {
         }
         moveCounter++;
         return (prePositions - positions);
-    }
-
-    private int count() {
-        State s;
-        int count = 0;
-        for (int i = 0; i < TT_SIZE; i++) {
-            s = states[i];
-            if (s == null)
-                continue;
-            // Check if the states were visited this round
-            while (true) {
-                count++;
-                if (s.next == null)
-                    break;
-                s = s.next;
-            }
-        }
-        return count;
     }
 
     private int getHashPos(long hash) {

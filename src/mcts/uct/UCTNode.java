@@ -281,6 +281,6 @@ public class UCTNode {
 
     @Override
     public String toString() {
-        return Board.getMoveString(move) + "\tValue: " + df2.format(getValue()) + "\tVisits: " + getVisits();
+        return Board.getMoveString(move) + " " + state.toString();
     }
 }

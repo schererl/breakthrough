@@ -6,8 +6,6 @@ import framework.Options;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
-import java.io.IOException;
-
 public class UCTPlayer implements AIPlayer {
 
     private TransposTable tt = new TransposTable();
@@ -22,7 +20,7 @@ public class UCTPlayer implements AIPlayer {
             throw new RuntimeException("MCTS Options not set.");
 
         root = new UCTNode(board.getPlayerToMove(), options, board, tt);
-        //
+
         if (options == null)
             throw new RuntimeException("MCTS Options not set.");
 
@@ -36,7 +34,6 @@ public class UCTPlayer implements AIPlayer {
                 simulations++;
                 if (System.currentTimeMillis() >= endTime)
                     break;
-
                 // Make one simulation from root to leaf.
                 if (Math.abs(root.MCTS(board.clone())) == State.INF)
                     break; // Break if you find a winning move
