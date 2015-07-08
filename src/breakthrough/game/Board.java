@@ -161,16 +161,16 @@ public class Board {
 
     public void startSubGame() {
 
-        int decrease = Options.r.nextInt(3);
-        startR  = decrease;
-        endR = 8 - decrease;
+//        int decrease = Options.r.nextInt(3);
+//        startR  = decrease;
+//        endR = 8 - decrease;
         startC = Options.r.nextInt(3);
         endC = 8 - Options.r.nextInt(3);
 
         while (getPlayoutMoves().size() == 0) {
-            decrease = Options.r.nextInt(3);
-            startR  = decrease;
-            endR = 8 - decrease;
+//            decrease = Options.r.nextInt(3);
+//            startR  = decrease;
+//            endR = 8 - decrease;
             //
             startC = Options.r.nextInt(3);
             endC = 8 - Options.r.nextInt(3);
@@ -192,13 +192,14 @@ public class Board {
 //            System.out.print("\n");
 //        }
 //        System.out.println();
-        if (startR > 0 && endR < 8) {
-            startC--; // Vertical (always even!)
-            endC++;
-        } else if (startC > 0 && endC < 8) {
-            startC--; // Horizontal 2
-            endC++;
-        } else if (startC > 0) {
+//        if (startR > 0 && endR < 8) {
+//            startC--; // Vertical (always even!)
+//            endC++;
+//        } else if (startC > 0 && endC < 8) {
+//            startC--; // Horizontal 2
+//            endC++;
+//        } else
+        if (startC > 0) {
             startC--; // Horizontal 1
         } else if (endC < 8) {
             endC++; // Horizontal 1
