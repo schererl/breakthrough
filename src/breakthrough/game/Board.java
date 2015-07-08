@@ -105,6 +105,16 @@ public class Board {
             zbHash ^= whiteHash;
             zbHash ^= blackHash;
         }
+        //
+        if (to / 8 > maxR)
+            maxR = to / 8;
+        else if (to / 8 < minR)
+            minR = to / 8;
+
+        if (to % 8 > maxC)
+            maxC = to % 8;
+        else if (to % 8 < minC)
+            minC = to % 8;
     }
 
     public MoveList getExpandMoves() {
@@ -158,23 +168,44 @@ public class Board {
     }
 
     int startC = 0, endC = 8, startR = 0, endR = 8;
+    int minR = 64, minC = 64, maxC = 0, maxR = 0;
 
     public void startSubGame() {
 
-//        int decrease = Options.r.nextInt(3);
-//        startR  = decrease;
-//        endR = 8 - decrease;
-        startC = Options.r.nextInt(3);
-        endC = 8 - Options.r.nextInt(3);
+        if (minR == 64 || minC == 64 || maxC == 0 || maxR == 0)
+            return;
 
-        while (getPlayoutMoves().size() == 0) {
-//            decrease = Options.r.nextInt(3);
-//            startR  = decrease;
-//            endR = 8 - decrease;
-            //
-            startC = Options.r.nextInt(3);
-            endC = 8 - Options.r.nextInt(3);
+        int value = Options.r.nextInt(3);
+        startR = minR - value;
+        endR = maxR + value;
+        while (endR - 1 <= startR) {
+            endR += 1;
+            startR -= 1;
         }
+        if (endR > 8)
+            endR = 8;
+        if (startR < 0)
+            startR = 0;
+
+        startC = minC - Options.r.nextInt(3);
+        endC = maxC + Options.r.nextInt(3);
+        while (endC - 1 <= startC) {
+            endC += 1;
+            startC -= 1;
+        }
+        if (endC > 8)
+            endC = 8;
+        if (startC < 0)
+            startC = 0;
+//
+//        while (getPlayoutMoves().size() == 0) {
+//            value = Options.r.nextInt(3);
+//            startR = value;
+//            endR = 8 - value;
+//            //
+//            startC = Options.r.nextInt(3);
+//            endC = 8 - Options.r.nextInt(3);
+//        }
 //        for (int r = startR; r < endR; r++) {
 //            for (int c = startC; c < endC; c++) {
 //                System.out.print(board[r * 8 + c]);
@@ -192,14 +223,15 @@ public class Board {
 //            System.out.print("\n");
 //        }
 //        System.out.println();
-//        if (startR > 0 && endR < 8) {
-//            startC--; // Vertical (always even!)
-//            endC++;
-//        } else if (startC > 0 && endC < 8) {
-//            startC--; // Horizontal 2
-//            endC++;
-//        } else
-        if (startC > 0) {
+
+        if (startR > 0 && endR < 8) {
+            startR--; // Vertical 2
+            endR++;
+        } else if (startR > 0) {
+            startR--; // Vertical 1
+        } else if (endR < 8) {
+            endR++; // Vertical 1
+        } else if (startC > 0) {
             startC--; // Horizontal 1
         } else if (endC < 8) {
             endC++; // Horizontal 1
@@ -210,7 +242,7 @@ public class Board {
 //            }
 //            System.out.print("\n");
 //        }
-//        System.out.println();
+//        System.out.println("----------------");
     }
 
     public MoveList getPlayoutMoves() {

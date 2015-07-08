@@ -187,13 +187,13 @@ public class UCTNode {
         int winner = board.checkWin();
         int[] move;
 
-        if(options.subGame)
+        if (options.subGame)
             board.startSubGame();
 
         MoveList moves;
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
-            if(moves.size() == 0)
+            if (moves.size() == 0)
                 board.increaseSubGame();
             else {
                 move = moves.get(Options.r.nextInt(moves.size()));
@@ -210,7 +210,7 @@ public class UCTNode {
     }
 
     public UCTNode getBestChild() {
-        if(children == null)
+        if (children == null)
             return null;
         double max = Double.NEGATIVE_INFINITY, value;
         UCTNode bestChild = null;
@@ -234,11 +234,11 @@ public class UCTNode {
     public String getPV() {
         UCTNode child = getBestChild();
         StringBuilder sb = new StringBuilder();
-        while(child != null) {
+        while (child != null) {
             sb.append(Board.getMoveString(child.move)).append(" v: ").append(df2.format(child.getValue())).append(" ");
             child = child.getBestChild();
         }
-        if(sb.length() > 0)
+        if (sb.length() > 0)
             sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
