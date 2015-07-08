@@ -132,13 +132,12 @@ public class UCTNode {
             return null;
         // Add all moves as children to the current node
         for (int i = 0; i < moves.size(); i++) {
-            Board tempBoad = board.clone();
             // If the game is partial observable, we don't want to do the solver part
-            tempBoad.doMove(moves.get(i));
-            UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoad, tt);
+            board.doMove(moves.get(i));
+            UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, board, tt);
             if (Math.abs(child.getValue()) != State.INF) {
                 // Check for a winner, (Solver)
-                winner = tempBoad.checkWin();
+                winner = board.checkWin();
                 //
                 if (winner == player) {
                     winNode = child;
@@ -147,6 +146,7 @@ public class UCTNode {
                     child.setSolved(false);
                 }
             }
+            board.undoMove();
             children.add(child);
 
         }
@@ -186,26 +186,35 @@ public class UCTNode {
     private double playOut(Board board) {
         int winner = board.checkWin();
         int[] move;
-
-        if (options.subGame)
-            board.startSubGame();
-
+        List<State> states = new LinkedList<State>();
+        State s;
         MoveList moves;
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
-            if (moves.size() == 0)
-                board.increaseSubGame();
-            else {
-                move = moves.get(Options.r.nextInt(moves.size()));
-                board.doMove(move);
-                winner = board.checkWin();
+            move = moves.get(Options.r.nextInt(moves.size()));
+            board.doMove(move);
+            winner = board.checkWin();
+
+            if(options.pott) {
+                s = tt.getState(board.hash(), true);
+                if (s != null) {
+                    states.add(s);
+                    if (winner == Board.NONE_WIN && Math.abs(s.getMean(player)) == State.INF) {
+                        winner = s.solvedPlayer;
+                    }
+                }
             }
         }
 
         double score;
         if (winner == player) score = 1.0;
         else score = -1;
-
+        if(options.pott) {
+            // update all states with the score
+            for (State st : states) {
+                st.updateStats(winner);
+            }
+        }
         return score;
     }
 
