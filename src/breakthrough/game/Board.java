@@ -36,6 +36,7 @@ public class Board {
 
         nMoves = 0;
         winner = NONE_WIN;
+        progress1 = progress2 = 1;
 
         // initialize the zobrist numbers
         if (zbnums == null) {
@@ -80,18 +81,29 @@ public class Board {
 
         board[to] = board[from];
         board[from] = '.';
+        int rp = to / 8;
 
         // check for a capture
         if (capture) {
-            if (playerToMove == 1)
+            if (playerToMove == 1) {
                 pieces2--;
-            else
+                // wiping out this piece could reduce the player's progress
+                if (progress2 == rp && pieces2 > 0)
+                    recomputeProgress(2);
+            } else {
+                if (progress1 == 7 - rp && pieces1 > 0)
+                    recomputeProgress(1);
                 pieces1--;
+            }
         }
 
         // check for a win
-        if (playerToMove == 1 && (to / 8 == 0 || pieces2 == 0)) winner = 1;
-        else if (playerToMove == 2 && (to / 8 == (8 - 1) || pieces1 == 0)) winner = 2;
+        if (playerToMove == 1 && (rp == 0 || pieces2 == 0)) winner = 1;
+        else if (playerToMove == 2 && (rp == (8 - 1) || pieces1 == 0)) winner = 2;
+
+        // check for progress (furthest pawn)
+        if (playerToMove == 1 && (7 - rp) > progress1) progress1 = 7 - rp;
+        else if (playerToMove == 2 && rp > progress2) progress2 = rp;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
@@ -201,8 +213,8 @@ public class Board {
     public MoveList getPlayoutMoves(boolean heuristics) {
         MoveList moveList = getExpandMoves();
         if(heuristics) {
-            MoveList decisive = new MoveList(32);
-            MoveList antiDecisive = new MoveList(32);
+            MoveList decisive = new MoveList(16);
+            MoveList antiDecisive = new MoveList(16);
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -253,7 +265,8 @@ public class Board {
         }
         sb.append(" ").append(colLabels).append("\n");
         sb.append("\nPieces: (").append(pieces1).append(", ").append(pieces2)
-                .append(") nMoves: ").append(nMoves).append("\n");
+                .append(") nMoves: ").append(nMoves).append("\n").append("Progresses: ")
+                .append(progress1).append(" ").append(progress2);
         return sb.toString();
     }
 

@@ -184,20 +184,27 @@ public class UCTNode {
     }
 
     private double playOut(Board board) {
-        int winner = board.checkWin();
+        int winner = board.checkWin(), nMoves = 0;
         int[] move;
-
+        boolean interrupted = false;
         MoveList moves;
-        while (winner == Board.NONE_WIN) {
+        while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
             board.doMove(move);
             winner = board.checkWin();
+            nMoves++;
+            if (options.earlyTerm && nMoves == options.termDepth)
+                interrupted = true;
         }
 
         double score;
-        if (winner == player) score = 1.0;
-        else score = -1;
+        if(!interrupted) {
+            if (winner == player) score = 1.0;
+            else score = -1;
+        } else {
+            return board.evaluate(player);
+        }
         return score;
     }
 
@@ -238,15 +245,13 @@ public class UCTNode {
     private void updateStats(double value) {
         if (state == null)
             state = tt.getState(hash, false);
-        if (value == -1)
-            state.updateStats(player);
-        else
-            state.updateStats(3 - player);
+        state.updateStats(value);
     }
 
     private void setSolved(boolean win) {
         if (state == null)
             state = tt.getState(hash, false);
+
         if (win)
             state.setSolved(3 - player);
         else

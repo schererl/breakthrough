@@ -1,12 +1,15 @@
 package mcts.transpos;
 
-import java.util.Arrays;
+import java.text.DecimalFormat;
 
 public class State {
-    public static double INF = 999999;
+
+    private static final DecimalFormat df2 = new DecimalFormat("###,##0.000");
+
+    public static float INF = 999999;
     public long hash;
     public int visits = 0, lastVisit = 0;
-    private int[] wins = {0, 0};
+    private float sum;
     public short solvedPlayer = 0;
     public boolean visited = false;
     //
@@ -16,22 +19,20 @@ public class State {
         this.hash = hash;
     }
 
-    public void updateStats(int winner) {
+    public void updateStats(double score) {
         visited = true;
-//        if (solvedPlayer != 0)
-//            throw new RuntimeException("updateStats called on solved position!");
-        this.wins[winner - 1]++;
+        if (solvedPlayer != 0)
+            throw new RuntimeException("updateStats called on solved position!");
+        sum += score;
 //        addSample(winner);
         this.visits++;
     }
 
-    public double getMean(int player) {
-//        if (player != 1 && player != 2)
-//            throw new RuntimeException("Invalid player " + player + " in getMean");
+    public float getMean(int player) {
         visited = true;
         if (solvedPlayer == 0) { // Position is not solved, return mean
             if (visits > 0)
-                return (wins[player - 1] - wins[(3 - player) - 1]) / (double) visits;
+                return sum / visits;
             else
                 return 0;
         } else    // Position is solved, return inf
@@ -39,11 +40,9 @@ public class State {
     }
 
     public void setSolved(int player) {
-//        if (player != 1 && player != 2)
-//            throw new RuntimeException("Invalid player " + player + " in setSolved");
         visited = true;
-//        if (solvedPlayer > 0 && player != solvedPlayer)
-//            throw new RuntimeException("setSolved with different player!");
+        if (solvedPlayer > 0 && player != solvedPlayer)
+            throw new RuntimeException("setSolved with different player!");
         this.solvedPlayer = (short) player;
     }
 
@@ -53,13 +52,12 @@ public class State {
 
     public String toString() {
         if (solvedPlayer == 0)
-            return Arrays.toString(wins) + "\tn:" + visits; // + "\tKL:" + df2.format(getKL());
+            return df2.format(sum) + "\tn:" + visits; // + "\tKL:" + df2.format(getKL());
         else
             return "solved win P" + solvedPlayer;
     }
 
 //    private boolean[] samples = new boolean[2];
-//    private static final DecimalFormat df2 = new DecimalFormat("###,##0.000");
 //
 //    private void addSample(int winner) {
 //        if (visits >= samples.length) {

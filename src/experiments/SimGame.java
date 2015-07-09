@@ -80,6 +80,9 @@ public class SimGame {
                 String tag = parts[i];
                 if (tag.startsWith("h")) {
                     options.heuristics = true;
+                } else if (tag.startsWith("et")) {
+                    options.earlyTerm = true;
+                    options.termDepth = Integer.parseInt(tag.substring(2));
                 }
             }
 
