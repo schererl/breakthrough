@@ -194,16 +194,21 @@ public class UCTNode {
             board.doMove(move);
             winner = board.checkWin();
             nMoves++;
-            if (options.earlyTerm && nMoves == options.termDepth)
+            if (winner == board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
                 interrupted = true;
         }
 
-        double score;
+        double score = 0.;
         if(!interrupted) {
             if (winner == player) score = 1.0;
             else score = -1;
         } else {
-            return board.evaluate(player);
+            double eval = board.evaluate(player);
+            //System.out.println(eval);
+            if(eval > 0.)
+                score = 1.;
+            else if (eval < 0)
+                score = -1.;
         }
         return score;
     }

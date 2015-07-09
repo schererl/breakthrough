@@ -172,7 +172,7 @@ public class Board {
 
     public double evaluate(int player) {
         // inspired by ion function in Maarten's thesis
-        double p1eval = 0;
+        double p1eval;
         if (progress1 == 7 || pieces2 == 0) p1eval = 1;
         else if (progress2 == 7 || pieces1 == 0) p1eval = -1;
         else {
