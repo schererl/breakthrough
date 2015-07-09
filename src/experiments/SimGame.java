@@ -79,7 +79,7 @@ public class SimGame {
             for (int i = 1; i < parts.length; i++) {
                 String tag = parts[i];
                 if (tag.startsWith("pott")) {
-                    options.pott = true;
+
                 }
             }
 

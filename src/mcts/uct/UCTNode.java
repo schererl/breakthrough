@@ -186,8 +186,6 @@ public class UCTNode {
     private double playOut(Board board) {
         int winner = board.checkWin();
         int[] move;
-        List<State> states = new LinkedList<State>();
-        State s;
         MoveList moves;
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
@@ -195,26 +193,11 @@ public class UCTNode {
             board.doMove(move);
             winner = board.checkWin();
 
-            if(options.pott) {
-                s = tt.getState(board.hash(), true);
-                if (s != null) {
-                    states.add(s);
-                    if (winner == Board.NONE_WIN && Math.abs(s.getMean(player)) == State.INF) {
-                        winner = s.solvedPlayer;
-                    }
-                }
-            }
         }
 
         double score;
         if (winner == player) score = 1.0;
         else score = -1;
-        if(options.pott) {
-            // update all states with the score
-            for (State st : states) {
-                st.updateStats(winner);
-            }
-        }
         return score;
     }
 
