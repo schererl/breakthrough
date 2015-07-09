@@ -6,6 +6,8 @@ import framework.Options;
 import framework.util.*;
 import mcts.uct.UCTPlayer;
 
+import java.util.DoubleSummaryStatistics;
+
 /**
  * Runs a single experiment. Options are sent by command-line.
  */
@@ -83,6 +85,8 @@ public class SimGame {
                 } else if (tag.startsWith("et")) {
                     options.earlyTerm = true;
                     options.termDepth = Integer.parseInt(tag.substring(2));
+                } else if (tag.startsWith("c")) {
+                    options.C = Double.parseDouble(tag.substring(1));
                 }
             }
 
