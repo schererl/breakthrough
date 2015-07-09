@@ -15,6 +15,7 @@ public class Game {
 
         AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
+        options1.subGame = true;
         aiPlayer1.setOptions(options1);
         AIPlayer aiPlayer2 = new UCTPlayer();
         aiPlayer2.setOptions(new Options());

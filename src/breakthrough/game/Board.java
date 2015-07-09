@@ -175,20 +175,22 @@ public class Board {
         if (minR == 64 || minC == 64 || maxC == 0 || maxR == 0)
             return;
 
-        int value = Options.r.nextInt(3);
-        startR = minR - value;
-        endR = maxR + value;
-        while (endR - 1 <= startR) {
-            endR += 1;
-            startR -= 1;
-        }
-        if (endR > 8)
-            endR = 8;
-        if (startR < 0)
-            startR = 0;
+//        int value = Options.r.nextInt(4);
+//        startR = minR - 1- value;
+//        endR = maxR + 1 + value;
+//        while (endR - 1 <= startR) {
+//            endR += 1;
+//            startR -= 1;
+//        }
+//        if (endR > 8)
+//            endR = 8;
+//        if (startR < 0)
+//            startR = 0;
 
-        startC = minC - Options.r.nextInt(3);
-        endC = maxC + Options.r.nextInt(3);
+        if (minC > 0)
+            startC = minC - Options.r.nextInt(minC);
+        if(maxC < 8)
+            endC = maxC + Options.r.nextInt(8 - maxC);
         while (endC - 1 <= startC) {
             endC += 1;
             startC -= 1;
