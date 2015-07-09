@@ -54,7 +54,7 @@ public class UCTNode {
      * @param board The current board
      * @return the currently evaluated playout value of the node
      */
-    public double MCTS(Board board) {
+    public double MCTS(Board board, int depth) {
         if (board.hash() != hash)
             throw new RuntimeException("Incorrect hash");
 
@@ -80,11 +80,14 @@ public class UCTNode {
 
             // When a leaf is reached return the result of the playout
             if (!child.simulated || child.isTerminal()) {
+
+                if (options.subGame && depth < options.subGameDepth)
+                    board.startSubGame();
                 result = child.playOut(board);
                 child.updateStats(-result);
                 child.simulated = true;
             } else {
-                result = -child.MCTS(board);
+                result = -child.MCTS(board, depth + 1);
             }
         }
         // Could be solved deeper in the tree as a transposition
@@ -132,12 +135,13 @@ public class UCTNode {
             return null;
         // Add all moves as children to the current node
         for (int i = 0; i < moves.size(); i++) {
+            Board tempBoard = board.clone();
             // If the game is partial observable, we don't want to do the solver part
-            board.doMove(moves.get(i));
-            UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, board, tt);
+            tempBoard.doMove(moves.get(i));
+            UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoard, tt);
             if (Math.abs(child.getValue()) != State.INF) {
                 // Check for a winner, (Solver)
-                winner = board.checkWin();
+                winner = tempBoard.checkWin();
                 //
                 if (winner == player) {
                     winNode = child;
@@ -146,7 +150,6 @@ public class UCTNode {
                     child.setSolved(false);
                 }
             }
-            board.undoMove();
             children.add(child);
 
         }
@@ -186,13 +189,17 @@ public class UCTNode {
     private double playOut(Board board) {
         int winner = board.checkWin();
         int[] move;
+
         MoveList moves;
         while (winner == Board.NONE_WIN) {
             moves = board.getPlayoutMoves();
-            move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
-            winner = board.checkWin();
-
+            if (moves.size() == 0)
+                board.increaseSubGame();
+            else {
+                move = moves.get(Options.r.nextInt(moves.size()));
+                board.doMove(move);
+                winner = board.checkWin();
+            }
         }
 
         double score;

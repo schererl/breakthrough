@@ -35,7 +35,7 @@ public class UCTPlayer implements AIPlayer {
                 if (System.currentTimeMillis() >= endTime)
                     break;
                 // Make one simulation from root to leaf.
-                if (Math.abs(root.MCTS(board.clone())) == State.INF)
+                if (Math.abs(root.MCTS(board.clone(), 0)) == State.INF)
                     break; // Break if you find a winning move
 
                 if (options.debug && simulations % 10000 == 0)
@@ -47,7 +47,7 @@ public class UCTPlayer implements AIPlayer {
                 simulations++;
                 // Make one simulation from root to leaf.
                 // Note: stats at the root node are in view of the root player (also never used)
-                if (Math.abs(root.MCTS(board.clone())) == State.INF)
+                if (Math.abs(root.MCTS(board.clone(), 0)) == State.INF)
                     break; // Break if you find a winning move
             }
         }
