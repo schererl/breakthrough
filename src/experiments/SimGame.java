@@ -6,8 +6,6 @@ import framework.Options;
 import framework.util.*;
 import mcts.uct.UCTPlayer;
 
-import java.util.DoubleSummaryStatistics;
-
 /**
  * Runs a single experiment. Options are sent by command-line.
  */
