@@ -83,7 +83,7 @@ public class SimGame {
                 } else if (tag.startsWith("et")) {
                     options.earlyTerm = true;
                     options.termDepth = Integer.parseInt(tag.substring(2));
-                } else if (tag.startsWith("ett")) {
+                } else if (tag.startsWith("ert")) {
                     options.earlyTerm = true;
                     options.etT = Double.parseDouble(tag.substring(3));
                 } else if (tag.startsWith("c")) {
