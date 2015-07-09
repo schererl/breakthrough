@@ -194,7 +194,7 @@ public class UCTNode {
             board.doMove(move);
             winner = board.checkWin();
             nMoves++;
-            if (winner == board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
+            if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
                 interrupted = true;
         }
 
