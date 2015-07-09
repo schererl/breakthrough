@@ -210,14 +210,16 @@ public class Board {
                     decisive.add(move[0], move[1]);
                 } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
                     decisive.add(move[0], move[1]);
-                } else if (move[1] != '.' && (move[1] / 8 == 7 || move[1] / 8 == 0)) {
+                } else if (board[move[1]] != '.' && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
                     antiDecisive.add(move[0], move[1]);
                 }
             }
-            if (antiDecisive.size() > 0)
+            if (antiDecisive.size() > 0) {
                 return antiDecisive;
-            if (decisive.size() > 0)
+            }
+            if (decisive.size() > 0) {
                 return decisive;
+            }
         }
         return moveList;
     }
