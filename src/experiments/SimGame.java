@@ -88,6 +88,8 @@ public class SimGame {
                     options.etT = Double.parseDouble(tag.substring(3));
                 } else if (tag.startsWith("c")) {
                     options.C = Double.parseDouble(tag.substring(1));
+                } else {
+                    throw new RuntimeException("Unrecognized tag: " + tag);
                 }
             }
 
