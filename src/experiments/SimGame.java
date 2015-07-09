@@ -78,9 +78,8 @@ public class SimGame {
             // now, parse the tags
             for (int i = 1; i < parts.length; i++) {
                 String tag = parts[i];
-                if (tag.startsWith("sg")) {
-                    options.subGame = true;
-                    options.subGameDepth = Integer.parseInt(tag.substring(2));
+                if (tag.startsWith("h")) {
+                    options.heuristics = true;
                 }
             }
 

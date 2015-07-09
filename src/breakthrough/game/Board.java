@@ -2,6 +2,7 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
+import framework.util.FastTanh;
 
 import java.util.Random;
 
@@ -15,7 +16,7 @@ public class Board {
     // Board stuff
     public char[] board;
     public int nMoves, winner, playerToMove;
-    private int pieces1, pieces2;
+    private int pieces1, pieces2, progress1, progress2;
     private long zbHash = 0;
 
     public void initialize() {
@@ -89,8 +90,8 @@ public class Board {
         }
 
         // check for a win
-        if (playerToMove == 1 && (to / 8 == startR || pieces2 == 0)) winner = 1;
-        else if (playerToMove == 2 && (to / 8 == (endR - 1) || pieces1 == 0)) winner = 2;
+        if (playerToMove == 1 && (to / 8 == 0 || pieces2 == 0)) winner = 1;
+        else if (playerToMove == 2 && (to / 8 == (8 - 1) || pieces1 == 0)) winner = 2;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
@@ -105,16 +106,6 @@ public class Board {
             zbHash ^= whiteHash;
             zbHash ^= blackHash;
         }
-        //
-        if (to / 8 > maxR)
-            maxR = to / 8;
-        else if (to / 8 < minR)
-            minR = to / 8;
-
-        if (to % 8 > maxC)
-            maxC = to % 8;
-        else if (to % 8 < minC)
-            minC = to % 8;
     }
 
     public MoveList getExpandMoves() {
@@ -167,138 +158,72 @@ public class Board {
         return allMoves;
     }
 
-    int startC = 0, endC = 8, startR = 0, endR = 8;
-    int minR = 64, minC = 64, maxC = 0, maxR = 0;
-
-    public void startSubGame() {
-
-        if (minR == 64 || minC == 64 || maxC == 0 || maxR == 0)
-            return;
-
-//        int value = Options.r.nextInt(4);
-//        startR = minR - 1- value;
-//        endR = maxR + 1 + value;
-//        while (endR - 1 <= startR) {
-//            endR += 1;
-//            startR -= 1;
-//        }
-//        if (endR > 8)
-//            endR = 8;
-//        if (startR < 0)
-//            startR = 0;
-
-        if (minC > 0)
-            startC = minC - Options.r.nextInt(minC);
-        if(maxC < 8)
-            endC = maxC + Options.r.nextInt(8 - maxC);
-        while (endC - 1 <= startC) {
-            endC += 1;
-            startC -= 1;
+    public double evaluate(int player) {
+        // inspired by ion function in Maarten's thesis
+        double p1eval = 0;
+        if (progress1 == 7 || pieces2 == 0) p1eval = 1;
+        else if (progress2 == 7 || pieces1 == 0) p1eval = -1;
+        else {
+            //double delta = (pieces1 * 10 + progress1 * 2.5 + capBonus1) - (pieces2 * 10 + progress2 * 2.5 + capBonus2);
+            double delta = (pieces1 * 10 + progress1 * 2.5) - (pieces2 * 10 + progress2 * 2.5);
+            if (delta < -100) delta = -100;
+            if (delta > 100) delta = 100;
+            // now pass it through tanh;
+            p1eval = FastTanh.tanh(delta / 60.0);
         }
-        if (endC > 8)
-            endC = 8;
-        if (startC < 0)
-            startC = 0;
-//
-//        while (getPlayoutMoves().size() == 0) {
-//            value = Options.r.nextInt(3);
-//            startR = value;
-//            endR = 8 - value;
-//            //
-//            startC = Options.r.nextInt(3);
-//            endC = 8 - Options.r.nextInt(3);
-//        }
-//        for (int r = startR; r < endR; r++) {
-//            for (int c = startC; c < endC; c++) {
-//                System.out.print(board[r * 8 + c]);
-//            }
-//            System.out.print("\n");
-//        }
-//        System.out.println();
+        return (player == 1 ? p1eval : -p1eval);
     }
 
-    public void increaseSubGame() {
-//        for (int r = startR; r < endR; r++) {
-//            for (int c = startC; c < endC; c++) {
-//                System.out.print(board[r * 8 + c]);
-//            }
-//            System.out.print("\n");
-//        }
-//        System.out.println();
-
-        if (startR > 0 && endR < 8) {
-            startR--; // Vertical 2
-            endR++;
-        } else if (startR > 0) {
-            startR--; // Vertical 1
-        } else if (endR < 8) {
-            endR++; // Vertical 1
-        } else if (startC > 0) {
-            startC--; // Horizontal 1
-        } else if (endC < 8) {
-            endC++; // Horizontal 1
-        }
-//        for (int r = startR; r < endR; r++) {
-//            for (int c = startC; c < endC; c++) {
-//                System.out.print(board[r * 8 + c]);
-//            }
-//            System.out.print("\n");
-//        }
-//        System.out.println("----------------");
-    }
-
-    public MoveList getPlayoutMoves() {
-        MoveList allMoves = new MoveList(96);
-        int from, to;
-        for (int r = startR; r < endR; r++) {
-            for (int c = startC; c < endC; c++) {
-                from = r * 8 + c;
-                if (playerToMove == 1 && board[from] == 'w') {
-                    if (inBounds(r - 1, c - 1)) {
-                        to = (r - 1) * 8 + (c - 1);
-                        // northwest
-                        if (board[to] != 'w')
-                            allMoves.add(from, to);
+    private void recomputeProgress(int player) {
+        if (player == 1) {
+            // white, start from top
+            for (int r = 0; r < 8; r++) {
+                for (int c = 0; c < 8; c++) {
+                    if (board[r * 8 + c] == 'w') {
+                        progress1 = 7 - r;
+                        return;
                     }
-                    if (inBounds(r - 1, c + 1)) {
-                        to = (r - 1) * 8 + (c + 1);
-                        // northeast
-                        if (board[to] != 'w')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r - 1, c)) {
-                        to = (r - 1) * 8 + c;
-                        // north
-                        if (board[to] == '.')
-                            allMoves.add(from, to);
-                    }
-                } else if (playerToMove == 2 && board[from] == 'b') {
-                    if (inBounds(r + 1, c - 1)) {
-                        to = (r + 1) * 8 + (c - 1);
-                        // southwest
-                        if (board[to] != 'b')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r + 1, c + 1)) {
-                        to = (r + 1) * 8 + (c + 1);
-                        // southeast
-                        if (board[to] != 'b')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r + 1, c)) {
-                        to = (r + 1) * 8 + c;
-                        // south
-                        if (board[to] == '.')
-                            allMoves.add(from, to);
+                }
+            }
+        } else if (player == 2) {
+            // black, start from bottom
+            for (int r = 7; r >= 0; r--) {
+                for (int c = 0; c < 8; c++) {
+                    if (board[r * 8 + c] == 'b') {
+                        progress2 = r;
+                        return;
                     }
                 }
             }
         }
-        return allMoves;
+    }
+
+    public MoveList getPlayoutMoves(boolean heuristics) {
+        MoveList moveList = getExpandMoves();
+        if(heuristics) {
+            MoveList decisive = new MoveList(8);
+            MoveList antiDecisive = new MoveList(8);
+            for (int i = 0; i < moveList.size(); i++) {
+                int[] move = moveList.get(i);
+                // Decisive / anti-decisive moves
+                if (playerToMove == 1 && (move[1] / 8 == 0)) {
+                    decisive.add(move[0], move[1]);
+                } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
+                    decisive.add(move[0], move[1]);
+                } else if (move[1] != '.' && (move[1] / 8 == 7 || move[1] / 8 == 0)) {
+                    antiDecisive.add(move[0], move[1]);
+                }
+            }
+            if (antiDecisive.size() > 0)
+                return antiDecisive;
+            if (decisive.size() > 0)
+                return decisive;
+        }
+        return moveList;
     }
 
     private boolean inBounds(int r, int c) {
-        return (r >= startR && c >= startC && r < endR && c < endC);
+        return (r >= 0 && c >= 0 && r < 8 && c < 8);
     }
 
     public int checkWin() {
@@ -339,6 +264,8 @@ public class Board {
         b.pieces2 = this.pieces2;
         b.nMoves = this.nMoves;
         b.winner = this.winner;
+        b.progress1 = this.progress1;
+        b.progress2 = this.progress2;
         b.playerToMove = this.playerToMove;
         b.zbHash = zbHash;
         return b;

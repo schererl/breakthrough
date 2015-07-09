@@ -80,9 +80,6 @@ public class UCTNode {
 
             // When a leaf is reached return the result of the playout
             if (!child.simulated || child.isTerminal()) {
-
-                if (options.subGame && depth < options.subGameDepth)
-                    board.startSubGame();
                 result = child.playOut(board);
                 child.updateStats(-result);
                 child.simulated = true;
@@ -192,14 +189,10 @@ public class UCTNode {
 
         MoveList moves;
         while (winner == Board.NONE_WIN) {
-            moves = board.getPlayoutMoves();
-            if (moves.size() == 0)
-                board.increaseSubGame();
-            else {
-                move = moves.get(Options.r.nextInt(moves.size()));
-                board.doMove(move);
-                winner = board.checkWin();
-            }
+            moves = board.getPlayoutMoves(options.heuristics);
+            move = moves.get(Options.r.nextInt(moves.size()));
+            board.doMove(move);
+            winner = board.checkWin();
         }
 
         double score;

@@ -8,6 +8,6 @@ import java.util.Random;
 public class Options {
     public static final Random r = new Random();
     public double C = 1.;
-    public boolean debug = true, fixSimulations = false, subGame = false;
-    public int timeLimit = 5000, subGameDepth = 6;
+    public boolean debug = true, fixSimulations = false, heuristics = false;
+    public int timeLimit = 5000;
 }
