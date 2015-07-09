@@ -205,9 +205,9 @@ public class UCTNode {
         } else {
             double eval = board.evaluate(player);
             //System.out.println(eval);
-            if(eval > 0.)
+            if(eval >= options.etT)
                 score = 1.;
-            else if (eval < 0)
+            else if (eval <= -options.etT)
                 score = -1.;
         }
         return score;
