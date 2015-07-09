@@ -201,8 +201,8 @@ public class Board {
     public MoveList getPlayoutMoves(boolean heuristics) {
         MoveList moveList = getExpandMoves();
         if(heuristics) {
-            MoveList decisive = new MoveList(8);
-            MoveList antiDecisive = new MoveList(8);
+            MoveList decisive = new MoveList(32);
+            MoveList antiDecisive = new MoveList(32);
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
