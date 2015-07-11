@@ -76,7 +76,7 @@ public class Board {
         zbHash ^= whiteHash;
     }
 
-    public void doMove(int[] move) {
+    public void doMove(int[] move, boolean updateEval) {
         int from = move[0], to = move[1];
 
         zbHash ^= zbnums[from][playerToMove];
@@ -95,14 +95,16 @@ public class Board {
         board[to] = board[from];
         board[from] = 0;
 
-        // lorentz piece value updates:
-        // subtract off from where you came, add where you ended up
-        if (playerToMove == 1) {
-            lorentzPV1 -= getLorentzPV(1, from);
-            lorentzPV1 += getLorentzPV(1, to);
-        } else {
-            lorentzPV2 -= getLorentzPV(2, from);
-            lorentzPV2 += getLorentzPV(2, to);
+        if(updateEval) {
+            // lorentz piece value updates:
+            // subtract off from where you came, add where you ended up
+            if (playerToMove == 1) {
+                lorentzPV1 -= getLorentzPV(1, from);
+                lorentzPV1 += getLorentzPV(1, to);
+            } else {
+                lorentzPV2 -= getLorentzPV(2, from);
+                lorentzPV2 += getLorentzPV(2, to);
+            }
         }
 
         int rp = to / 8;
@@ -115,16 +117,20 @@ public class Board {
                 // wiping out this piece could reduce the player's progress
                 if (progress2 == rp && nPieces2 > 0)
                     recomputeProgress(2);
-                // The player loses the piece's lorentz value
-                lorentzPV2 -= getLorentzPV(2, to);
+                if(updateEval) {
+                    // The player loses the piece's lorentz value
+                    lorentzPV2 -= getLorentzPV(2, to);
+                }
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
                 if (progress1 == 7 - rp && nPieces1 > 0)
                     recomputeProgress(1);
-                // The player loses the piece's lorentz value
-                lorentzPV1 -= getLorentzPV(1, to);
+                if(updateEval) {
+                    // The player loses the piece's lorentz value
+                    lorentzPV1 -= getLorentzPV(1, to);
+                }
             }
 
         }
@@ -344,7 +350,7 @@ public class Board {
         return b;
     }
 
-    private boolean isSafe1(int position) {
+    private boolean isSafe(int position) {
         // White moves up (-1) black down (+1)
         int moveMode = (board[position] / 100 == 1) ? -1 : 1;
         int opp = (board[position] / 100 == 1) ? 2 : 1;
@@ -366,7 +372,7 @@ public class Board {
     }
 
 
-    private boolean isSafe(int position) {
+    private boolean isSafe2(int position) {
         int rp = position / 8;
         int cp = position % 8;
 

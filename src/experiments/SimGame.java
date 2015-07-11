@@ -137,7 +137,7 @@ public class SimGame {
 
             aiPlayer.getMove(board.clone());
             m = aiPlayer.getBestMove();
-            board.doMove(m);
+            board.doMove(m, true);
 
         }
 

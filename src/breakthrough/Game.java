@@ -35,7 +35,7 @@ public class Game {
 
             aiPlayer.getMove(b.clone());
             m = aiPlayer.getBestMove();
-            b.doMove(m);
+            b.doMove(m, true);
 
             if (m != null)
                 System.out.println("Player " + player + " played " + Arrays.toString(m));

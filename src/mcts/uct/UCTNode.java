@@ -76,7 +76,7 @@ public class UCTNode {
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
             if (!isTerminal())
-                board.doMove(child.move);
+                board.doMove(child.move, options.earlyTerm);
 
             // When a leaf is reached return the result of the playout
             if (!child.simulated || child.isTerminal()) {
@@ -131,25 +131,23 @@ public class UCTNode {
         for (int i = 0; i < moves.size(); i++) {
             Board tempBoard = board.clone();
             // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i));
+            tempBoard.doMove(moves.get(i), false);
             UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoard, tt);
 
             if (Math.abs(child.getValue()) != State.INF) {
                 // Check for a winner, (Solver)
                 winner = tempBoard.checkWin();
-                //
                 if (winner == player) {
                     winNode = child;
                     child.setSolved(true);
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
+                } else if (options.nodePriors && child.state == null) {
+                    // Only initialize node priors is the state is not yet initialized somewhere else
+                    tempBoard.initNodePriors(player, child.getState(), moves.get(i));
                 }
-                // Only initialize node priors is the state is not yet initialized somewhere else
-            } else if (options.nodePriors && child.state == null) {
-                tempBoard.initNodePriors(player, child.getState(), move);
             }
             children.add(child);
-
         }
         // If one of the nodes is a win, return it.
         return winNode;
@@ -192,7 +190,7 @@ public class UCTNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
+            board.doMove(move, options.earlyTerm);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
@@ -288,7 +286,7 @@ public class UCTNode {
 
     private State getState() {
         if (state == null)
-            state = tt.getState(hash, true);
+            state = tt.getState(hash, false);
         return state;
     }
 
