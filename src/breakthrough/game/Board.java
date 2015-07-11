@@ -282,7 +282,7 @@ public class Board {
                             heurMoves.add(move[0], move[1]);
                             heurMoves.add(move[0], move[1]);
                         }
-                        if (isSafe1(move[1])) {
+                        if (isSafe1(move[1], playerToMove)) {
                             heurMoves.add(move[0], move[1]);
                             heurMoves.add(move[0], move[1]);
                         }
@@ -369,10 +369,10 @@ public class Board {
         return b;
     }
 
-    private boolean isSafe1(int position) {
+    private boolean isSafe1(int position, int player) {
         // White moves up (-1) black down (+1)
-        int moveMode = (board[position] / 100 == 1) ? -1 : 1;
-        int opp = (board[position] / 100 == 1) ? 2 : 1;
+        int moveMode = (player == 1) ? -1 : 1;
+        int opp = 3 - player;
         int r = position / 8, c = position % 8, to;
         // Check neighbouring positions for an opponent's piece
         if (inBounds(r + moveMode, c - 1)) {
@@ -426,7 +426,7 @@ public class Board {
     }
 
     public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
-        boolean safeMove = isSafe1(move[1]);
+        boolean safeMove = isSafe1(move[1], parentPlayer);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
         double winRate = 0.3;
