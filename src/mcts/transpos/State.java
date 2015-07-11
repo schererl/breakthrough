@@ -28,6 +28,10 @@ public class State {
         this.visits++;
     }
 
+    public void init(int player, int wins, int visits) {
+        // WTF?
+    }
+
     public float getMean(int player) {
         visited = true;
         if (solvedPlayer == 0) { // Position is not solved, return mean

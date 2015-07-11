@@ -2,13 +2,14 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
+import mcts.transpos.State;
 
 import java.util.Random;
 
 public class Board {
     public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
     private static final int[] lorentzValues =
-                    {5, 15, 15, 5, 5, 15, 15, 5,
+            {5, 15, 15, 5, 5, 15, 15, 5,
                     2, 3, 3, 3, 3, 3, 3, 2,
                     4, 6, 6, 6, 6, 6, 6, 4,
                     7, 10, 10, 10, 10, 10, 10, 7,
@@ -187,7 +188,7 @@ public class Board {
     }
 
     public int evaluate(int player) {
-        int p1eval =  10 * (nPieces1 - nPieces2);
+        int p1eval = 10 * (nPieces1 - nPieces2);
         p1eval += lorentzPV1 - lorentzPV2;
         return (player == 1 ? p1eval : -p1eval);
     }
@@ -269,27 +270,6 @@ public class Board {
         return moveList;
     }
 
-    private boolean isSafe(int position) {
-        // White moves up (-1) black down (+1)
-        int moveMode = (board[position] / 100 == 1) ? -1 : 1;
-        int opp = (board[position] / 100 == 1) ? 2 : 1;
-        int r = position / 8, c = position % 8, to;
-        // Check neighbouring positions for an opponent's piece
-        if (inBounds(r + moveMode, c - 1)) {
-            to = (r + moveMode) * 8 + (c - 1);
-            // northwest
-            if (board[to] / 100 == opp)
-                return false;
-        }
-        if (inBounds(r + moveMode, c + 1)) {
-            to = (r + moveMode) * 8 + (c + 1);
-            // northeast
-            if (board[to] / 100 == opp)
-                return false;
-        }
-        return true;
-    }
-
     private boolean inBounds(int r, int c) {
         return (r >= 0 && c >= 0 && r < 8 && c < 8);
     }
@@ -363,6 +343,97 @@ public class Board {
         b.zbHash = zbHash;
         return b;
     }
+
+    private boolean isSafe1(int position) {
+        // White moves up (-1) black down (+1)
+        int moveMode = (board[position] / 100 == 1) ? -1 : 1;
+        int opp = (board[position] / 100 == 1) ? 2 : 1;
+        int r = position / 8, c = position % 8, to;
+        // Check neighbouring positions for an opponent's piece
+        if (inBounds(r + moveMode, c - 1)) {
+            to = (r + moveMode) * 8 + (c - 1);
+            // northwest
+            if (board[to] / 100 == opp)
+                return false;
+        }
+        if (inBounds(r + moveMode, c + 1)) {
+            to = (r + moveMode) * 8 + (c + 1);
+            // northeast
+            if (board[to] / 100 == opp)
+                return false;
+        }
+        return true;
+    }
+
+
+    private boolean isSafe(int position) {
+        int rp = position / 8;
+        int cp = position % 8;
+
+        //assert(inBounds(rp,cp));
+        int parentPiece = board[position] / 100;
+
+        // count immediate attackers and defenders
+        int attackers = 0, defenders = 0;
+
+        int[] rowOffset = {-1, -1, +1, +1};
+        int[] colOffset = {-1, +1, -1, +1};
+
+        for (int oi = 0; oi < 4; oi++) {
+            int rpp = rp + rowOffset[oi];
+            int cpp = cp + colOffset[oi];
+
+            if (inBounds(rpp, cpp) && (board[rpp * 8 + cpp] / 100 == 1 || board[rpp * 8 + cpp] / 100 == 2)) {
+                if (parentPiece == 1 && oi < 2 && board[rpp * 8 + cpp] == 2)
+                    attackers++;
+                if (parentPiece == 1 && oi >= 2 && board[rpp * 8 + cpp] == 1)
+                    defenders++;
+
+                if (parentPiece == 2 && oi < 2 && board[rpp * 8 + cpp] == 2)
+                    defenders++;
+                if (parentPiece == 2 && oi >= 2 && board[rpp * 8 + cpp] == 1)
+                    attackers++;
+            }
+        }
+        return (attackers <= defenders);
+    }
+
+    public void initNodePriorsLorenz(int parentPlayer, State state, int[] move) {
+        boolean safeMove = isSafe(move[1]);
+        int rp = move[1] / 8;
+        int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
+        int wins = 30;
+
+        if (safeMove) {
+            if (distToGoal == 1)
+                wins = 100;
+            else if (distToGoal == 2)
+                wins = 95;
+            else if (distToGoal == 3)
+                wins = 85;
+            else if (distToGoal == 4)
+                wins = 75;
+            else if (distToGoal == 5)
+                wins = 60;
+        } else {
+            if (board[move[1]] != 0)
+                wins = 60;
+        }
+
+        //if (!safeMove) {
+        //    System.out.println("unsafe move! " + bmove + "\n" + toString());
+        // }
+        //System.out.println("Node priors, wins = " + wins);
+
+        // this causes a significant slowdown
+        /*for (int i = 0; i < winrate*npvisits; i++)
+            stats.push(1.0);
+        for (int i = 0; i < (1.0-winrate)*npvisits; i++)
+            stats.push(-1.0);*/
+
+        state.init(playerToMove, wins, 100);
+    }
+
 
     public static String getMoveString(int[] move) {
         int c = move[0] % 8, cp = move[1] % 8;
