@@ -240,11 +240,10 @@ public class Board {
 
     public MoveList getPlayoutMoves(boolean heuristics) {
         // Check for decisive / anti-decisive moves
-        if (heuristics) {
+        if (heuristics && progress1 >= 6 || progress2 >= 6) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
-            MoveList goodMoves = new MoveList(128);
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -255,18 +254,6 @@ public class Board {
                 } else if (board[move[1]] != 0 && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
                     antiDecisive.add(move[0], move[1]);
                 }
-                if(decisive.size() == 0 && antiDecisive.size() == 0) {
-                    if (board[move[1]] != 0) {
-                        goodMoves.add(move[0], move[1]);
-                        goodMoves.add(move[0], move[1]);
-                        goodMoves.add(move[0], move[1]);
-                    }
-                    if(isSafe(move[1])) {
-                        goodMoves.add(move[0], move[1]);
-                        goodMoves.add(move[0], move[1]);
-                    }
-                    goodMoves.add(move[0], move[1]);
-                }
             }
             if (antiDecisive.size() > 0) {
                 return antiDecisive;
@@ -274,8 +261,6 @@ public class Board {
             if (decisive.size() > 0) {
                 return decisive;
             }
-            if(goodMoves.size() > 0)
-                return goodMoves;
         }
         // Select a piece uniformly random and generate its moves
         // This should remove any bias towards selecting pieces with more available moves
@@ -285,8 +270,26 @@ public class Board {
         while (moveList.size() == 0) {
             pieceI = Options.r.nextInt(PIECES);
             //
-            if (playerPieces[pieceI] != CAPTURED)
+            if (playerPieces[pieceI] != CAPTURED) {
                 generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList);
+                if(heuristics && moveList.size() > 1) {
+                    MoveList heurMoves = new MoveList(moveList.size() * 3);
+                    for(int i = 0; i < moveList.size(); i++) {
+                        int[] move = moveList.get(i);
+                        if (board[move[1]] != 0) {
+                            heurMoves.add(move[0], move[1]);
+                            heurMoves.add(move[0], move[1]);
+                            heurMoves.add(move[0], move[1]);
+                        }
+                        if (isSafe(move[1])) {
+                            heurMoves.add(move[0], move[1]);
+                            heurMoves.add(move[0], move[1]);
+                        }
+                        heurMoves.add(move[0], move[1]);
+                    }
+                    return heurMoves;
+                }
+            }
         }
         return moveList;
     }
@@ -421,26 +424,26 @@ public class Board {
         return attackers <= defenders;
     }
 
-    public void initNodePriors(int parentPlayer, State state, int[] move) {
+    public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
         boolean safeMove = isSafe(move[1]);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
-        int wins = 3;
+        double winRate = 0.3;
 
         if (safeMove) {
             if (distToGoal == 0)
-                wins = 10;
+                winRate = 1.;
             else if (distToGoal == 1)
-                wins = 9;
+                winRate = 0.95;
             else if (distToGoal == 2)
-                wins = 8;
+                winRate = 0.85;
             else if (distToGoal == 3)
-                wins = 7;
+                winRate = 0.7;
             else if (distToGoal == 4)
-                wins = 6;
+                winRate = 0.6;
         } else {
             if (board[move[1]] != 0)
-                wins = 6;
+                winRate = 0.6;
         }
 
         //if (!safeMove) {
@@ -454,7 +457,7 @@ public class Board {
         for (int i = 0; i < (1.0-winrate)*npvisits; i++)
             stats.push(-1.0);*/
 
-        state.init(wins, 10);
+        state.init((int)(winRate * npVisits), npVisits);
     }
 
 
