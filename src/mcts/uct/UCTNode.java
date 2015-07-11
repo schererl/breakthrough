@@ -7,7 +7,6 @@ import framework.util.FastLog;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
-import javax.swing.tree.TreeNode;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -160,7 +159,7 @@ public class UCTNode {
         double max = Double.NEGATIVE_INFINITY;
         // Use UCT down the tree
         double uctValue, np = getVisits();
-        if(options.nodePriors) {
+        if (options.nodePriors) {
             for (UCTNode c : children)
                 np += c.getVisits();
         }
@@ -204,13 +203,13 @@ public class UCTNode {
         }
 
         double score = 0.;
-        if(!interrupted) {
+        if (!interrupted) {
             if (winner == player) score = 1.0;
             else score = -1;
         } else {
             double eval = board.evaluate(player);
             //System.out.println(eval);
-            if(eval > options.etT)
+            if (eval > options.etT)
                 score = 1.;
             else if (eval < -options.etT)
                 score = -1.;
@@ -252,20 +251,27 @@ public class UCTNode {
         return sb.toString();
     }
 
+    double sum = 0, visits = 0;
+
     private void updateStats(double value) {
         if (state == null)
             state = tt.getState(hash, false);
         state.updateStats(value);
+        sum += value;
+        visits++;
     }
 
     private void setSolved(boolean win) {
         if (state == null)
             state = tt.getState(hash, false);
 
-        if (win) // win for the parent player
+        if (win) {// win for the parent player
             state.setSolved(3 - player);
-        else
+            sum = State.INF;
+        } else {
             state.setSolved(player);
+            sum = -State.INF;
+        }
     }
 
     /**
@@ -276,7 +282,14 @@ public class UCTNode {
             state = tt.getState(hash, true);
         if (state == null)
             return 0.;
-        return state.getMean(3 - player);
+        if (options.tt) {
+            return state.getMean(3 - player);
+        } else {
+            if (Math.abs(sum) != State.INF)
+                return sum / visits;
+            else
+                return sum;
+        }
     }
 
     /**
@@ -287,7 +300,10 @@ public class UCTNode {
             state = tt.getState(hash, true);
         if (state == null)
             return 0.;
-        return state.getVisits();
+        if (options.tt)
+            return state.getVisits();
+        else
+            return visits;
     }
 
     private State getState() {

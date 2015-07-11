@@ -90,8 +90,8 @@ public class SimGame {
                     options.C = Double.parseDouble(tag.substring(1));
                 } else if (tag.equals("np")) {
                     options.nodePriors = true;
-                } else if (tag.equals("test")) {
-                    options.test = true;
+                } else if (tag.equals("tt")) {
+                    options.tt = true;
                 } else {
                     throw new RuntimeException("Unrecognized tag: " + tag);
                 }
