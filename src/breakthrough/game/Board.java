@@ -22,36 +22,35 @@ public class Board {
     private static long blackHash, whiteHash;
     // Board stuff
     public int[] board, pieces[];
-    public int nMoves, winner, playerToMove;
-    private int[] nPieces, progress, lorentzPV;
+    public short nMoves, winner, playerToMove;
+    private int nPieces1, progress1, lorentzPV1, nPieces2, progress2, lorentzPV2;
     private long zbHash = 0;
 
     public void initialize() {
         board = new int[64];
         pieces = new int[2][PIECES];
-        nPieces = new int[2];
-        progress = new int[2];
-        lorentzPV = new int[2];
         playerToMove = P1;
 
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 if (r == 0 || r == 1) {
-                    board[r * 8 + c] = 200 + nPieces[1]; // player 2 is black
-                    pieces[1][nPieces[1]] = r * 8 + c;
-                    nPieces[1]++;
+                    board[r * 8 + c] = 200 + nPieces2; // player 2 is black
+                    pieces[1][nPieces2] = r * 8 + c;
+                    nPieces2++;
+                    lorentzPV2 += getLorentzPV(2, r * 8 + c);
                 } else if (r == 6 || r == 7) {
-                    board[r * 8 + c] = 100 + nPieces[0]; // player 1 is white
-                    pieces[0][nPieces[0]] = r * 8 + c;
-                    nPieces[0]++;
+                    board[r * 8 + c] = 100 + nPieces1; // player 1 is white
+                    pieces[0][nPieces1] = r * 8 + c;
+                    nPieces1++;
+                    lorentzPV1 += getLorentzPV(1, r * 8 + c);
                 }
             }
         }
 
         nMoves = 0;
         winner = NONE_WIN;
-        progress[0] = 1;
-        progress[1] = 1;
+        progress1 = 1;
+        progress2 = 1;
 
         // initialize the zobrist numbers
         if (zbnums == null) {
@@ -97,38 +96,51 @@ public class Board {
 
         // lorentz piece value updates:
         // subtract off from where you came, add where you ended up
-        //lorentzPV[playerToMove-1] -= getLorentzPV(playerToMove, from);
-        //lorentzPV[playerToMove-1] += getLorentzPV(playerToMove, to);
+        if (playerToMove == 1) {
+            lorentzPV1 -= getLorentzPV(1, from);
+            lorentzPV1 += getLorentzPV(1, to);
+        } else {
+            lorentzPV2 -= getLorentzPV(2, from);
+            lorentzPV2 += getLorentzPV(2, to);
+        }
 
         int rp = to / 8;
 
         // check for a capture
         if (capture) {
-            int opp = (3 - playerToMove) - 1;
-            nPieces[opp]--;
-            pieces[opp][pieceCap] = CAPTURED;
+            if (playerToMove == 1) {
+                nPieces2--;
+                pieces[1][pieceCap] = CAPTURED;
+                // wiping out this piece could reduce the player's progress
+                if (progress2 == rp && nPieces2 > 0)
+                    recomputeProgress(2);
+                // The player loses the piece's lorentz value
+                lorentzPV2 -= getLorentzPV(2, to);
+            } else {
+                nPieces1--;
+                pieces[0][pieceCap] = CAPTURED;
+                //
+                if (progress1 == 7 - rp && nPieces1 > 0)
+                    recomputeProgress(1);
+                // The player loses the piece's lorentz value
+                lorentzPV1 -= getLorentzPV(1, to);
+            }
 
-            // Recompute the player's progress (if needed)
-            if(progress[opp] == rp && nPieces[opp] > 0)
-                recomputeProgress(opp);
-
-            // The player loses the piece's lorentz value
-            // lorentzPV[opp] -= getLorentzPV(opp, to);
         }
 
         // check for a win
-        if (playerToMove == 1 && (rp == 0 || nPieces[1] == 0)) winner = 1;
-        else if (playerToMove == 2 && (rp == (8 - 1) || nPieces[0] == 0)) winner = 2;
+        if (playerToMove == 1 && (rp == 0 || nPieces2 == 0)) winner = 1;
+        else if (playerToMove == 2 && (rp == (8 - 1) || nPieces1 == 0)) winner = 2;
 
         // check for progress (furthest pawn)
-        if (playerToMove == 1 && (7 - rp) > progress[0]) progress[0] = 7 - rp;
-        else if (playerToMove == 2 && rp > progress[1]) progress[1] = rp;
+        if (playerToMove == 1 && (7 - rp) > progress1) progress1 = 7 - rp;
+        else if (playerToMove == 2 && rp > progress2) progress2 = rp;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
 
         nMoves++;
-        playerToMove = 3 - playerToMove;
+        playerToMove = (short) (3 - playerToMove);
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -175,52 +187,53 @@ public class Board {
     }
 
     public int evaluate(int player) {
-        int p1eval = 0;
-        // inspired by ion function in Maarten's thesis
-        if (progress[0] == 7 || nPieces[1] == 0) p1eval = 100;
-        else if (progress[1] == 7 || nPieces[0] == 0) p1eval = -100;
-        else {
-            p1eval += 10 * (nPieces[0] - nPieces[1]);
-            p1eval += progress[0] * 2 - progress[1] * 2;
-        }
+        int p1eval =  10 * (nPieces1 - nPieces2);
+        p1eval += lorentzPV1 - lorentzPV2;
         return (player == 1 ? p1eval : -p1eval);
     }
 
-    private void recomputeProgress(int playerI) {
-        int[] playerPieces = pieces[playerI];
-        if (playerI == 0) {
+    private void recomputeProgress(int player) {
+        int[] playerPieces = pieces[player - 1];
+        if (player == 1) {
             int min = 100;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
                 if (piece / 8 < min) {
                     min = piece / 8;
-                    progress[0] = 7 - min;
+                    progress1 = 7 - min;
                 }
             }
-        } else if (playerI == 1) {
+        } else if (player == 2) {
             int max = -1;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
                 if (piece / 8 > max) {
                     max = piece / 8;
-                    progress[1] = max;
+                    progress2 = max;
                 }
             }
         }
     }
 
-    private int getLorentzPV(int playerI, int position) {
-        if (playerI == 1)
-            return lorentzValues[position];
-        else
-            return lorentzValues[63 - position];
+    private int getLorentzPV(int player, int position) {
+        if (player == 2) {
+            if (isSafe(position))
+                return lorentzValues[position] + (int) (0.5 * lorentzValues[position]);
+            else
+                return lorentzValues[position];
+        } else {
+            if (isSafe(position))
+                return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
+            else
+                return lorentzValues[position];
+        }
     }
 
     public MoveList getPlayoutMoves(boolean heuristics) {
         // Check for decisive / anti-decisive moves
-        if (heuristics && (progress[0] >= 6 || progress[1] >= 6)) {
+        if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
@@ -254,6 +267,27 @@ public class Board {
                 generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList);
         }
         return moveList;
+    }
+
+    private boolean isSafe(int position) {
+        // White moves up (-1) black down (+1)
+        int moveMode = (board[position] / 100 == 1) ? -1 : 1;
+        int opp = (board[position] / 100 == 1) ? 2 : 1;
+        int r = position / 8, c = position % 8, to;
+        // Check neighbouring positions for an opponent's piece
+        if (inBounds(r + moveMode, c - 1)) {
+            to = (r + moveMode) * 8 + (c - 1);
+            // northwest
+            if (board[to] / 100 == opp)
+                return false;
+        }
+        if (inBounds(r + moveMode, c + 1)) {
+            to = (r + moveMode) * 8 + (c + 1);
+            // northeast
+            if (board[to] / 100 == opp)
+                return false;
+        }
+        return true;
     }
 
     private boolean inBounds(int r, int c) {
@@ -294,9 +328,9 @@ public class Board {
             sb.append("\n");
         }
         sb.append(" ").append(colLabels).append("\n");
-        sb.append("\nPieces: (").append(nPieces[0]).append(", ").append(nPieces[1])
+        sb.append("\nPieces: (").append(nPieces1).append(", ").append(nPieces2)
                 .append(") nMoves: ").append(nMoves).append("\n").append("Progresses: ")
-                .append(progress[0]).append(" ").append(progress[1]);
+                .append(progress1).append(" ").append(progress2);
         return sb.toString();
     }
 
@@ -317,17 +351,14 @@ public class Board {
         b.pieces = new int[2][PIECES];
         System.arraycopy(pieces[0], 0, b.pieces[0], 0, 16);
         System.arraycopy(pieces[1], 0, b.pieces[1], 0, 16);
-        b.nPieces = new int[2];
-        b.nPieces[0] = this.nPieces[0];
-        b.nPieces[1] = this.nPieces[1];
+        b.nPieces1 = this.nPieces1;
+        b.nPieces2 = this.nPieces2;
         b.nMoves = this.nMoves;
         b.winner = this.winner;
-        b.progress = new int[2];
-        b.progress[0] = this.progress[0];
-        b.progress[1] = this.progress[1];
-        b.lorentzPV = new int[2];
-        b.lorentzPV[0] = this.lorentzPV[0];
-        b.lorentzPV[1] = this.lorentzPV[1];
+        b.progress1 = this.progress1;
+        b.progress2 = this.progress2;
+        b.lorentzPV1 = this.lorentzPV1;
+        b.lorentzPV1 = this.lorentzPV2;
         b.playerToMove = this.playerToMove;
         b.zbHash = zbHash;
         return b;
