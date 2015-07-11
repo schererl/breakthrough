@@ -226,12 +226,12 @@ public class Board {
 
     private int getLorentzPV(int player, int position) {
         if (player == 2) {
-            if (isSafe(position))
+            if (isSafe(position, player))
                 return lorentzValues[position] + (int) (0.5 * lorentzValues[position]);
             else
                 return lorentzValues[position];
         } else {
-            if (isSafe(position))
+            if (isSafe(position, player))
                 return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
             else
                 return lorentzValues[63 - position];
