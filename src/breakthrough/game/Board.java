@@ -258,11 +258,14 @@ public class Board {
                 if(decisive.size() == 0 && antiDecisive.size() == 0) {
                     if (board[move[1]] != 0) {
                         goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
                     }
                     if(isSafe(move[1])) {
                         goodMoves.add(move[0], move[1]);
                         goodMoves.add(move[0], move[1]);
                     }
+                    goodMoves.add(move[0], move[1]);
                 }
             }
             if (antiDecisive.size() > 0) {
