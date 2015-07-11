@@ -8,6 +8,8 @@ import java.util.Random;
 public class Options {
     public static final Random r = new Random();
     public double C = .85;
-    public boolean debug = true, fixSimulations = false, heuristics = false, earlyTerm = false, nodePriors = false;
+    public boolean debug = true, fixSimulations = false,
+            heuristics = false, earlyTerm = false,
+            nodePriors = false, test = false;
     public int timeLimit = 5000, termDepth = 4, etT = 70;
 }

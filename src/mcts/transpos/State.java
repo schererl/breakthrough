@@ -58,7 +58,7 @@ public class State {
 
     public String toString() {
         if (solvedPlayer == 0)
-            return df2.format(sum) + "\tn:" + visits; // + "\tKL:" + df2.format(getKL());
+            return df2.format(getMean(1)) + "\tn:" + visits; // + "\tKL:" + df2.format(getKL());
         else
             return "solved win P" + solvedPlayer;
     }
