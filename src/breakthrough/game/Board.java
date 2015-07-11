@@ -2,45 +2,56 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
-import framework.util.FastTanh;
 
 import java.util.Random;
 
 public class Board {
     public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
-    private static final String rowLabels = "87654321";
-    private static final String colLabels = "abcdefgh";
+    private static final int[] lorentzValues =
+            {5, 15, 15, 5, 5, 15, 15, 5,
+                    2, 3, 3, 3, 3, 3, 3, 2,
+                    4, 6, 6, 6, 6, 6, 6, 4,
+                    7, 10, 10, 10, 10, 10, 10, 7,
+                    11, 15, 15, 15, 15, 15, 15, 11,
+                    16, 21, 21, 21, 21, 21, 21, 16,
+                    20, 28, 28, 28, 28, 28, 28, 20,
+                    36, 36, 36, 36, 36, 36, 36, 36};
+    private static final String rowLabels = "87654321", colLabels = "abcdefgh";
     // Zobrist stuff
     private static long[][] zbnums = null;
     private static long blackHash, whiteHash;
     // Board stuff
     public int[] board, pieces[];
     public int nMoves, winner, playerToMove;
-    private int pieces1, pieces2, progress1, progress2;
+    private int[] nPieces, progress, lorentzPV;
     private long zbHash = 0;
 
     public void initialize() {
         board = new int[64];
         pieces = new int[2][PIECES];
+        nPieces = new int[2];
+        progress = new int[2];
+        lorentzPV = new int[2];
         playerToMove = P1;
 
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 if (r == 0 || r == 1) {
-                    board[r * 8 + c] = 200 + pieces2; // player 2 is black
-                    pieces[1][pieces2] = r * 8 + c;
-                    pieces2++;
+                    board[r * 8 + c] = 200 + nPieces[1]; // player 2 is black
+                    pieces[1][nPieces[1]] = r * 8 + c;
+                    nPieces[1]++;
                 } else if (r == 6 || r == 7) {
-                    board[r * 8 + c] = 100 + pieces1; // player 1 is white
-                    pieces[0][pieces1] = r * 8 + c;
-                    pieces1++;
+                    board[r * 8 + c] = 100 + nPieces[0]; // player 1 is white
+                    pieces[0][nPieces[0]] = r * 8 + c;
+                    nPieces[0]++;
                 }
             }
         }
 
         nMoves = 0;
         winner = NONE_WIN;
-        progress1 = progress2 = 1;
+        progress[0] = 1;
+        progress[1] = 1;
 
         // initialize the zobrist numbers
         if (zbnums == null) {
@@ -83,32 +94,35 @@ public class Board {
 
         board[to] = board[from];
         board[from] = 0;
+
+        // lorentz piece value updates:
+        // subtract off from where you came, add where you ended up
+        //lorentzPV[playerToMove-1] -= getLorentzPV(playerToMove, from);
+        //lorentzPV[playerToMove-1] += getLorentzPV(playerToMove, to);
+
         int rp = to / 8;
 
         // check for a capture
         if (capture) {
-            if (playerToMove == 1) {
-                pieces2--;
-                pieces[1][pieceCap] = CAPTURED;
-                // wiping out this piece could reduce the player's progress
-                if (progress2 == rp && pieces2 > 0)
-                    recomputeProgress(2);
-            } else {
-                pieces1--;
-                pieces[0][pieceCap] = CAPTURED;
-                //
-                if (progress1 == 7 - rp && pieces1 > 0)
-                    recomputeProgress(1);
-            }
+            int opp = (3 - playerToMove) - 1;
+            nPieces[opp]--;
+            pieces[opp][pieceCap] = CAPTURED;
+
+            // Recompute the player's progress (if needed)
+            if(progress[opp] == rp && nPieces[opp] > 0)
+                recomputeProgress(opp);
+
+            // The player loses the piece's lorentz value
+            // lorentzPV[opp] -= getLorentzPV(opp, to);
         }
 
         // check for a win
-        if (playerToMove == 1 && (rp == 0 || pieces2 == 0)) winner = 1;
-        else if (playerToMove == 2 && (rp == (8 - 1) || pieces1 == 0)) winner = 2;
+        if (playerToMove == 1 && (rp == 0 || nPieces[1] == 0)) winner = 1;
+        else if (playerToMove == 2 && (rp == (8 - 1) || nPieces[0] == 0)) winner = 2;
 
         // check for progress (furthest pawn)
-        if (playerToMove == 1 && (7 - rp) > progress1) progress1 = 7 - rp;
-        else if (playerToMove == 2 && rp > progress2) progress2 = rp;
+        if (playerToMove == 1 && (7 - rp) > progress[0]) progress[0] = 7 - rp;
+        else if (playerToMove == 2 && rp > progress[1]) progress[1] = rp;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
@@ -163,43 +177,50 @@ public class Board {
     public int evaluate(int player) {
         int p1eval = 0;
         // inspired by ion function in Maarten's thesis
-        if (progress1 == 7 || pieces2 == 0) p1eval = 100;
-        else if (progress2 == 7 || pieces1 == 0) p1eval = -100;
+        if (progress[0] == 7 || nPieces[1] == 0) p1eval = 100;
+        else if (progress[1] == 7 || nPieces[0] == 0) p1eval = -100;
         else {
-            p1eval += 10 * (pieces1 - pieces2);
-            p1eval += progress1 * 2 - progress2 * 2;
+            p1eval += 10 * (nPieces[0] - nPieces[1]);
+            p1eval += progress[0] * 2 - progress[1] * 2;
         }
         return (player == 1 ? p1eval : -p1eval);
     }
 
-    private void recomputeProgress(int player) {
-        int[] playerPieces = pieces[player - 1];
-        if (player == 1) {
+    private void recomputeProgress(int playerI) {
+        int[] playerPieces = pieces[playerI];
+        if (playerI == 0) {
             int min = 100;
-            for(int piece : playerPieces) {
-                if(piece == CAPTURED)
+            for (int piece : playerPieces) {
+                if (piece == CAPTURED)
                     continue;
-                if(piece / 8 < min) {
+                if (piece / 8 < min) {
                     min = piece / 8;
-                    progress1 = 7 - min;
+                    progress[0] = 7 - min;
                 }
             }
-        } else if (player == 2) {
+        } else if (playerI == 1) {
             int max = -1;
-            for(int piece : playerPieces) {
-                if(piece == CAPTURED)
+            for (int piece : playerPieces) {
+                if (piece == CAPTURED)
                     continue;
-                if(piece / 8 > max) {
+                if (piece / 8 > max) {
                     max = piece / 8;
-                    progress2 = max;
+                    progress[1] = max;
                 }
             }
         }
     }
 
+    private int getLorentzPV(int playerI, int position) {
+        if (playerI == 1)
+            return lorentzValues[position];
+        else
+            return lorentzValues[63 - position];
+    }
+
     public MoveList getPlayoutMoves(boolean heuristics) {
         // Check for decisive / anti-decisive moves
-        if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
+        if (heuristics && (progress[0] >= 6 || progress[1] >= 6)) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
@@ -260,17 +281,22 @@ public class Board {
             for (int c = 0; c < 8; c++) {
                 int player = board[r * 8 + c] / 100;
                 switch (player) {
-                    case 1 : sb.append('w'); break;
-                    case 2 : sb.append('b'); break;
-                    case 0 : sb.append('.');
+                    case 1:
+                        sb.append('w');
+                        break;
+                    case 2:
+                        sb.append('b');
+                        break;
+                    case 0:
+                        sb.append('.');
                 }
             }
             sb.append("\n");
         }
         sb.append(" ").append(colLabels).append("\n");
-        sb.append("\nPieces: (").append(pieces1).append(", ").append(pieces2)
+        sb.append("\nPieces: (").append(nPieces[0]).append(", ").append(nPieces[1])
                 .append(") nMoves: ").append(nMoves).append("\n").append("Progresses: ")
-                .append(progress1).append(" ").append(progress2);
+                .append(progress[0]).append(" ").append(progress[1]);
         return sb.toString();
     }
 
@@ -278,16 +304,30 @@ public class Board {
     public Board clone() {
         Board b = new Board();
         b.board = new int[64];
-        System.arraycopy(board, 0, b.board, 0, board.length);
-        b.pieces = new int[2][16];
+        // Only copy the actual pieces on the board, instead of the full board
+        int piece;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < PIECES; j++) {
+                piece = pieces[i][j];
+                if (piece == CAPTURED)
+                    continue;
+                b.board[piece] = board[piece];
+            }
+        }
+        b.pieces = new int[2][PIECES];
         System.arraycopy(pieces[0], 0, b.pieces[0], 0, 16);
         System.arraycopy(pieces[1], 0, b.pieces[1], 0, 16);
-        b.pieces1 = this.pieces1;
-        b.pieces2 = this.pieces2;
+        b.nPieces = new int[2];
+        b.nPieces[0] = this.nPieces[0];
+        b.nPieces[1] = this.nPieces[1];
         b.nMoves = this.nMoves;
         b.winner = this.winner;
-        b.progress1 = this.progress1;
-        b.progress2 = this.progress2;
+        b.progress = new int[2];
+        b.progress[0] = this.progress[0];
+        b.progress[1] = this.progress[1];
+        b.lorentzPV = new int[2];
+        b.lorentzPV[0] = this.lorentzPV[0];
+        b.lorentzPV[1] = this.lorentzPV[1];
         b.playerToMove = this.playerToMove;
         b.zbHash = zbHash;
         return b;
