@@ -166,11 +166,8 @@ public class Board {
         if (progress1 == 7 || pieces2 == 0) p1eval = 100;
         else if (progress2 == 7 || pieces1 == 0) p1eval = -100;
         else {
-            if(pieces1 > pieces2)
-                p1eval += 10;
-            else if (pieces2 > pieces1)
-                p1eval -= 10;
-            p1eval += progress1 * 5 - progress2 * 5;
+            p1eval += 10 * (pieces1 - pieces2);
+            p1eval += progress1 * 2 - progress2 * 2;
         }
         return (player == 1 ? p1eval : -p1eval);
     }
