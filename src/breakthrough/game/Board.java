@@ -282,7 +282,7 @@ public class Board {
                             heurMoves.add(move[0], move[1]);
                             heurMoves.add(move[0], move[1]);
                         }
-                        if (isSafe1(move[1], playerToMove)) {
+                        if (isSafe(move[1], playerToMove)) {
                             heurMoves.add(move[0], move[1]);
                             heurMoves.add(move[0], move[1]);
                         }
@@ -369,34 +369,9 @@ public class Board {
         return b;
     }
 
-    private boolean isSafe1(int position, int player) {
-        // White moves up (-1) black down (+1)
-        int moveMode = (player == 1) ? -1 : 1;
-        int opp = 3 - player;
-        int r = position / 8, c = position % 8, to;
-        // Check neighbouring positions for an opponent's piece
-        if (inBounds(r + moveMode, c - 1)) {
-            to = (r + moveMode) * 8 + (c - 1);
-            // northwest
-            if (board[to] / 100 == opp)
-                return false;
-        }
-        if (inBounds(r + moveMode, c + 1)) {
-            to = (r + moveMode) * 8 + (c + 1);
-            // northeast
-            if (board[to] / 100 == opp)
-                return false;
-        }
-        return true;
-    }
-
-
-    private boolean isSafe(int position) {
+    private boolean isSafe(int position, int player) {
         int rp = position / 8;
         int cp = position % 8;
-
-        //assert(inBounds(rp,cp));
-        int piece = board[position] / 100;
 
         // count immediate attackers and defenders
         int attackers = 0, defenders = 0;
@@ -409,7 +384,7 @@ public class Board {
             int cpp = cp + colOffset[oi];
 
             if (inBounds(rpp, cpp) && board[rpp * 8 + cpp] / 100 != 0) {
-                if(piece == 1) {
+                if(player == 1) {
                     if (oi < 2 && board[rpp * 8 + cpp] / 100 == 2)
                         attackers++;
                     if (oi >= 2 && board[rpp * 8 + cpp] / 100 == 1)
@@ -426,7 +401,7 @@ public class Board {
     }
 
     public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
-        boolean safeMove = isSafe1(move[1], parentPlayer);
+        boolean safeMove = isSafe(move[1], parentPlayer);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
         double winRate = 0.3;
