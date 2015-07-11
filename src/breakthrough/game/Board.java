@@ -7,30 +7,34 @@ import framework.util.FastTanh;
 import java.util.Random;
 
 public class Board {
-    public static final int P1 = 1, NONE_WIN = -1;
+    public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
     private static final String rowLabels = "87654321";
     private static final String colLabels = "abcdefgh";
     // Zobrist stuff
     private static long[][] zbnums = null;
     private static long blackHash, whiteHash;
     // Board stuff
-    public char[] board;
+    public int[] board, pieces[];
     public int nMoves, winner, playerToMove;
     private int pieces1, pieces2, progress1, progress2;
     private long zbHash = 0;
 
     public void initialize() {
-        board = new char[64];
-        pieces1 = pieces2 = 16;
+        board = new int[64];
+        pieces = new int[2][PIECES];
         playerToMove = P1;
 
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
-                if (r == 0 || r == 1)
-                    board[r * 8 + c] = 'b'; // player 2 is black
-                else if (r == 6 || r == 7)
-                    board[r * 8 + c] = 'w'; // player 1 is white
-                else board[r * 8 + c] = '.';
+                if (r == 0 || r == 1) {
+                    board[r * 8 + c] = 200 + pieces2; // player 2 is black
+                    pieces[1][pieces2] = r * 8 + c;
+                    pieces2++;
+                } else if (r == 6 || r == 7) {
+                    board[r * 8 + c] = 100 + pieces1; // player 1 is white
+                    pieces[0][pieces1] = r * 8 + c;
+                    pieces1++;
+                }
             }
         }
 
@@ -56,14 +60,8 @@ public class Board {
         }
         // now build the initial hash
         zbHash = 0;
-        for (int i = 0; i < 8 * 8; i++) {
-            if (board[i] == '.')
-                zbHash ^= zbnums[i][0];
-            else if (board[i] == 'w')
-                zbHash ^= zbnums[i][1];
-            else if (board[i] == 'b')
-                zbHash ^= zbnums[i][2];
-        }
+        for (int i = 0; i < 8 * 8; i++)
+            zbHash ^= zbnums[i][board[i] / 100];
         zbHash ^= whiteHash;
     }
 
@@ -72,28 +70,35 @@ public class Board {
 
         zbHash ^= zbnums[from][playerToMove];
 
-        boolean capture = board[to] != '.';
+        boolean capture = board[to] != 0;
+        int pieceCap = board[to] % 100;
 
         if (!capture)
             zbHash ^= zbnums[to][0];
         else
             zbHash ^= zbnums[to][3 - playerToMove];
 
+        // Move the piece in the reverse lookup table
+        pieces[playerToMove - 1][board[from] % 100] = to;
+
         board[to] = board[from];
-        board[from] = '.';
+        board[from] = 0;
         int rp = to / 8;
 
         // check for a capture
         if (capture) {
             if (playerToMove == 1) {
                 pieces2--;
+                pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
                 if (progress2 == rp && pieces2 > 0)
                     recomputeProgress(2);
             } else {
+                pieces1--;
+                pieces[0][pieceCap] = CAPTURED;
+                //
                 if (progress1 == 7 - rp && pieces1 > 0)
                     recomputeProgress(1);
-                pieces1--;
             }
         }
 
@@ -122,99 +127,85 @@ public class Board {
 
     public MoveList getExpandMoves() {
         MoveList allMoves = new MoveList(96);
-        int from, to;
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                from = r * 8 + c;
-                if (playerToMove == 1 && board[from] == 'w') {
-                    if (inBounds(r - 1, c - 1)) {
-                        to = (r - 1) * 8 + (c - 1);
-                        // northwest
-                        if (board[to] != 'w')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r - 1, c + 1)) {
-                        to = (r - 1) * 8 + (c + 1);
-                        // northeast
-                        if (board[to] != 'w')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r - 1, c)) {
-                        to = (r - 1) * 8 + c;
-                        // north
-                        if (board[to] == '.')
-                            allMoves.add(from, to);
-                    }
-                } else if (playerToMove == 2 && board[from] == 'b') {
-                    if (inBounds(r + 1, c - 1)) {
-                        to = (r + 1) * 8 + (c - 1);
-                        // southwest
-                        if (board[to] != 'b')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r + 1, c + 1)) {
-                        to = (r + 1) * 8 + (c + 1);
-                        // southeast
-                        if (board[to] != 'b')
-                            allMoves.add(from, to);
-                    }
-                    if (inBounds(r + 1, c)) {
-                        to = (r + 1) * 8 + c;
-                        // south
-                        if (board[to] == '.')
-                            allMoves.add(from, to);
-                    }
-                }
-            }
+        int moveMode = (playerToMove == 1) ? -1 : 1;
+        int[] playerPieces = pieces[playerToMove - 1];
+        for (int playerPiece : playerPieces) {
+            if (playerPiece == CAPTURED)
+                continue;
+            generateMovesForPiece(playerPiece, moveMode, allMoves);
         }
         return allMoves;
     }
 
-    public double evaluate(int player) {
+    public void generateMovesForPiece(int from, int moveMode, MoveList moveList) {
+        int r = from / 8, c = from % 8, to;
+        // Generate the moves!
+        if (inBounds(r + moveMode, c - 1)) {
+            to = (r + moveMode) * 8 + (c - 1);
+            // northwest
+            if (board[to] / 100 != playerToMove)
+                moveList.add(from, to);
+        }
+        if (inBounds(r + moveMode, c + 1)) {
+            to = (r + moveMode) * 8 + (c + 1);
+            // northeast
+            if (board[to] / 100 != playerToMove)
+                moveList.add(from, to);
+        }
+        if (inBounds(r + moveMode, c)) {
+            to = (r + moveMode) * 8 + c;
+            // north
+            if (board[to] == 0)
+                moveList.add(from, to);
+        }
+    }
+
+    public int evaluate(int player) {
+        int p1eval = 0;
         // inspired by ion function in Maarten's thesis
-        double p1eval;
-        if (progress1 == 7 || pieces2 == 0) p1eval = 1;
-        else if (progress2 == 7 || pieces1 == 0) p1eval = -1;
+        if (progress1 == 7 || pieces2 == 0) p1eval = 100;
+        else if (progress2 == 7 || pieces1 == 0) p1eval = -100;
         else {
-            //double delta = (pieces1 * 10 + progress1 * 2.5 + capBonus1) - (pieces2 * 10 + progress2 * 2.5 + capBonus2);
-            double delta = (pieces1 * 10 + progress1 * 2.5) - (pieces2 * 10 + progress2 * 2.5);
-            if (delta < -100) delta = -100;
-            if (delta > 100) delta = 100;
-            // now pass it through tanh;
-            p1eval = FastTanh.tanh(delta / 60.0);
+            if(pieces1 > pieces2)
+                p1eval += 10;
+            else if (pieces2 > pieces1)
+                p1eval -= 10;
+            p1eval += progress1 * 5 - progress2 * 5;
         }
         return (player == 1 ? p1eval : -p1eval);
     }
 
     private void recomputeProgress(int player) {
+        int[] playerPieces = pieces[player - 1];
         if (player == 1) {
-            // white, start from top
-            for (int r = 0; r < 8; r++) {
-                for (int c = 0; c < 8; c++) {
-                    if (board[r * 8 + c] == 'w') {
-                        progress1 = 7 - r;
-                        return;
-                    }
+            int min = 100;
+            for(int piece : playerPieces) {
+                if(piece == CAPTURED)
+                    continue;
+                if(piece / 8 < min) {
+                    min = piece / 8;
+                    progress1 = 7 - min;
                 }
             }
         } else if (player == 2) {
-            // black, start from bottom
-            for (int r = 7; r >= 0; r--) {
-                for (int c = 0; c < 8; c++) {
-                    if (board[r * 8 + c] == 'b') {
-                        progress2 = r;
-                        return;
-                    }
+            int max = -1;
+            for(int piece : playerPieces) {
+                if(piece == CAPTURED)
+                    continue;
+                if(piece / 8 > max) {
+                    max = piece / 8;
+                    progress2 = max;
                 }
             }
         }
     }
 
     public MoveList getPlayoutMoves(boolean heuristics) {
-        MoveList moveList = getExpandMoves();
-        if(heuristics) {
-            MoveList decisive = new MoveList(16);
-            MoveList antiDecisive = new MoveList(16);
+        // Check for decisive / anti-decisive moves
+        if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
+            MoveList moveList = getExpandMoves();
+            MoveList decisive = new MoveList(32);
+            MoveList antiDecisive = new MoveList(32);
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -222,7 +213,7 @@ public class Board {
                     decisive.add(move[0], move[1]);
                 } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
                     decisive.add(move[0], move[1]);
-                } else if (board[move[1]] != '.' && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
+                } else if (board[move[1]] != 0 && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
                     antiDecisive.add(move[0], move[1]);
                 }
             }
@@ -232,6 +223,17 @@ public class Board {
             if (decisive.size() > 0) {
                 return decisive;
             }
+        }
+        // Select a piece uniformly random and generate its moves
+        // This should remove any bias towards selecting pieces with more available moves
+        int[] playerPieces = pieces[playerToMove - 1];
+        int pieceI;
+        MoveList moveList = new MoveList(3);
+        while (moveList.size() == 0) {
+            pieceI = Options.r.nextInt(PIECES);
+            //
+            if (playerPieces[pieceI] != CAPTURED)
+                generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList);
         }
         return moveList;
     }
@@ -259,7 +261,12 @@ public class Board {
         for (int r = 0; r < 8; r++) {
             sb.append(rowLabels.charAt(r));
             for (int c = 0; c < 8; c++) {
-                sb.append(board[r * 8 + c]);
+                int player = board[r * 8 + c] / 100;
+                switch (player) {
+                    case 1 : sb.append('w'); break;
+                    case 2 : sb.append('b'); break;
+                    case 0 : sb.append('.');
+                }
             }
             sb.append("\n");
         }
@@ -273,8 +280,11 @@ public class Board {
     @Override
     public Board clone() {
         Board b = new Board();
-        b.board = new char[64];
+        b.board = new int[64];
         System.arraycopy(board, 0, b.board, 0, board.length);
+        b.pieces = new int[2][16];
+        System.arraycopy(pieces[0], 0, b.pieces[0], 0, 16);
+        System.arraycopy(pieces[1], 0, b.pieces[1], 0, 16);
         b.pieces1 = this.pieces1;
         b.pieces2 = this.pieces2;
         b.nMoves = this.nMoves;

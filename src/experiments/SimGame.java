@@ -85,7 +85,7 @@ public class SimGame {
                     options.termDepth = Integer.parseInt(tag.substring(2));
                 } else if (tag.startsWith("ert")) {
                     options.earlyTerm = true;
-                    options.etT = Double.parseDouble(tag.substring(3));
+                    options.etT = Integer.parseInt(tag.substring(3));
                 } else if (tag.startsWith("c")) {
                     options.C = Double.parseDouble(tag.substring(1));
                 } else {

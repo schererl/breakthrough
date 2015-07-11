@@ -87,9 +87,6 @@ public class UCTNode {
                 result = -child.MCTS(board, depth + 1);
             }
         }
-        // Could be solved deeper in the tree as a transposition
-        if (Math.abs(child.getValue()) == State.INF)
-            result = child.getValue();
 
         // (Solver) If one of the children is a win, then I'm a win
         if (result == State.INF) {
@@ -136,6 +133,7 @@ public class UCTNode {
             // If the game is partial observable, we don't want to do the solver part
             tempBoard.doMove(moves.get(i));
             UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoard, tt);
+
             if (Math.abs(child.getValue()) != State.INF) {
                 // Check for a winner, (Solver)
                 winner = tempBoard.checkWin();
@@ -205,9 +203,9 @@ public class UCTNode {
         } else {
             double eval = board.evaluate(player);
             //System.out.println(eval);
-            if(eval >= options.etT)
+            if(eval > options.etT)
                 score = 1.;
-            else if (eval <= -options.etT)
+            else if (eval < -options.etT)
                 score = -1.;
         }
         return score;

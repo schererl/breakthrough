@@ -38,7 +38,7 @@ public class UCTPlayer implements AIPlayer {
                 if (Math.abs(root.MCTS(board.clone(), 0)) == State.INF)
                     break; // Break if you find a winning move
 
-                if (options.debug && simulations % 10000 == 0)
+                if (options.debug && simulations % 50000 == 0)
                     System.out.println("PV: " + root.getPV());
             }
         } else {

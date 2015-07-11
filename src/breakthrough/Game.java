@@ -15,12 +15,13 @@ public class Game {
 
         AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
-        options1.heuristics = true;
         options1.earlyTerm = true;
+        options1.heuristics = true;
         aiPlayer1.setOptions(options1);
+
         AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
-        options1.heuristics = true;
+        options2.heuristics = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;
