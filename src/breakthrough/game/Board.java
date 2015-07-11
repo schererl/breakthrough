@@ -350,7 +350,7 @@ public class Board {
         return b;
     }
 
-    private boolean isSafe(int position) {
+    private boolean isSafe1(int position) {
         // White moves up (-1) black down (+1)
         int moveMode = (board[position] / 100 == 1) ? -1 : 1;
         int opp = (board[position] / 100 == 1) ? 2 : 1;
@@ -372,7 +372,7 @@ public class Board {
     }
 
 
-    private boolean isSafe2(int position) {
+    private boolean isSafe(int position) {
         int rp = position / 8;
         int cp = position % 8;
 

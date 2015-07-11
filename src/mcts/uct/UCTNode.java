@@ -106,17 +106,13 @@ public class UCTNode {
                     return -1;
                 }
             }
-            // (Solver) If all children lead to a loss for the opponent, then I'm a win
             setSolved(true);
             return result; // always return in view of me
         }
         // Update the results for the current node
         updateStats(result);
         // Back-propagate the result always return in view of me
-        if(options.test)
-            return -result;
-        else
-            return result;
+        return result;
     }
 
     private UCTNode expand(Board board) {
