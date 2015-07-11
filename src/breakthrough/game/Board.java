@@ -410,22 +410,22 @@ public class Board {
         boolean safeMove = isSafe(move[1]);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
-        int wins = 30;
+        int wins = 0;
 
         if (safeMove) {
-            if (distToGoal == 1)
-                wins = 100;
+            if (distToGoal == 0)
+                wins = 10;
+            else if (distToGoal == 1)
+                wins = 9;
             else if (distToGoal == 2)
-                wins = 95;
+                wins = 8;
             else if (distToGoal == 3)
-                wins = 85;
+                wins = 7;
             else if (distToGoal == 4)
-                wins = 75;
-            else if (distToGoal == 5)
-                wins = 60;
+                wins = 6;
         } else {
             if (board[move[1]] != 0)
-                wins = 60;
+                wins = 6;
         }
 
         //if (!safeMove) {
@@ -439,7 +439,7 @@ public class Board {
         for (int i = 0; i < (1.0-winrate)*npvisits; i++)
             stats.push(-1.0);*/
 
-        state.init(wins, 100);
+        state.init(wins, 10);
     }
 
 

@@ -72,18 +72,17 @@ public class UCTNode {
                 child = select();
         }
         double result;
-        double initVal = child.getValue();
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
             board.doMove(child.move, options.earlyTerm);
             // When a leaf is reached return the result of the playout
             if (!child.simulated) {
-                result = child.playOut(board.clone());
+                result = child.playOut(board);
                 child.updateStats(-result);
                 child.simulated = true;
             } else {
-                result = -child.MCTS(board.clone(), depth + 1);
+                result = -child.MCTS(board, depth + 1);
             }
         } else {
             result = child.getValue();
@@ -107,8 +106,11 @@ public class UCTNode {
             setSolved(true);
             return result; // always return in view of me
         }
-        // Update the results for the current node
-        updateStats(result);
+        if(Math.abs(getValue()) != State.INF)
+            // Update the results for the current node
+            updateStats(result);
+        else
+            return -getValue();
         // Back-propagate the result always return in view of me
         return result;
     }
@@ -250,15 +252,10 @@ public class UCTNode {
         return sb.toString();
     }
 
-    double sum = 0, visits = 0;
-
     private void updateStats(double value) {
         if (state == null)
             state = tt.getState(hash, false);
-        if(options.tt)
-            state.updateStats(value);
-        sum += value;
-        visits++;
+        state.updateStats(value);
     }
 
     private void setSolved(boolean win) {
@@ -267,10 +264,8 @@ public class UCTNode {
 
         if (win) {// win for the parent player
             state.setSolved(3 - player);
-            sum = State.INF;
         } else {
             state.setSolved(player);
-            sum = -State.INF;
         }
     }
 
@@ -282,15 +277,7 @@ public class UCTNode {
             state = tt.getState(hash, true);
         if (state == null)
             return 0.;
-        if (options.tt) {
-            return state.getMean(3 - player);
-        } else {
-            if (Math.abs(sum) == State.INF)
-                return sum;
-            if(visits == 0.)
-                return 0.;
-            return sum / visits;
-        }
+        return state.getMean(3 - player);
     }
 
     /**
@@ -301,10 +288,7 @@ public class UCTNode {
             state = tt.getState(hash, true);
         if (state == null)
             return 0.;
-        if (options.tt)
-            return state.getVisits();
-        else
-            return visits;
+        return state.getVisits();
     }
 
     private State getState() {
