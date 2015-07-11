@@ -144,6 +144,9 @@ public class UCTNode {
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
                 }
+                // Only initialize node priors is the state is not yet initialized somewhere else
+            } else if (options.nodePriors && child.state == null) {
+                board.initNodePriors(player, child.getState(), move);
             }
             children.add(child);
 
@@ -281,6 +284,12 @@ public class UCTNode {
         if (state == null)
             return 0.;
         return state.getVisits();
+    }
+
+    private State getState() {
+        if (state == null)
+            state = tt.getState(hash, true);
+        return state;
     }
 
     public boolean isTerminal() {
