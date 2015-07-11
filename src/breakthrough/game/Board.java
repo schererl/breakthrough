@@ -8,7 +8,7 @@ import java.util.Random;
 public class Board {
     public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
     private static final int[] lorentzValues =
-            {5, 15, 15, 5, 5, 15, 15, 5,
+                    {5, 15, 15, 5, 5, 15, 15, 5,
                     2, 3, 3, 3, 3, 3, 3, 2,
                     4, 6, 6, 6, 6, 6, 6, 4,
                     7, 10, 10, 10, 10, 10, 10, 7,
@@ -227,7 +227,7 @@ public class Board {
             if (isSafe(position))
                 return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
             else
-                return lorentzValues[position];
+                return lorentzValues[63 - position];
         }
     }
 
@@ -329,8 +329,8 @@ public class Board {
         }
         sb.append(" ").append(colLabels).append("\n");
         sb.append("\nPieces: (").append(nPieces1).append(", ").append(nPieces2)
-                .append(") nMoves: ").append(nMoves).append("\n").append("Progresses: ")
-                .append(progress1).append(" ").append(progress2);
+                .append(") nMoves: ").append(nMoves).append("\n").append("Lorentz: ")
+                .append(lorentzPV1).append(" ").append(lorentzPV2);
         return sb.toString();
     }
 
