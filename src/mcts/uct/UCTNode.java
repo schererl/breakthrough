@@ -7,6 +7,7 @@ import framework.util.FastLog;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
+import javax.swing.tree.TreeNode;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -158,6 +159,10 @@ public class UCTNode {
         double max = Double.NEGATIVE_INFINITY;
         // Use UCT down the tree
         double uctValue, np = getVisits();
+        if(options.nodePriors) {
+            for (UCTNode c : children)
+                np += c.getVisits();
+        }
         // Select a child according to the UCT Selection policy
         for (UCTNode c : children) {
             double nc = c.getVisits();
