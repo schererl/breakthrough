@@ -72,19 +72,18 @@ public class UCTNode {
                 child = select();
         }
         double result;
+        double initVal = child.getValue();
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
-            if (!isTerminal())
-                board.doMove(child.move, options.earlyTerm);
-
+            board.doMove(child.move, options.earlyTerm);
             // When a leaf is reached return the result of the playout
-            if (!child.simulated || child.isTerminal()) {
-                result = child.playOut(board);
+            if (!child.simulated) {
+                result = child.playOut(board.clone());
                 child.updateStats(-result);
                 child.simulated = true;
             } else {
-                result = -child.MCTS(board, depth + 1);
+                result = -child.MCTS(board.clone(), depth + 1);
             }
         } else {
             result = child.getValue();
@@ -285,10 +284,11 @@ public class UCTNode {
         if (options.tt) {
             return state.getMean(3 - player);
         } else {
-            if (Math.abs(sum) != State.INF)
-                return sum / visits;
-            else
+            if (Math.abs(sum) == State.INF)
                 return sum;
+            if(visits == 0.)
+                return 0.;
+            return sum / visits;
         }
     }
 
