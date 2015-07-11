@@ -439,7 +439,7 @@ public class Board {
         for (int i = 0; i < (1.0-winrate)*npvisits; i++)
             stats.push(-1.0);*/
 
-        state.init(parentPlayer, wins, 100);
+        state.init(wins, 100);
     }
 
 
