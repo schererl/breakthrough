@@ -113,7 +113,10 @@ public class UCTNode {
         // Update the results for the current node
         updateStats(result);
         // Back-propagate the result always return in view of me
-        return -result;
+        if(options.test)
+            return -result;
+        else
+            return result;
     }
 
     private UCTNode expand(Board board) {
