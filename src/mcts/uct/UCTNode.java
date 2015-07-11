@@ -72,7 +72,7 @@ public class UCTNode {
             else
                 child = select();
         }
-        double result = 0;
+        double result;
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
@@ -87,6 +87,8 @@ public class UCTNode {
             } else {
                 result = -child.MCTS(board, depth + 1);
             }
+        } else {
+            result = child.getValue();
         }
 
         // (Solver) If one of the children is a win, then I'm a win
@@ -111,12 +113,12 @@ public class UCTNode {
         // Update the results for the current node
         updateStats(result);
         // Back-propagate the result always return in view of me
-        return result;
+        return -result;
     }
 
     private UCTNode expand(Board board) {
         expanded = true;
-        int nextPlayer = 3 - board.getPlayerToMove();
+        int nextPlayer = (3 - board.getPlayerToMove());
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
         // Generate all moves
@@ -261,7 +263,7 @@ public class UCTNode {
         if (state == null)
             state = tt.getState(hash, false);
 
-        if (win)
+        if (win) // win for the parent player
             state.setSolved(3 - player);
         else
             state.setSolved(player);
