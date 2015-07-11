@@ -377,7 +377,7 @@ public class Board {
         int cp = position % 8;
 
         //assert(inBounds(rp,cp));
-        int parentPiece = board[position] / 100;
+        int piece = board[position] / 100;
 
         // count immediate attackers and defenders
         int attackers = 0, defenders = 0;
@@ -389,19 +389,21 @@ public class Board {
             int rpp = rp + rowOffset[oi];
             int cpp = cp + colOffset[oi];
 
-            if (inBounds(rpp, cpp) && (board[rpp * 8 + cpp] / 100 == 1 || board[rpp * 8 + cpp] / 100 == 2)) {
-                if (parentPiece == 1 && oi < 2 && board[rpp * 8 + cpp] == 2)
-                    attackers++;
-                if (parentPiece == 1 && oi >= 2 && board[rpp * 8 + cpp] == 1)
-                    defenders++;
-
-                if (parentPiece == 2 && oi < 2 && board[rpp * 8 + cpp] == 2)
-                    defenders++;
-                if (parentPiece == 2 && oi >= 2 && board[rpp * 8 + cpp] == 1)
-                    attackers++;
+            if (inBounds(rpp, cpp) && board[rpp * 8 + cpp] / 100 != 0) {
+                if(piece == 1) {
+                    if (oi < 2 && board[rpp * 8 + cpp] / 100 == 2)
+                        attackers++;
+                    if (oi >= 2 && board[rpp * 8 + cpp] / 100 == 1)
+                        defenders++;
+                } else {
+                    if (oi < 2 && board[rpp * 8 + cpp] / 100 == 2)
+                        defenders++;
+                    if (oi >= 2 && board[rpp * 8 + cpp] / 100 == 1)
+                        attackers++;
+                }
             }
         }
-        return (attackers <= defenders);
+        return attackers <= defenders;
     }
 
     public void initNodePriors(int parentPlayer, State state, int[] move) {

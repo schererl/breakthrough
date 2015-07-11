@@ -28,8 +28,10 @@ public class State {
         this.visits++;
     }
 
-    public void init(int player, int wins, int visits) {
-        // WTF?
+    public void init(int wins, int visits) {
+        sum += wins;
+        this.visits += visits;
+        visited = true;
     }
 
     public float getMean(int player) {
