@@ -255,7 +255,8 @@ public class UCTNode {
     private void updateStats(double value) {
         if (state == null)
             state = tt.getState(hash, false);
-        state.updateStats(value);
+        if(options.tt)
+            state.updateStats(value);
         sum += value;
         visits++;
     }
