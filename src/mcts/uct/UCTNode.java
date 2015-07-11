@@ -146,7 +146,7 @@ public class UCTNode {
                 }
                 // Only initialize node priors is the state is not yet initialized somewhere else
             } else if (options.nodePriors && child.state == null) {
-                board.initNodePriors(player, child.getState(), move);
+                tempBoard.initNodePriors(player, child.getState(), move);
             }
             children.add(child);
 
