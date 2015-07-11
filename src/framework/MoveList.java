@@ -12,6 +12,14 @@ public class MoveList {
     }
 
     public void add(int from, int to) {
+        if(movesTo.length <= size()) {
+            int[] movesToNew = new int[size * 2];
+            int[] movesFromNew = new int[size * 2];
+            System.arraycopy(movesFrom, 0, movesFromNew, 0, movesFrom.length);
+            System.arraycopy(movesTo, 0, movesToNew, 0, movesTo.length);
+            movesFrom = movesFromNew;
+            movesTo = movesToNew;
+        }
         movesFrom[size] = from;
         movesTo[size++] = to;
     }

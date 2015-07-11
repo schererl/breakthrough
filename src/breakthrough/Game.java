@@ -15,7 +15,6 @@ public class Game {
 
         AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
-        options1.nodePriors = true;
         options1.heuristics = true;
         aiPlayer1.setOptions(options1);
 

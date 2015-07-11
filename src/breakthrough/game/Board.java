@@ -240,10 +240,11 @@ public class Board {
 
     public MoveList getPlayoutMoves(boolean heuristics) {
         // Check for decisive / anti-decisive moves
-        if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
+        if (heuristics) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
+            MoveList goodMoves = new MoveList(64);
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -254,6 +255,18 @@ public class Board {
                 } else if (board[move[1]] != 0 && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
                     antiDecisive.add(move[0], move[1]);
                 }
+                if(decisive.size() == 0 && antiDecisive.size() == 0) {
+                    if (board[move[1]] != 0) {
+                        goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
+                    }
+                    if(isSafe(move[1])) {
+                        goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
+                        goodMoves.add(move[0], move[1]);
+                    }
+                }
             }
             if (antiDecisive.size() > 0) {
                 return antiDecisive;
@@ -261,6 +274,8 @@ public class Board {
             if (decisive.size() > 0) {
                 return decisive;
             }
+            if(goodMoves.size() > 0)
+                return goodMoves;
         }
         // Select a piece uniformly random and generate its moves
         // This should remove any bias towards selecting pieces with more available moves
@@ -410,7 +425,7 @@ public class Board {
         boolean safeMove = isSafe(move[1]);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
-        int wins = 0;
+        int wins = 3;
 
         if (safeMove) {
             if (distToGoal == 0)
