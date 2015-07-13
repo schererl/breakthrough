@@ -19,6 +19,7 @@ public class MoveList {
             System.arraycopy(movesTo, 0, movesToNew, 0, movesTo.length);
             movesFrom = movesFromNew;
             movesTo = movesToNew;
+            System.out.println("Increasing movelist size.");
         }
         movesFrom[size] = from;
         movesTo[size++] = to;
@@ -30,5 +31,13 @@ public class MoveList {
 
     public int size() {
         return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public void clear() {
+        size = 0;
     }
 }

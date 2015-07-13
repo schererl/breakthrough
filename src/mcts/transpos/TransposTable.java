@@ -1,7 +1,7 @@
 package mcts.transpos;
 
 public class TransposTable {
-    private final int TT_SIZE = (int) Math.pow(2, 20);
+    private final int TT_SIZE = (int) Math.pow(2, 22);
     private final long MASK = TT_SIZE - 1;
     //
     private State[] states;

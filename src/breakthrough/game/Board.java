@@ -95,7 +95,7 @@ public class Board {
         board[to] = board[from];
         board[from] = 0;
 
-        if(updateEval) {
+        if (updateEval) {
             // lorentz piece value updates:
             // subtract off from where you came, add where you ended up
             if (playerToMove == 1) {
@@ -117,7 +117,7 @@ public class Board {
                 // wiping out this piece could reduce the player's progress
                 if (progress2 == rp && nPieces2 > 0)
                     recomputeProgress(2);
-                if(updateEval) {
+                if (updateEval) {
                     // The player loses the piece's lorentz value
                     lorentzPV2 -= getLorentzPV(2, to);
                 }
@@ -127,7 +127,7 @@ public class Board {
                 //
                 if (progress1 == 7 - rp && nPieces1 > 0)
                     recomputeProgress(1);
-                if(updateEval) {
+                if (updateEval) {
                     // The player loses the piece's lorentz value
                     lorentzPV1 -= getLorentzPV(1, to);
                 }
@@ -165,31 +165,75 @@ public class Board {
         for (int playerPiece : playerPieces) {
             if (playerPiece == CAPTURED)
                 continue;
-            generateMovesForPiece(playerPiece, moveMode, allMoves);
+            generateMovesForPiece(playerPiece, moveMode, allMoves, false);
         }
         return allMoves;
     }
 
-    public void generateMovesForPiece(int from, int moveMode, MoveList moveList) {
+    public void generateMovesForPiece(int from, int moveMode, MoveList moveList, boolean heuristics) {
         int r = from / 8, c = from % 8, to;
         // Generate the moves!
         if (inBounds(r + moveMode, c - 1)) {
             to = (r + moveMode) * 8 + (c - 1);
             // northwest
-            if (board[to] / 100 != playerToMove)
+            if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
+                if(heuristics) {
+                    // Prefer captures
+                    int n = board[to] != 0 ? 4 : 0;
+                    // Check if move is safe, prefer safe moves
+                    if (isSafe(to, playerToMove)) {
+                        n += 3;
+                        // Dodge move to avoid capture
+                        if (!isSafe(from, playerToMove))
+                            n += 3;
+                    }
+                    for (int j = 0; j < n; j++) {
+                        moveList.add(from, to);
+                    }
+                }
+            }
         }
         if (inBounds(r + moveMode, c + 1)) {
             to = (r + moveMode) * 8 + (c + 1);
             // northeast
-            if (board[to] / 100 != playerToMove)
+            if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
+                if(heuristics) {
+                    // Prefer captures
+                    int n = board[to] != 0 ? 4 : 0;
+                    // Check if move is safe, prefer safe moves
+                    if (isSafe(to, playerToMove)) {
+                        n += 3;
+                        // Dodge move to avoid capture
+                        if (!isSafe(from, playerToMove))
+                            n += 3;
+                    }
+                    for (int j = 0; j < n; j++) {
+                        moveList.add(from, to);
+                    }
+                }
+            }
         }
         if (inBounds(r + moveMode, c)) {
             to = (r + moveMode) * 8 + c;
             // north
-            if (board[to] == 0)
+            if (board[to] == 0) {
                 moveList.add(from, to);
+                if(heuristics) {
+                    int n = 0;
+                    // Check if move is safe, prefer safe moves
+                    if (isSafe(to, playerToMove)) {
+                        n += 3;
+                        // Dodge move to avoid capture
+                        if (!isSafe(from, playerToMove))
+                            n += 3;
+                    }
+                    for (int j = 0; j < n; j++) {
+                        moveList.add(from, to);
+                    }
+                }
+            }
         }
     }
 
@@ -238,7 +282,6 @@ public class Board {
         }
     }
 
-
     public MoveList getPlayoutMoves(boolean heuristics) {
         // Check for decisive / anti-decisive moves
         if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
@@ -252,7 +295,8 @@ public class Board {
                     decisive.add(move[0], move[1]);
                 } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
                     decisive.add(move[0], move[1]);
-                } else if (board[move[1]] != 0 && (move[0] / 8 == 7 || move[0] / 8 == 0)) {
+                } else if (decisive.isEmpty() && (board[move[1]] != 0 &&
+                        (move[0] / 8 == 7 || move[0] / 8 == 0))) {
                     antiDecisive.add(move[0], move[1]);
                 }
             }
@@ -267,29 +311,13 @@ public class Board {
         // This should remove any bias towards selecting pieces with more available moves
         int[] playerPieces = pieces[playerToMove - 1];
         int pieceI;
-        MoveList moveList = new MoveList(3);
-        while (moveList.size() == 0) {
+        MoveList moveList = (!heuristics) ? new MoveList(3) : new MoveList(32);
+        while (moveList.isEmpty()) {
+            moveList.clear();
             pieceI = Options.r.nextInt(PIECES);
             //
             if (playerPieces[pieceI] != CAPTURED) {
-                generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList);
-                if(heuristics && moveList.size() > 1) {
-                    MoveList heurMoves = new MoveList(32);
-                    for(int i = 0; i < moveList.size(); i++) {
-                        int[] move = moveList.get(i);
-                        if (board[move[1]] != 0) {
-                            heurMoves.add(move[0], move[1]);
-                            heurMoves.add(move[0], move[1]);
-                            heurMoves.add(move[0], move[1]);
-                        }
-                        if (isSafe(move[1], playerToMove)) {
-                            heurMoves.add(move[0], move[1]);
-                            heurMoves.add(move[0], move[1]);
-                        }
-                        heurMoves.add(move[0], move[1]);
-                    }
-                    return heurMoves;
-                }
+                generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList, heuristics);
             }
         }
         return moveList;
@@ -369,30 +397,28 @@ public class Board {
         return b;
     }
 
-    private boolean isSafe(int position, int player) {
-        int rp = position / 8;
-        int cp = position % 8;
+    private static final int[] rowOffset = {-1, -1, +1, +1}, colOffset = {-1, +1, -1, +1};
 
+    private boolean isSafe(int position, int player) {
+        int rp = position / 8, cp = position % 8, rpp, cpp, to, occ;
         // count immediate attackers and defenders
         int attackers = 0, defenders = 0;
 
-        int[] rowOffset = {-1, -1, +1, +1};
-        int[] colOffset = {-1, +1, -1, +1};
-
         for (int oi = 0; oi < 4; oi++) {
-            int rpp = rp + rowOffset[oi];
-            int cpp = cp + colOffset[oi];
-
-            if (inBounds(rpp, cpp) && board[rpp * 8 + cpp] / 100 != 0) {
-                if(player == 1) {
-                    if (oi < 2 && board[rpp * 8 + cpp] / 100 == 2)
+            rpp = rp + rowOffset[oi];
+            cpp = cp + colOffset[oi];
+            to = rpp * 8 + cpp;
+            if (inBounds(rpp, cpp) && board[to] / 100 != 0) {
+                occ = board[to] / 100;
+                if (player == 1) {
+                    if (oi < 2 && occ != player)
                         attackers++;
-                    if (oi >= 2 && board[rpp * 8 + cpp] / 100 == 1)
+                    else if (oi >= 2 && occ == player)
                         defenders++;
                 } else {
-                    if (oi < 2 && board[rpp * 8 + cpp] / 100 == 2)
+                    if (oi < 2 && occ != player)
                         defenders++;
-                    if (oi >= 2 && board[rpp * 8 + cpp] / 100 == 1)
+                    else if (oi >= 2 && occ == player)
                         attackers++;
                 }
             }
@@ -421,19 +447,7 @@ public class Board {
             if (board[move[1]] != 0)
                 winRate = 0.6;
         }
-
-        //if (!safeMove) {
-        //    System.out.println("unsafe move! " + bmove + "\n" + toString());
-        // }
-        //System.out.println("Node priors, wins = " + wins);
-
-        // this causes a significant slowdown
-        /*for (int i = 0; i < winrate*npvisits; i++)
-            stats.push(1.0);
-        for (int i = 0; i < (1.0-winrate)*npvisits; i++)
-            stats.push(-1.0);*/
-
-        state.init((int)(winRate * npVisits), npVisits);
+        state.init((int) (winRate * npVisits), npVisits);
     }
 
 
