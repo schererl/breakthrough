@@ -88,9 +88,6 @@ public class SimGame {
                     options.etT = Integer.parseInt(tag.substring(3));
                 } else if (tag.startsWith("c")) {
                     options.C = Double.parseDouble(tag.substring(1));
-                } else if (tag.startsWith("np")) {
-                    options.nodePriors = true;
-                    options.npVisits = Integer.parseInt(tag.substring(2));
                 } else if(tag.equals("le")) {
                     options.lorenzEval = true;
                 } else if (tag.equals("tt")) {
@@ -142,7 +139,7 @@ public class SimGame {
 
             aiPlayer.getMove(board.clone());
             m = aiPlayer.getBestMove();
-            board.doMove(m, true);
+            board.doMove(m);
 
         }
 
