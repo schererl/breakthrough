@@ -1,44 +1,47 @@
-package mcts.H_MCTS;
+package mcts.SHOT;
 
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
 import mcts.transpos.ShotTransposTable;
 
-public class HybridPlayer implements AIPlayer {
+public class SHOTPlayer implements AIPlayer {
 
     private ShotTransposTable tt = new ShotTransposTable();
-    private HybridNode root;
+    private SHOTNode root;
     private int[] bestMove;
     public int total = 0;
     public long totalTime = 0;
     // Fields that must be set
     private Options options = null;
 
-    @Override
     public void getMove(Board board) {
         if (options == null)
             throw new RuntimeException("MCTS Options not set.");
-        HybridNode.totalPlayouts = 0;
-        root = new HybridNode(board.getPlayerToMove(), null, options, board.hash(), tt);
+        //
+        SHOTNode.maxDepth = 0;
+        SHOTNode.totalPlayouts = 0;
+        //
+        root = new SHOTNode(board.getPlayerToMove(), null, options, board.hash(), tt);
         int[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
-        root.HybridMCTS(board.clone(), 0, options.timeLimit, pl);
+        root.SHOT(board.clone(), 0, options.timeLimit, pl);
         long endT = System.currentTimeMillis();
         // Return the best move found
-        HybridNode bestChild = root.selectBestMove();
+        SHOTNode bestChild = root.selectBestMove();
         bestMove = bestChild.getMove();
         // show information on the best move
         if (options.debug) {
             System.out.println("Player " + board.getPlayerToMove());
             System.out.println("Best child: " + bestChild);
             System.out.println("Play-outs: " + pl[3]);
-            System.out.println("Play-outs check: " + HybridNode.totalPlayouts);
-            System.out.println((int) ((1000. * HybridNode.totalPlayouts) / (endT - startT)) + " playouts per s");
+            System.out.println("Play-outs check: " + SHOTNode.totalPlayouts);
+            System.out.println("Max sr depth: " + SHOTNode.maxDepth);
+            System.out.println((int) ((1000. * SHOTNode.totalPlayouts) / (endT - startT)) + " playouts per s");
         }
-        total += HybridNode.totalPlayouts;
+        total += SHOTNode.totalPlayouts;
         totalTime += endT - startT;
-        int removed = tt.pack(1);
+        int removed = tt.pack(0);
         if (options.debug)
             System.out.println("Pack cleaned: " + removed + " transpositions");
         root = null;

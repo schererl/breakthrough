@@ -3,6 +3,7 @@ package breakthrough;
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
+import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
 
 import java.util.Arrays;
@@ -13,17 +14,14 @@ public class Game {
         Board b = new Board();
         b.initialize();
 
-        AIPlayer aiPlayer1 = new UCTPlayer();
+        AIPlayer aiPlayer1 = new SHOTPlayer();
         Options options1 = new Options();
         options1.heuristics = true;
-//        options1.earlyTerm = true;
-//        options1.lorenzEval = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
         options2.heuristics = true;
-//        options2.earlyTerm = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;

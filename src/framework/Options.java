@@ -11,6 +11,6 @@ public class Options {
     public boolean debug = true, fixSimulations = false,
             heuristics = false, earlyTerm = false, solver = true,
             tt = false, lorenzEval = false;
-    public int timeLimit = 10000, termDepth = 4, etT = 20, npVisits = 5;
+    public int timeLimit = 100000, termDepth = 4, etT = 20;
     // Schadd etT: 20, Lorentz: 1??
 }
