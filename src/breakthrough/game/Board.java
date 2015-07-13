@@ -180,10 +180,10 @@ public class Board {
                 moveList.add(from, to);
                 if(heuristics) {
                     // Prefer captures
-                    int n = board[to] != 0 ? 4 : 0;
+                    int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
                     if (isSafe(to, playerToMove)) {
-                        n += 3;
+                        n += (board[to] != 0) ? 6 : 3;
                         // Dodge move to avoid capture
                         if (!isSafe(from, playerToMove))
                             n += 3;
@@ -201,10 +201,10 @@ public class Board {
                 moveList.add(from, to);
                 if(heuristics) {
                     // Prefer captures
-                    int n = board[to] != 0 ? 4 : 0;
+                    int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
                     if (isSafe(to, playerToMove)) {
-                        n += 3;
+                        n += (board[to] != 0) ? 6 : 3;
                         // Dodge move to avoid capture
                         if (!isSafe(from, playerToMove))
                             n += 3;
@@ -400,16 +400,16 @@ public class Board {
     private static final int[] rowOffset = {-1, -1, +1, +1}, colOffset = {-1, +1, -1, +1};
 
     private boolean isSafe(int position, int player) {
-        int rp = position / 8, cp = position % 8, rpp, cpp, to, occ;
+        int rp = position / 8, cp = position % 8, rpp, cpp, pos, occ;
         // count immediate attackers and defenders
         int attackers = 0, defenders = 0;
 
         for (int oi = 0; oi < 4; oi++) {
             rpp = rp + rowOffset[oi];
             cpp = cp + colOffset[oi];
-            to = rpp * 8 + cpp;
-            if (inBounds(rpp, cpp) && board[to] / 100 != 0) {
-                occ = board[to] / 100;
+            pos = rpp * 8 + cpp;
+            if (inBounds(rpp, cpp) && board[pos] / 100 != 0) {
+                occ = board[pos] / 100;
                 if (player == 1) {
                     if (oi < 2 && occ != player)
                         attackers++;
