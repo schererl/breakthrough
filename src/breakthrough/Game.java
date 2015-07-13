@@ -16,15 +16,15 @@ public class Game {
         AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
         options1.heuristics = true;
-        options1.earlyTerm = true;
-        options1.lorenzEval = true;
-        // options1.nodePriors = true;
+//        options1.earlyTerm = true;
+//        options1.lorenzEval = true;
+         options1.nodePriors = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
         options2.heuristics = true;
-        options2.earlyTerm = true;
+//        options2.earlyTerm = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;
