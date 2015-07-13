@@ -8,15 +8,6 @@ import java.util.Random;
 
 public class Board {
     public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
-    private static final int[] lorentzValues =
-            {5, 15, 15, 5, 5, 15, 15, 5,
-                    2, 3, 3, 3, 3, 3, 3, 2,
-                    4, 6, 6, 6, 6, 6, 6, 4,
-                    7, 10, 10, 10, 10, 10, 10, 7,
-                    11, 15, 15, 15, 15, 15, 15, 11,
-                    16, 21, 21, 21, 21, 21, 21, 16,
-                    20, 28, 28, 28, 28, 28, 28, 20,
-                    36, 36, 36, 36, 36, 36, 36, 36};
     private static final String rowLabels = "87654321", colLabels = "abcdefgh";
     // Zobrist stuff
     private static long[][] zbnums = null;
@@ -38,12 +29,10 @@ public class Board {
                     board[r * 8 + c] = 200 + nPieces2; // player 2 is black
                     pieces[1][nPieces2] = r * 8 + c;
                     nPieces2++;
-                    lorentzPV2 += getLorentzPV(2, r * 8 + c);
                 } else if (r == 6 || r == 7) {
                     board[r * 8 + c] = 100 + nPieces1; // player 1 is white
                     pieces[0][nPieces1] = r * 8 + c;
                     nPieces1++;
-                    lorentzPV1 += getLorentzPV(1, r * 8 + c);
                 }
             }
         }
@@ -76,7 +65,7 @@ public class Board {
         zbHash ^= whiteHash;
     }
 
-    public void doMove(int[] move, boolean updateEval) {
+    public void doMove(int[] move) {
         int from = move[0], to = move[1];
 
         zbHash ^= zbnums[from][playerToMove];
@@ -95,18 +84,6 @@ public class Board {
         board[to] = board[from];
         board[from] = 0;
 
-        if (updateEval) {
-            // lorentz piece value updates:
-            // subtract off from where you came, add where you ended up
-            if (playerToMove == 1) {
-                lorentzPV1 -= getLorentzPV(1, from);
-                lorentzPV1 += getLorentzPV(1, to);
-            } else {
-                lorentzPV2 -= getLorentzPV(2, from);
-                lorentzPV2 += getLorentzPV(2, to);
-            }
-        }
-
         int rp = to / 8;
 
         // check for a capture
@@ -117,20 +94,12 @@ public class Board {
                 // wiping out this piece could reduce the player's progress
                 if (progress2 == rp && nPieces2 > 0)
                     recomputeProgress(2);
-                if (updateEval) {
-                    // The player loses the piece's lorentz value
-                    lorentzPV2 -= getLorentzPV(2, to);
-                }
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
                 if (progress1 == 7 - rp && nPieces1 > 0)
                     recomputeProgress(1);
-                if (updateEval) {
-                    // The player loses the piece's lorentz value
-                    lorentzPV1 -= getLorentzPV(1, to);
-                }
             }
 
         }
@@ -270,20 +239,6 @@ public class Board {
                     progress2 = max;
                 }
             }
-        }
-    }
-
-    private int getLorentzPV(int player, int position) {
-        if (player == 2) {
-            if (isSafe(position, player))
-                return lorentzValues[position] + (int) (0.5 * lorentzValues[position]);
-            else
-                return lorentzValues[position];
-        } else {
-            if (isSafe(position, player))
-                return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
-            else
-                return lorentzValues[63 - position];
         }
     }
 
@@ -430,31 +385,6 @@ public class Board {
         }
         return attackers <= defenders;
     }
-
-    public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
-        boolean safeMove = isSafe(move[1], parentPlayer);
-        int rp = move[1] / 8;
-        int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
-        double winRate = 0.3;
-
-        if (safeMove) {
-            if (distToGoal == 0)
-                winRate = 1.;
-            else if (distToGoal == 1)
-                winRate = 0.95;
-            else if (distToGoal == 2)
-                winRate = 0.85;
-            else if (distToGoal == 3)
-                winRate = 0.7;
-            else if (distToGoal == 4)
-                winRate = 0.6;
-        } else {
-            if (board[move[1]] != 0)
-                winRate = 0.6;
-        }
-        state.init((int) (winRate * npVisits), npVisits);
-    }
-
 
     public static String getMoveString(int[] move) {
         int c = move[0] % 8, cp = move[1] % 8;

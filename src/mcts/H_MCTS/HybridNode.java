@@ -7,7 +7,6 @@ import framework.util.FastLog;
 import mcts.transpos.ShotState;
 import mcts.transpos.ShotTransposTable;
 import mcts.transpos.State;
-import mcts.transpos.TransposTable;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -111,7 +110,7 @@ public class HybridNode {
                         continue;
                     Board tempBoard = board.clone();
                     // :: Recursion
-                    tempBoard.doMove(child.getMove(), options.lorenzEval);
+                    tempBoard.doMove(child.getMove());
                     result = -child.HybridMCTS(tempBoard, depth + 1, b_b, pl);
                     // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                     plStats[0] += pl[0];
@@ -224,7 +223,7 @@ public class HybridNode {
         }
         // (Solver) Check for proven win / loss / draw
         if (!child.isSolved()) {
-            board.doMove(child.getMove(), options.lorenzEval);
+            board.doMove(child.getMove());
             if (!child.simulated) {
                 // :: Play-out
                 result = child.playOut(board);
@@ -307,7 +306,7 @@ public class HybridNode {
             Board tempBoard = board.clone();
 
             // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i), false);
+            tempBoard.doMove(moves.get(i));
             HybridNode child = new HybridNode(nextPlayer, moves.get(i), options, board.hash(), tt);
             if (options.solver && !child.isSolved()) {
                 // Check for a winner, (Solver)
@@ -349,7 +348,7 @@ public class HybridNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move, options.lorenzEval);
+            board.doMove(move);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)

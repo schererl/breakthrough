@@ -24,14 +24,7 @@ public class State {
         if (solvedPlayer != 0)
             throw new RuntimeException("updateStats called on solved position!");
         sum += score;
-//        addSample(winner);
         this.visits++;
-    }
-
-    public void init(int wins, int visits) {
-        sum += wins;
-        this.visits += visits;
-        visited = true;
     }
 
     public float getMean(int player) {
@@ -62,31 +55,4 @@ public class State {
         else
             return "solved win P" + solvedPlayer;
     }
-
-//    private boolean[] samples = new boolean[2];
-//
-//    private void addSample(int winner) {
-//        if (visits >= samples.length) {
-//            boolean[] newSamples = new boolean[samples.length * 2];
-//            System.arraycopy(samples, 0, newSamples, 0, samples.length);
-//            samples = newSamples;
-//        }
-//        samples[visits] = (winner == 1);
-//    }
-//
-//    public double getKL() {
-//        double p = 0, q = 0;
-//        int vis = visits / 2;
-//        for (int i = 0; i < vis; i++) {
-//            if (samples[i])
-//                p++;
-//            if (samples[vis + i])
-//                q++;
-//        }
-////        p = p / vis;
-//        p = (p + q) / visits;
-//        q = q / vis;
-//
-//        return p * Math.log(p / q) + (1 - p) * Math.log((1 - p) / (1 - q));
-//    }
 }

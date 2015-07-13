@@ -10,7 +10,7 @@ public class Options {
     public double C = 1., B = 30;
     public boolean debug = true, fixSimulations = false,
             heuristics = false, earlyTerm = false, solver = true,
-            nodePriors = false, tt = false, lorenzEval = false;
+            tt = false, lorenzEval = false;
     public int timeLimit = 10000, termDepth = 4, etT = 20, npVisits = 5;
     // Schadd etT: 20, Lorentz: 1??
 }

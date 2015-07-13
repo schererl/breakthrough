@@ -4,7 +4,6 @@ import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
 import mcts.transpos.ShotTransposTable;
-import mcts.transpos.TransposTable;
 
 public class HybridPlayer implements AIPlayer {
 
