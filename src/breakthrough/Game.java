@@ -18,7 +18,6 @@ public class Game {
         options1.heuristics = true;
 //        options1.earlyTerm = true;
 //        options1.lorenzEval = true;
-         options1.nodePriors = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
@@ -38,7 +37,7 @@ public class Game {
 
             aiPlayer.getMove(b.clone());
             m = aiPlayer.getBestMove();
-            b.doMove(m, true);
+            b.doMove(m);
 
             if (m != null)
                 System.out.println("Player " + player + " played " + Arrays.toString(m));
