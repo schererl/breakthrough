@@ -75,7 +75,7 @@ public class UCTNode {
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
-            board.doMove(child.move, options.earlyTerm);
+            board.doMove(child.move, options.lorenzEval);
             // When a leaf is reached return the result of the playout
             if (!child.simulated) {
                 result = child.playOut(board);
@@ -197,7 +197,7 @@ public class UCTNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move, options.earlyTerm);
+            board.doMove(move, options.lorenzEval);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)

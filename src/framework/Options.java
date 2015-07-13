@@ -10,6 +10,6 @@ public class Options {
     public double C = 1.;
     public boolean debug = true, fixSimulations = false,
             heuristics = false, earlyTerm = false,
-            nodePriors = false, tt = false;
+            nodePriors = false, tt = false, lorenzEval = false;
     public int timeLimit = 5000, termDepth = 4, etT = 30, npVisits = 10;
 }

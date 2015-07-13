@@ -91,6 +91,8 @@ public class SimGame {
                 } else if (tag.startsWith("np")) {
                     options.nodePriors = true;
                     options.npVisits = Integer.parseInt(tag.substring(2));
+                } else if(tag.equals("le")) {
+                    options.lorenzEval = true;
                 } else if (tag.equals("tt")) {
                     options.tt = true;
                 } else {

@@ -178,7 +178,7 @@ public class Board {
             // northwest
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
-                if(heuristics) {
+                if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
@@ -199,7 +199,7 @@ public class Board {
             // northeast
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
-                if(heuristics) {
+                if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
@@ -220,7 +220,7 @@ public class Board {
             // north
             if (board[to] == 0) {
                 moveList.add(from, to);
-                if(heuristics) {
+                if (heuristics) {
                     int n = 0;
                     // Check if move is safe, prefer safe moves
                     if (isSafe(to, playerToMove)) {
@@ -237,9 +237,14 @@ public class Board {
         }
     }
 
-    public int evaluate(int player) {
+    public int evaluate(int player, boolean lorentzEval) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-        p1eval += lorentzPV1 - lorentzPV2;
+
+        if (lorentzEval)
+            p1eval += lorentzPV1 - lorentzPV2;
+        else
+            p1eval += (2.5 * progress1) - (2.5 * progress2);
+
         return (player == 1 ? p1eval : -p1eval);
     }
 
