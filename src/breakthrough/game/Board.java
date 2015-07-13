@@ -256,11 +256,11 @@ public class Board {
                     antiDecisive.add(move[0], move[1]);
                 }
             }
-            if (antiDecisive.size() > 0) {
-                return antiDecisive;
-            }
             if (decisive.size() > 0) {
                 return decisive;
+            }
+            if (antiDecisive.size() > 0) {
+                return antiDecisive;
             }
         }
         // Select a piece uniformly random and generate its moves
