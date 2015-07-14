@@ -50,8 +50,8 @@
       <file leaf-file-name="SimGame.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6633444">
-              <caret line="98" column="38" selection-start-line="98" selection-start-column="38" selection-end-line="98" selection-end-column="38" />
+            <state vertical-scroll-proportion="-0.662237">
+              <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -684,12 +684,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00015" summary="early termination">
-      <created>1436472755585</created>
-      <option name="number" value="00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1436472755585</updated>
-    </task>
     <task id="LOCAL-00016" summary="early termination">
       <created>1436473566636</created>
       <option name="number" value="00016" />
@@ -978,7 +972,13 @@
       <option name="project" value="LOCAL" />
       <updated>1436900775140</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="shot">
+      <created>1436900877518</created>
+      <option name="number" value="00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1436900877518</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1507,8 +1507,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6633444">
-          <caret line="98" column="38" selection-start-line="98" selection-start-column="38" selection-end-line="98" selection-end-column="38" />
+        <state vertical-scroll-proportion="-0.662237">
+          <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

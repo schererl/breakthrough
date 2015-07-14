@@ -15,7 +15,6 @@ import mcts.uct.UCTPlayer;
 public class SimGame {
 
     private String p1label, p2label;
-    private Board board;
     private AIPlayer player1, player2;
     private int timeLimit;
     private long seed;
@@ -133,7 +132,7 @@ public class SimGame {
         System.out.println("P2: " + p2label);
         System.out.println("");
 
-        board = new Board();
+        Board board = new Board();
         board.initialize();
 
         loadPlayer(1, p1label);
