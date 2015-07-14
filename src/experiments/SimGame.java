@@ -80,7 +80,7 @@ public class SimGame {
             playerRef = new SHOTPlayer();
             options.debug = mctsDebug; // false by default
             options.timeLimit = timeLimit;
-        } else if (parts[0].equals("hmcts")) {
+        } else if (parts[0].equals("hybrid")) {
             playerRef = new HybridPlayer();
             options.debug = mctsDebug; // false by default
             options.timeLimit = timeLimit;
@@ -93,6 +93,10 @@ public class SimGame {
             String tag = parts[i];
             if (tag.startsWith("h")) {
                 options.heuristics = true;
+            } else if (tag.startsWith("b")) {
+                options.B = Integer.parseInt(tag.substring(1));
+            } else if (tag.startsWith("s")) {
+                options.solver = true;
             } else if (tag.startsWith("et")) {
                 options.earlyTerm = true;
                 options.termDepth = Integer.parseInt(tag.substring(2));
@@ -150,7 +154,7 @@ public class SimGame {
 
             aiPlayer.getMove(board.clone());
             m = aiPlayer.getBestMove();
-            board.doMove(m);
+            board.doMove(m, true);
 
         }
 
