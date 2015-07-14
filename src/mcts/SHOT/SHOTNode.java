@@ -10,8 +10,6 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class SHOTNode {
-    public static int maxDepth = 0;
-    //
     private boolean expanded = false, simulated = false;
     private List<SHOTNode> C, S;
     private SHOTNode bestArm;
