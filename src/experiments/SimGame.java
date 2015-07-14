@@ -3,7 +3,9 @@ package experiments;
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
-import framework.util.*;
+import framework.util.FastLog;
+import mcts.H_MCTS.HybridPlayer;
+import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
 
 /**
@@ -74,32 +76,41 @@ public class SimGame {
             playerRef = new UCTPlayer();
             options.debug = mctsDebug; // false by default
             options.timeLimit = timeLimit;
-
-            // now, parse the tags
-            for (int i = 1; i < parts.length; i++) {
-                String tag = parts[i];
-                if (tag.startsWith("h")) {
-                    options.heuristics = true;
-                } else if (tag.startsWith("et")) {
-                    options.earlyTerm = true;
-                    options.termDepth = Integer.parseInt(tag.substring(2));
-                } else if (tag.startsWith("ert")) {
-                    options.earlyTerm = true;
-                    options.etT = Integer.parseInt(tag.substring(3));
-                } else if (tag.startsWith("c")) {
-                    options.C = Double.parseDouble(tag.substring(1));
-                } else if(tag.equals("le")) {
-                    options.lorenzEval = true;
-                } else if (tag.equals("tt")) {
-                    options.tt = true;
-                } else {
-                    throw new RuntimeException("Unrecognized tag: " + tag);
-                }
-            }
-
+        } else if (parts[0].equals("shot")) {
+            playerRef = new SHOTPlayer();
+            options.debug = mctsDebug; // false by default
+            options.timeLimit = timeLimit;
+        } else if (parts[0].equals("hmcts")) {
+            playerRef = new HybridPlayer();
+            options.debug = mctsDebug; // false by default
+            options.timeLimit = timeLimit;
         } else {
             throw new RuntimeException("Unrecognized player: " + label);
         }
+
+        // now, parse the tags
+        for (int i = 1; i < parts.length; i++) {
+            String tag = parts[i];
+            if (tag.startsWith("h")) {
+                options.heuristics = true;
+            } else if (tag.startsWith("et")) {
+                options.earlyTerm = true;
+                options.termDepth = Integer.parseInt(tag.substring(2));
+            } else if (tag.startsWith("ert")) {
+                options.earlyTerm = true;
+                options.etT = Integer.parseInt(tag.substring(3));
+            } else if (tag.startsWith("c")) {
+                options.C = Double.parseDouble(tag.substring(1));
+            } else if (tag.equals("le")) {
+                options.lorenzEval = true;
+            } else if (tag.equals("tt")) {
+                options.tt = true;
+            } else {
+                throw new RuntimeException("Unrecognized tag: " + tag);
+            }
+        }
+
+
         // Now, set the player
         if (player == 1) {
             player1 = playerRef;
