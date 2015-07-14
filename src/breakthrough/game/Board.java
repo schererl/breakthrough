@@ -214,7 +214,7 @@ public class Board {
 
     public int evaluate(int player) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress1);
+        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
         return (player == 1 ? p1eval : -p1eval);
     }
 
