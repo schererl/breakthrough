@@ -79,7 +79,7 @@ public class SimGame {
             playerRef = new SHOTPlayer();
             options.debug = mctsDebug; // false by default
             options.timeLimit = timeLimit;
-        } else if (parts[0].equals("hybrid")) {
+        } else if (parts[0].equals("hmcts")) {
             playerRef = new HybridPlayer();
             options.debug = mctsDebug; // false by default
             options.timeLimit = timeLimit;
