@@ -82,7 +82,6 @@ public class SimGame {
                     options.heuristics = true;
                 } else if (tag.startsWith("et")) {
                     options.earlyTerm = true;
-                    options.termDepth = Integer.parseInt(tag.substring(2));
                 } else if (tag.startsWith("ert")) {
                     options.earlyTerm = true;
                     options.etT = Integer.parseInt(tag.substring(3));
