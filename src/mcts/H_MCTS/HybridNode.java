@@ -75,7 +75,7 @@ public class HybridNode {
             // Run UCT budget times
             for (int i = 0; i < budget; i++) {
                 int[] pl = {0, 0, 0, 0};
-                result = UCT(board, pl);
+                result = UCT(board.clone(), pl);
                 // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                 plStats[0] += pl[0];
                 plStats[1] += pl[1];
@@ -110,7 +110,7 @@ public class HybridNode {
                         continue;
                     Board tempBoard = board.clone();
                     // :: Recursion
-                    tempBoard.doMove(child.getMove());
+                    tempBoard.doMove(child.getMove(), options.earlyTerm);
                     result = -child.HybridMCTS(tempBoard, depth + 1, b_b, pl);
                     // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                     plStats[0] += pl[0];
@@ -223,7 +223,7 @@ public class HybridNode {
         }
         // (Solver) Check for proven win / loss / draw
         if (!child.isSolved()) {
-            board.doMove(child.getMove());
+            board.doMove(child.getMove(), options.earlyTerm);
             if (!child.simulated) {
                 // :: Play-out
                 result = child.playOut(board);
@@ -306,7 +306,7 @@ public class HybridNode {
             Board tempBoard = board.clone();
 
             // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i));
+            tempBoard.doMove(moves.get(i), options.earlyTerm);
             HybridNode child = new HybridNode(nextPlayer, moves.get(i), options, tempBoard.hash(), tt);
             if (options.solver && !child.isSolved()) {
                 // Check for a winner, (Solver)
@@ -348,7 +348,7 @@ public class HybridNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
+            board.doMove(move, options.earlyTerm);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
@@ -356,7 +356,7 @@ public class HybridNode {
         }
 
         if (interrupted) {
-            double eval = board.evaluate(player, options.lorenzEval);
+            double eval = board.evaluate(player);
             //System.out.println(eval);
             if (eval > options.etT)
                 winner = player;

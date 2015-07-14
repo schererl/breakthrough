@@ -15,7 +15,7 @@ public class Board {
     // Board stuff
     public int[] board, pieces[];
     public short nMoves, winner, playerToMove;
-    private int nPieces1, progress1, lorentzPV1, nPieces2, progress2, lorentzPV2;
+    private int nPieces1, progress1, safeProgress1, nPieces2, progress2, safeProgress2;
     private long zbHash = 0;
 
     public void initialize() {
@@ -39,8 +39,8 @@ public class Board {
 
         nMoves = 0;
         winner = NONE_WIN;
-        progress1 = 1;
-        progress2 = 1;
+        progress1 = safeProgress1 = 1;
+        progress2 = safeProgress2 = 1;
 
         // initialize the zobrist numbers
         if (zbnums == null) {
@@ -65,7 +65,7 @@ public class Board {
         zbHash ^= whiteHash;
     }
 
-    public void doMove(int[] move) {
+    public void doMove(int[] move, boolean fullProgresss) {
         int from = move[0], to = move[1];
 
         zbHash ^= zbnums[from][playerToMove];
@@ -92,14 +92,16 @@ public class Board {
                 nPieces2--;
                 pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
-                if (progress2 == rp && nPieces2 > 0)
-                    recomputeProgress(2);
+                if (!fullProgresss && ((progress2 == rp
+                        || safeProgress2 == rp) && nPieces2 > 0))
+                    recomputeProgress(2, false);
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
-                if (progress1 == 7 - rp && nPieces1 > 0)
-                    recomputeProgress(1);
+                if (!fullProgresss && ((progress1 == 7 - rp
+                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
+                    recomputeProgress(1, false);
             }
 
         }
@@ -117,6 +119,11 @@ public class Board {
 
         nMoves++;
         playerToMove = (short) (3 - playerToMove);
+
+        if(fullProgresss) {
+            recomputeProgress(playerToMove, fullProgresss);
+            recomputeProgress(3 - playerToMove, fullProgresss);
+        }
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -151,10 +158,10 @@ public class Board {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
-                    if (isSafe(to, playerToMove)) {
+                    if (isSafe(to, from, playerToMove)) {
                         n += (board[to] != 0) ? 6 : 3;
                         // Dodge move to avoid capture
-                        if (!isSafe(from, playerToMove))
+                        if (!isSafe(from, from, playerToMove))
                             n += 3;
                     }
                     for (int j = 0; j < n; j++) {
@@ -172,10 +179,10 @@ public class Board {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
                     // Check if move is safe, prefer safe moves
-                    if (isSafe(to, playerToMove)) {
+                    if (isSafe(to, from, playerToMove)) {
                         n += (board[to] != 0) ? 6 : 3;
                         // Dodge move to avoid capture
-                        if (!isSafe(from, playerToMove))
+                        if (!isSafe(from, from, playerToMove))
                             n += 3;
                     }
                     for (int j = 0; j < n; j++) {
@@ -192,10 +199,10 @@ public class Board {
                 if (heuristics) {
                     int n = 0;
                     // Check if move is safe, prefer safe moves
-                    if (isSafe(to, playerToMove)) {
+                    if (isSafe(to, from, playerToMove)) {
                         n += 3;
                         // Dodge move to avoid capture
-                        if (!isSafe(from, playerToMove))
+                        if (!isSafe(from, from, playerToMove))
                             n += 3;
                     }
                     for (int j = 0; j < n; j++) {
@@ -206,21 +213,16 @@ public class Board {
         }
     }
 
-    public int evaluate(int player, boolean lorentzEval) {
+    public int evaluate(int player) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-
-        if (lorentzEval)
-            p1eval += lorentzPV1 - lorentzPV2;
-        else
-            p1eval += (2.5 * progress1) - (2.5 * progress2);
-
+        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
         return (player == 1 ? p1eval : -p1eval);
     }
 
-    private void recomputeProgress(int player) {
+    private void recomputeProgress(int player, boolean safeProgress) {
         int[] playerPieces = pieces[player - 1];
         if (player == 1) {
-            int min = 100;
+            int min = 100, minSafe = 100;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
@@ -228,9 +230,13 @@ public class Board {
                     min = piece / 8;
                     progress1 = 7 - min;
                 }
+                if (safeProgress && piece / 8 < minSafe && isSafe(piece, piece, player)) {
+                    minSafe = piece / 8;
+                    safeProgress1 = 7 - minSafe;
+                }
             }
         } else if (player == 2) {
-            int max = -1;
+            int max = -1, maxSafe = -1;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
@@ -238,16 +244,22 @@ public class Board {
                     max = piece / 8;
                     progress2 = max;
                 }
+                if (safeProgress && piece / 8 > maxSafe && isSafe(piece, piece, player)) {
+                    maxSafe = piece / 8;
+                    safeProgress2 = maxSafe;
+                }
             }
         }
     }
 
     public MoveList getPlayoutMoves(boolean heuristics) {
+        int moveMode = (playerToMove == 1) ? -1 : 1;
         // Check for decisive / anti-decisive moves
         if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
+
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -277,7 +289,7 @@ public class Board {
             pieceI = Options.r.nextInt(PIECES);
             //
             if (playerPieces[pieceI] != CAPTURED) {
-                generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList, heuristics);
+                generateMovesForPiece(playerPieces[pieceI], moveMode, moveList, heuristics);
             }
         }
         return moveList;
@@ -322,8 +334,9 @@ public class Board {
         }
         sb.append(" ").append(colLabels).append("\n");
         sb.append("\nPieces: (").append(nPieces1).append(", ").append(nPieces2)
-                .append(") nMoves: ").append(nMoves).append("\n").append("Lorentz: ")
-                .append(lorentzPV1).append(" ").append(lorentzPV2);
+                .append(") nMoves: ").append(nMoves).append("\n").append("Progress: [")
+                .append(safeProgress1).append(",").append(progress1).append("] [")
+                .append(safeProgress2).append(",").append(progress2).append("]");
         return sb.toString();
     }
 
@@ -350,8 +363,8 @@ public class Board {
         b.winner = this.winner;
         b.progress1 = this.progress1;
         b.progress2 = this.progress2;
-        b.lorentzPV1 = this.lorentzPV1;
-        b.lorentzPV1 = this.lorentzPV2;
+        b.safeProgress1 = this.safeProgress1;
+        b.safeProgress2 = this.safeProgress2;
         b.playerToMove = this.playerToMove;
         b.zbHash = zbHash;
         return b;
@@ -359,16 +372,15 @@ public class Board {
 
     private static final int[] rowOffset = {-1, -1, +1, +1}, colOffset = {-1, +1, -1, +1};
 
-    private boolean isSafe(int position, int player) {
+    private boolean isSafe(int position, int from, int player) {
         int rp = position / 8, cp = position % 8, rpp, cpp, pos, occ;
         // count immediate attackers and defenders
         int attackers = 0, defenders = 0;
-
         for (int oi = 0; oi < 4; oi++) {
             rpp = rp + rowOffset[oi];
             cpp = cp + colOffset[oi];
             pos = rpp * 8 + cpp;
-            if (inBounds(rpp, cpp) && board[pos] / 100 != 0) {
+            if (pos != from && inBounds(rpp, cpp) && board[pos] / 100 != 0) {
                 occ = board[pos] / 100;
                 if (player == 1) {
                     if (oi < 2 && occ != player)
@@ -376,9 +388,9 @@ public class Board {
                     else if (oi >= 2 && occ == player)
                         defenders++;
                 } else {
-                    if (oi < 2 && occ != player)
+                    if (oi < 2 && occ == player)
                         defenders++;
-                    else if (oi >= 2 && occ == player)
+                    else if (oi >= 2 && occ != player)
                         attackers++;
                 }
             }

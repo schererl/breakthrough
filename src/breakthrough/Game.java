@@ -3,6 +3,8 @@ package breakthrough;
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
+import framework.util.KeyboardPlayer;
+import mcts.H_MCTS.HybridPlayer;
 import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
 
@@ -14,14 +16,17 @@ public class Game {
         Board b = new Board();
         b.initialize();
 
-        AIPlayer aiPlayer1 = new SHOTPlayer();
+        AIPlayer aiPlayer1 = new HybridPlayer();
         Options options1 = new Options();
+        options1.solver = true;
         options1.heuristics = true;
+//        options1.earlyTerm = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
         options2.heuristics = true;
+//        options2.earlyTerm = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;
@@ -35,7 +40,7 @@ public class Game {
 
             aiPlayer.getMove(b.clone());
             m = aiPlayer.getBestMove();
-            b.doMove(m);
+            b.doMove(m, true);
 
             if (m != null)
                 System.out.println("Player " + player + " played " + Arrays.toString(m));
