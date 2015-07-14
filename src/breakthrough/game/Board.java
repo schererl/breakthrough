@@ -253,11 +253,13 @@ public class Board {
     }
 
     public MoveList getPlayoutMoves(boolean heuristics) {
+        int moveMode = (playerToMove == 1) ? -1 : 1;
         // Check for decisive / anti-decisive moves
         if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
             MoveList moveList = getExpandMoves();
             MoveList decisive = new MoveList(32);
             MoveList antiDecisive = new MoveList(32);
+
             for (int i = 0; i < moveList.size(); i++) {
                 int[] move = moveList.get(i);
                 // Decisive / anti-decisive moves
@@ -287,7 +289,7 @@ public class Board {
             pieceI = Options.r.nextInt(PIECES);
             //
             if (playerPieces[pieceI] != CAPTURED) {
-                generateMovesForPiece(playerPieces[pieceI], (playerToMove == 1) ? -1 : 1, moveList, heuristics);
+                generateMovesForPiece(playerPieces[pieceI], moveMode, moveList, heuristics);
             }
         }
         return moveList;

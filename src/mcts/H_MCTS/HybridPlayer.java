@@ -27,7 +27,7 @@ public class HybridPlayer implements AIPlayer {
             root = new HybridNode(board.getPlayerToMove(), null, options, board.hash(), new ShotTransposTable());
             int[] pl = {0, 0, 0, 0};
             long startT = System.currentTimeMillis();
-            root.HybridMCTS(board.clone(), 0, 50000, pl);
+            root.HybridMCTS(board.clone(), 0, 100000, pl);
             long endT = System.currentTimeMillis();
             // Calculate the total number of simulations, based on the measured simulations / second
             double simsPerSec = ((1000. * HybridNode.totalPlayouts) / (endT - startT));
@@ -40,7 +40,7 @@ public class HybridPlayer implements AIPlayer {
         root = new HybridNode(board.getPlayerToMove(), null, options, board.hash(), tt);
         int[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
-        root.HybridMCTS(board.clone(), 0, options.timeLimit, pl);
+        root.HybridMCTS(board.clone(), 0, nSimulations, pl);
         long endT = System.currentTimeMillis();
         // Return the best move found
         HybridNode bestChild = root.selectBestMove();
