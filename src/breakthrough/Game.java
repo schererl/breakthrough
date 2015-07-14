@@ -3,6 +3,7 @@ package breakthrough;
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
+import framework.util.KeyboardPlayer;
 import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
 
@@ -17,11 +18,13 @@ public class Game {
         AIPlayer aiPlayer1 = new SHOTPlayer();
         Options options1 = new Options();
         options1.heuristics = true;
+        options1.fixSimulations = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
         options2.heuristics = true;
+        options2.fixSimulations = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;
