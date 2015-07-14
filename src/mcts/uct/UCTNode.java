@@ -75,7 +75,7 @@ public class UCTNode {
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
             // Execute the move represented by the child
-            board.doMove(child.move);
+            board.doMove(child.move, options.earlyTerm);
             // When a leaf is reached return the result of the playout
             if (!child.simulated) {
                 result = child.playOut(board);
@@ -133,7 +133,7 @@ public class UCTNode {
         for (int i = 0; i < moves.size(); i++) {
             Board tempBoard = board.clone();
             // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i));
+            tempBoard.doMove(moves.get(i), options.earlyTerm);
             UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoard, tt);
 
             if (Math.abs(child.getValue()) != State.INF) {
@@ -189,7 +189,7 @@ public class UCTNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
+            board.doMove(move, options.earlyTerm);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)

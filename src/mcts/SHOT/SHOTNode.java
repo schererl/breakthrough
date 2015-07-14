@@ -83,7 +83,7 @@ public class SHOTNode {
                     continue;
                 Board tempBoard = board.clone();
                 // Perform play-outs on all unvisited children
-                tempBoard.doMove(n.getMove());
+                tempBoard.doMove(n.getMove(), options.earlyTerm);
                 result = n.playOut(tempBoard);
                 //
                 int[] pl = {1, 0, 0, 0};
@@ -111,7 +111,7 @@ public class SHOTNode {
             if (!child.isSolved()) {
                 // :: Recursion
                 Board tempBoard = board.clone();
-                tempBoard.doMove(child.getMove());
+                tempBoard.doMove(child.getMove(), options.earlyTerm);
                 result = -child.SHOT(tempBoard, depth + 1, budget, pl);
                 // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                 plStats[0] += pl[0];
@@ -160,7 +160,7 @@ public class SHOTNode {
                         continue;
                     // :: Recursion
                     Board tempBoard = board.clone();
-                    tempBoard.doMove(child.getMove());
+                    tempBoard.doMove(child.getMove(), options.earlyTerm);
                     result = -child.SHOT(tempBoard, depth + 1, b_b, pl);
                     // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                     plStats[0] += pl[0];
@@ -272,7 +272,7 @@ public class SHOTNode {
         for (int i = 0; i < moves.size(); i++) {
             Board tempBoard = board.clone();
             // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i));
+            tempBoard.doMove(moves.get(i), options.earlyTerm);
             SHOTNode child = new SHOTNode(nextPlayer, moves.get(i), options, tempBoard.hash(), tt);
             if (options.solver && !child.isSolved()) {
                 // Check for a winner, (Solver)
@@ -314,7 +314,7 @@ public class SHOTNode {
         while (winner == Board.NONE_WIN && !interrupted) {
             moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
-            board.doMove(move);
+            board.doMove(move, options.earlyTerm);
             winner = board.checkWin();
             nMoves++;
             if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)

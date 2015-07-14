@@ -65,7 +65,7 @@ public class Board {
         zbHash ^= whiteHash;
     }
 
-    public void doMove(int[] move) {
+    public void doMove(int[] move, boolean fullProgresss) {
         int from = move[0], to = move[1];
 
         zbHash ^= zbnums[from][playerToMove];
@@ -92,14 +92,16 @@ public class Board {
                 nPieces2--;
                 pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
-//                if ((progress2 == rp || safeProgress2 == rp) && nPieces2 > 0)
-//                    recomputeProgress(2);
+                if (!fullProgresss && ((progress2 == rp
+                        || safeProgress2 == rp) && nPieces2 > 0))
+                    recomputeProgress(2, false);
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
-//                if ((progress1 == 7 - rp || safeProgress1 == 7 - rp) && nPieces1 > 0)
-//                    recomputeProgress(1);
+                if (!fullProgresss && ((progress1 == 7 - rp
+                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
+                    recomputeProgress(1, false);
             }
 
         }
@@ -109,11 +111,8 @@ public class Board {
         else if (playerToMove == 2 && (rp == (8 - 1) || nPieces1 == 0)) winner = 2;
 
         // check for progress (furthest pawn)
-//        if (playerToMove == 1 && (7 - rp) > progress1) progress1 = 7 - rp;
-//        else if (playerToMove == 2 && rp > progress2) progress2 = rp;
-//
-//        if (playerToMove == 1 && (7 - rp) > safeProgress1 && isSafe(to, playerToMove)) safeProgress1 = 7 - rp;
-//        else if (playerToMove == 2 && rp > safeProgress2 && isSafe(to, playerToMove)) safeProgress2 = rp;
+        if (playerToMove == 1 && (7 - rp) > progress1) progress1 = 7 - rp;
+        else if (playerToMove == 2 && rp > progress2) progress2 = rp;
 
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
@@ -121,8 +120,10 @@ public class Board {
         nMoves++;
         playerToMove = (short) (3 - playerToMove);
 
-        recomputeProgress(playerToMove);
-        recomputeProgress(3 - playerToMove);
+        if(fullProgresss) {
+            recomputeProgress(playerToMove, fullProgresss);
+            recomputeProgress(3 - playerToMove, fullProgresss);
+        }
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -218,7 +219,7 @@ public class Board {
         return (player == 1 ? p1eval : -p1eval);
     }
 
-    private void recomputeProgress(int player) {
+    private void recomputeProgress(int player, boolean safeProgress) {
         int[] playerPieces = pieces[player - 1];
         if (player == 1) {
             int min = 100, minSafe = 100;
@@ -229,7 +230,7 @@ public class Board {
                     min = piece / 8;
                     progress1 = 7 - min;
                 }
-                if (piece / 8 < minSafe && isSafe(piece, piece, player)) {
+                if (safeProgress && piece / 8 < minSafe && isSafe(piece, piece, player)) {
                     minSafe = piece / 8;
                     safeProgress1 = 7 - minSafe;
                 }
@@ -243,7 +244,7 @@ public class Board {
                     max = piece / 8;
                     progress2 = max;
                 }
-                if (piece / 8 > maxSafe && isSafe(piece, piece, player)) {
+                if (safeProgress && piece / 8 > maxSafe && isSafe(piece, piece, player)) {
                     maxSafe = piece / 8;
                     safeProgress2 = maxSafe;
                 }
