@@ -346,7 +346,7 @@ public class HybridNode {
         boolean interrupted = false;
         MoveList moves;
         while (winner == Board.NONE_WIN && !interrupted) {
-            moves = board.getPlayoutMoves(options.heuristics, options.capHeur);
+            moves = board.getPlayoutMoves(options.heuristics);
             move = moves.get(Options.r.nextInt(moves.size()));
             board.doMove(move, options.earlyTerm);
             winner = board.checkWin();

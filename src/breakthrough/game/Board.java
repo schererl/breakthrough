@@ -121,8 +121,8 @@ public class Board {
         playerToMove = (short) (3 - playerToMove);
 
         if(fullProgresss) {
-            recomputeProgress(playerToMove, fullProgresss);
-            recomputeProgress(3 - playerToMove, fullProgresss);
+            recomputeProgress(playerToMove, true);
+            recomputeProgress(3 - playerToMove, true);
         }
 
         if (playerToMove == Board.P1) {
@@ -256,12 +256,12 @@ public class Board {
         }
     }
 
-    public MoveList getPlayoutMoves(boolean heuristics, boolean capHeur) {
+    public MoveList getPlayoutMoves(boolean heuristics) {
         int moveMode = (playerToMove == 1) ? -1 : 1;
         // Check for decisive / anti-decisive moves
         if (heuristics && (progress1 >= 4 || progress2 >= 4)) {
             MoveList captures = new MoveList(32);
-            MoveList moveList = getExpandMoves(capHeur ? captures : null);
+            MoveList moveList = getExpandMoves(captures);
 
             if(progress1 >= 6 || progress2 >= 6) {
                 MoveList decisive = new MoveList(32);
