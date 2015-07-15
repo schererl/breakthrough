@@ -276,15 +276,9 @@ public class Board {
 
     private int getLorentzPV(int player, int position) {
         if (player == 2) {
-            if (isSafe(position, position, player))
-                return lorentzValues[position] + (int) (0.5 * lorentzValues[position]);
-            else
-                return lorentzValues[position];
+            return lorentzValues[position];
         } else {
-            if (isSafe(position, position, player))
-                return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
-            else
-                return lorentzValues[63 - position];
+            return lorentzValues[63 - position];
         }
     }
 
@@ -330,10 +324,8 @@ public class Board {
         while (moveList.isEmpty()) {
             moveList.clear();
             pieceI = Options.r.nextInt(PIECES);
-            //
-            if (playerPieces[pieceI] != CAPTURED) {
+            if (playerPieces[pieceI] != CAPTURED)
                 generateMovesForPiece(playerPieces[pieceI], moveMode, moveList, null, heuristics);
-            }
         }
         return moveList;
     }
