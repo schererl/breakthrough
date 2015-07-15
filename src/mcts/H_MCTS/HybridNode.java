@@ -351,7 +351,7 @@ public class HybridNode {
             board.doMove(move, options.earlyTerm);
             winner = board.checkWin();
             nMoves++;
-            if (winner != Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
+            if (winner == Board.NONE_WIN && options.earlyTerm && nMoves == options.termDepth)
                 interrupted = true;
         }
 
