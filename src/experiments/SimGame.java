@@ -91,8 +91,10 @@ public class SimGame {
         // now, parse the tags
         for (int i = 1; i < parts.length; i++) {
             String tag = parts[i];
-            if (tag.startsWith("h")) {
+            if (tag.equals("h")) {
                 options.heuristics = true;
+            } else if (tag.equals("f")) {
+                options.fixSimulations = true;
             } else if (tag.startsWith("b")) {
                 options.B = Integer.parseInt(tag.substring(1));
             } else if (tag.startsWith("s")) {

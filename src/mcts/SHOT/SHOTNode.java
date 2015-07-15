@@ -226,7 +226,7 @@ public class SHOTNode {
     }
 
     private int getBudget(int initVis, int budget, int subS, int totS) {
-        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * Math.ceil((Math.log(totS) / LOG2)))));
+        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * Math.ceil(Math.log(totS) / LOG2))));
     }
 
     private boolean solverCheck(double result) {
