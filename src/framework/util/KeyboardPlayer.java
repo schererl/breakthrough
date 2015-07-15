@@ -10,7 +10,7 @@ public class KeyboardPlayer implements AIPlayer {
     private int[] theMove;
 
     public void getMove(Board board) {
-        MoveList list = board.getExpandMoves();
+        MoveList list = board.getExpandMoves(null);
         theMove = null;
         try {
             Scanner scanner = new Scanner(System.in);

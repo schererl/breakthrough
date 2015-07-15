@@ -258,7 +258,7 @@ public class SHOTNode {
         // If one of the nodes is a win, we don't have to select
         SHOTNode winNode = null;
         // Generate all moves
-        MoveList moves = board.getExpandMoves();
+        MoveList moves = board.getExpandMoves(null);
         if (S == null)
             S = new LinkedList<SHOTNode>();
         if (C == null)
@@ -310,7 +310,7 @@ public class SHOTNode {
         boolean interrupted = false;
         MoveList moves;
         while (winner == Board.NONE_WIN && !interrupted) {
-            moves = board.getPlayoutMoves(options.heuristics);
+            moves = board.getPlayoutMoves(options.heuristics, options.capHeur);
             move = moves.get(Options.r.nextInt(moves.size()));
             board.doMove(move, options.earlyTerm);
             winner = board.checkWin();

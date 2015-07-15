@@ -110,7 +110,8 @@ public class UCTNode {
             // Update the results for the current node
             updateStats(result);
         else
-            return -getValue();
+            // Sometimes the node becomes solved deeper in the tree
+            return getValue();
         // Back-propagate the result always return in view of me
         return result;
     }
@@ -121,7 +122,7 @@ public class UCTNode {
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
         // Generate all moves
-        MoveList moves = board.getExpandMoves();
+        MoveList moves = board.getExpandMoves(null);
         if (children == null)
             children = new LinkedList<UCTNode>();
         //
@@ -187,7 +188,7 @@ public class UCTNode {
         boolean interrupted = false;
         MoveList moves;
         while (winner == Board.NONE_WIN && !interrupted) {
-            moves = board.getPlayoutMoves(options.heuristics);
+            moves = board.getPlayoutMoves(options.heuristics, options.capHeur);
             move = moves.get(Options.r.nextInt(moves.size()));
             board.doMove(move, options.earlyTerm);
             winner = board.checkWin();

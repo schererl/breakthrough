@@ -293,7 +293,7 @@ public class HybridNode {
         // If one of the nodes is a win, we don't have to select
         HybridNode winNode = null;
         // Generate all moves
-        MoveList moves = board.getExpandMoves();
+        MoveList moves = board.getExpandMoves(null);
         if (S == null)
             S = new LinkedList<HybridNode>();
         if (C == null)
@@ -346,7 +346,7 @@ public class HybridNode {
         boolean interrupted = false;
         MoveList moves;
         while (winner == Board.NONE_WIN && !interrupted) {
-            moves = board.getPlayoutMoves(options.heuristics);
+            moves = board.getPlayoutMoves(options.heuristics, options.capHeur);
             move = moves.get(Options.r.nextInt(moves.size()));
             board.doMove(move, options.earlyTerm);
             winner = board.checkWin();

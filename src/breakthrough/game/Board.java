@@ -134,19 +134,19 @@ public class Board {
         }
     }
 
-    public MoveList getExpandMoves() {
+    public MoveList getExpandMoves(MoveList captures) {
         MoveList allMoves = new MoveList(96);
         int moveMode = (playerToMove == 1) ? -1 : 1;
         int[] playerPieces = pieces[playerToMove - 1];
         for (int playerPiece : playerPieces) {
             if (playerPiece == CAPTURED)
                 continue;
-            generateMovesForPiece(playerPiece, moveMode, allMoves, false);
+            generateMovesForPiece(playerPiece, moveMode, allMoves, captures, false);
         }
         return allMoves;
     }
 
-    public void generateMovesForPiece(int from, int moveMode, MoveList moveList, boolean heuristics) {
+    public void generateMovesForPiece(int from, int moveMode, MoveList moveList, MoveList captures, boolean heuristics) {
         int r = from / 8, c = from % 8, to;
         // Generate the moves!
         if (inBounds(r + moveMode, c - 1)) {
@@ -154,6 +154,8 @@ public class Board {
             // northwest
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
+                if(captures != null && board[to] != 0)
+                    captures.add(from ,to);
                 if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
@@ -175,6 +177,8 @@ public class Board {
             // northeast
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
+                if(captures!= null && board[to] != 0)
+                    captures.add(from ,to);
                 if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
@@ -252,32 +256,39 @@ public class Board {
         }
     }
 
-    public MoveList getPlayoutMoves(boolean heuristics) {
+    public MoveList getPlayoutMoves(boolean heuristics, boolean capHeur) {
         int moveMode = (playerToMove == 1) ? -1 : 1;
         // Check for decisive / anti-decisive moves
-        if (heuristics && (progress1 >= 6 || progress2 >= 6)) {
-            MoveList moveList = getExpandMoves();
-            MoveList decisive = new MoveList(32);
-            MoveList antiDecisive = new MoveList(32);
+        if (heuristics && (progress1 >= 4 || progress2 >= 4)) {
+            MoveList captures = new MoveList(32);
+            MoveList moveList = getExpandMoves(capHeur ? captures : null);
 
-            for (int i = 0; i < moveList.size(); i++) {
-                int[] move = moveList.get(i);
-                // Decisive / anti-decisive moves
-                if (playerToMove == 1 && (move[1] / 8 == 0)) {
-                    decisive.add(move[0], move[1]);
-                } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
-                    decisive.add(move[0], move[1]);
-                } else if (decisive.isEmpty() && (board[move[1]] != 0 &&
-                        (move[0] / 8 == 7 || move[0] / 8 == 0))) {
-                    antiDecisive.add(move[0], move[1]);
+            if(progress1 >= 6 || progress2 >= 6) {
+                MoveList decisive = new MoveList(32);
+                MoveList antiDecisive = new MoveList(32);
+
+                for (int i = 0; i < moveList.size(); i++) {
+                    int[] move = moveList.get(i);
+                    // Decisive / anti-decisive moves
+                    if (playerToMove == 1 && (move[1] / 8 == 0)) {
+                        decisive.add(move[0], move[1]);
+                    } else if (playerToMove == 2 && (move[1] / 8 == 7)) {
+                        decisive.add(move[0], move[1]);
+                    } else if (decisive.isEmpty() && (board[move[1]] != 0 &&
+                            (move[0] / 8 == 7 || move[0] / 8 == 0))) {
+                        antiDecisive.add(move[0], move[1]);
+                    }
+                }
+                if (decisive.size() > 0) {
+                    return decisive;
+                }
+                if (antiDecisive.size() > 0) {
+                    return antiDecisive;
                 }
             }
-            if (decisive.size() > 0) {
-                return decisive;
-            }
-            if (antiDecisive.size() > 0) {
-                return antiDecisive;
-            }
+
+            if(!captures.isEmpty())
+                return captures;
         }
         // Select a piece uniformly random and generate its moves
         // This should remove any bias towards selecting pieces with more available moves
@@ -289,7 +300,7 @@ public class Board {
             pieceI = Options.r.nextInt(PIECES);
             //
             if (playerPieces[pieceI] != CAPTURED) {
-                generateMovesForPiece(playerPieces[pieceI], moveMode, moveList, heuristics);
+                generateMovesForPiece(playerPieces[pieceI], moveMode, moveList, null, heuristics);
             }
         }
         return moveList;

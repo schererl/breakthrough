@@ -89,6 +89,8 @@ public class SimGame {
                     options.C = Double.parseDouble(tag.substring(1));
                 } else if(tag.equals("le")) {
                     options.lorenzEval = true;
+                } else if(tag.equals("ch")) {
+                    options.capHeur = true;
                 } else if (tag.equals("tt")) {
                     options.tt = true;
                 } else {
