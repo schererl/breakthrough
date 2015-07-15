@@ -24,7 +24,7 @@ public class Game {
         options1.nodePriors = true;
         aiPlayer1.setOptions(options1);
 
-        AIPlayer aiPlayer2 = new SHOTPlayer();
+        AIPlayer aiPlayer2 = new HybridPlayer();
         Options options2 = new Options();
         options2.solver = true;
         options2.heuristics = true;
