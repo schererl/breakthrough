@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="node priors">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/breakthrough/Game.java" afterPath="$PROJECT_DIR$/src/breakthrough/Game.java" />
+    <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" afterPath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" afterPath="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" afterPath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="breakthrough.iws" />
@@ -73,14 +71,10 @@
       <file leaf-file-name="SHOTNode.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.027685493">
-              <caret line="207" column="25" selection-start-line="207" selection-start-column="25" selection-end-line="207" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.9858491">
+              <caret line="297" column="5" selection-start-line="297" selection-start-column="5" selection-end-line="297" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#13777#13778#0" expanded="true" />
-                <element signature="e#13838#13839#0" expanded="true" />
-                <element signature="e#15575#15576#0" expanded="true" />
-                <element signature="e#15602#15603#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,11 +96,9 @@
         <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="232" column="20" selection-start-line="232" selection-start-column="20" selection-end-line="232" selection-end-column="20" />
+              <caret line="337" column="5" selection-start-line="337" selection-start-column="5" selection-end-line="337" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#15113#15114#0" expanded="true" />
-                <element signature="e#15158#15159#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -174,8 +166,8 @@
         <option value="$PROJECT_DIR$/src/mcts/transpos/ShotState.java" />
         <option value="$PROJECT_DIR$/src/framework/Options.java" />
         <option value="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
-        <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
         <option value="$PROJECT_DIR$/src/breakthrough/Game.java" />
+        <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
         <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" />
       </list>
     </option>
@@ -597,12 +589,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00033" summary="test">
-      <created>1436637990151</created>
-      <option name="number" value="00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1436637990151</updated>
-    </task>
     <task id="LOCAL-00034" summary="test">
       <created>1436638038377</created>
       <option name="number" value="00034" />
@@ -891,7 +877,13 @@
       <option name="project" value="LOCAL" />
       <updated>1436990482807</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="node priors">
+      <created>1436991188065</created>
+      <option name="number" value="00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1436991188065</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="TodoView">
@@ -913,7 +905,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32867885" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.74221265" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.74221265" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5370166" sideWeight="0.502445" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928178" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1303,7 +1295,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5780731">
           <caret line="105" column="36" selection-start-line="105" selection-start-column="36" selection-end-line="105" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1334,28 +1325,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="232" column="20" selection-start-line="232" selection-start-column="20" selection-end-line="232" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#15113#15114#0" expanded="true" />
-            <element signature="e#15158#15159#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/Options.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1382,16 +1351,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
+    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.027685493">
-          <caret line="207" column="25" selection-start-line="207" selection-start-column="25" selection-end-line="207" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#13777#13778#0" expanded="true" />
-            <element signature="e#13838#13839#0" expanded="true" />
-            <element signature="e#15575#15576#0" expanded="true" />
-            <element signature="e#15602#15603#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="337" column="5" selection-start-line="337" selection-start-column="5" selection-end-line="337" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9858491">
+          <caret line="297" column="5" selection-start-line="297" selection-start-column="5" selection-end-line="297" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

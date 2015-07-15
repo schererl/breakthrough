@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class HybridNode {
+    private static final double LOG2 = Math.log(2);
     private boolean expanded = false, simulated = false;
     private List<HybridNode> C, S;
     private HybridNode bestArm;
@@ -174,7 +175,7 @@ public class HybridNode {
     }
 
     private int getBudget(int initVis, int budget, int subS, int totS) {
-        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * log2(totS))));
+        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * Math.ceil((Math.log(totS) / LOG2)))));
     }
 
     private boolean solverCheck(double result) {
@@ -334,10 +335,6 @@ public class HybridNode {
         }
         // If one of the nodes is a win, return it.
         return winNode;
-    }
-
-    private double log2(double x) {
-        return (Math.log(x) / Math.log(2));
     }
 
     private final Comparator<HybridNode> comparator = new Comparator<HybridNode>() {
