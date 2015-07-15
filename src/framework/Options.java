@@ -9,7 +9,7 @@ public class Options {
     public static final Random r = new Random();
     public double C = .8, B = 30;
     public boolean debug = true, fixSimulations = false,
-            heuristics = false, earlyTerm = false, solver = true,
+            heuristics = false, earlyTerm = false, solver = false,
             tt = false, nodePriors = false;
     public int timeLimit = 10000, termDepth = 4, etT = 25, npVisits = 100;
 }
