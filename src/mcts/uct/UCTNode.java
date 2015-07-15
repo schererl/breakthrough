@@ -145,6 +145,8 @@ public class UCTNode {
                     child.setSolved(true);
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
+                } else if (options.nodePriors && child.getVisits() == 0) {
+                    tempBoard.initNodePriors(player, child.getState(), child.move, options.npVisits);
                 }
             }
             children.add(child);
@@ -158,6 +160,12 @@ public class UCTNode {
         double max = Double.NEGATIVE_INFINITY;
         // Use UCT down the tree
         double uctValue, np = getVisits();
+        if(options.nodePriors) {
+            np = 0;
+            for (UCTNode c : children) {
+                np += c.getVisits();
+            }
+        }
         // Select a child according to the UCT Selection policy
         for (UCTNode c : children) {
             double nc = c.getVisits();

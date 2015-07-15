@@ -105,10 +105,12 @@ public class SimGame {
                 options.etT = Integer.parseInt(tag.substring(3));
             } else if (tag.startsWith("c")) {
                 options.C = Double.parseDouble(tag.substring(1));
-            } else if (tag.equals("le")) {
-                options.lorenzEval = true;
             } else if (tag.equals("tt")) {
                 options.tt = true;
+            } else if(tag.startsWith("np")) {
+                options.nodePriors = true;
+                if(tag.length() > 2)
+                    options.npVisits = Integer.parseInt(tag.substring(2));
             } else {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }

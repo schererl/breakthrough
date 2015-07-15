@@ -27,6 +27,12 @@ public class State {
         this.visits++;
     }
 
+    public void init(int wins, int visits) {
+        sum += wins;
+        this.visits += visits;
+        visited = true;
+    }
+
     public float getMean(int player) {
         visited = true;
         if (solvedPlayer == 0) { // Position is not solved, return mean
