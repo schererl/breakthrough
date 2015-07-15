@@ -6,7 +6,6 @@ import framework.Options;
 import framework.util.FastLog;
 import mcts.transpos.ShotState;
 import mcts.transpos.ShotTransposTable;
-import mcts.transpos.State;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -48,7 +47,7 @@ public class HybridNode {
 
         if (child != null) {
             if (solverCheck(child.getValue()))
-                return State.INF;
+                return ShotState.INF;
         }
 
         int s = S.size();
@@ -82,7 +81,7 @@ public class HybridNode {
                 plStats[2] += pl[2];
                 plStats[3] += pl[3];
                 // :: Solver
-                if (Math.abs(result) == State.INF)
+                if (Math.abs(result) == ShotState.INF)
                     return result;
             }
             return 0;
@@ -125,9 +124,9 @@ public class HybridNode {
                     result = child.getValue();
                 }
                 // :: Solver
-                if (Math.abs(result) == State.INF) {
+                if (Math.abs(result) == ShotState.INF) {
                     if (solverCheck(result)) {   // Returns true if node is solved
-                        if (result == State.INF)
+                        if (result == ShotState.INF)
                             bestArm = child;
                         // Update the budgetSpent
                         state.incrBudgetSpent(plStats[3]);
@@ -182,10 +181,10 @@ public class HybridNode {
         if (!options.solver)
             return false;
         // (Solver) If one of the children is a win, then I'm a loss for the opponent
-        if (result == State.INF) {
+        if (result == ShotState.INF) {
             setSolved(false);
             return true;
-        } else if (result == -State.INF) {
+        } else if (result == -ShotState.INF) {
             boolean allSolved = true;
             // (Solver) Check if all children are a loss
             for (HybridNode tn : C) {
@@ -230,7 +229,8 @@ public class HybridNode {
                 plStats[0]++;
                 plStats[3]++;
                 // 0: playouts, 1: player1, 2: player2
-                plStats[(int) result]++;
+                if(result != Board.NONE_WIN)
+                    plStats[(int) result]++;
                 child.updateStats(plStats);
                 child.updateBudgetSpent(1);
                 child.simulated = true;
@@ -240,9 +240,9 @@ public class HybridNode {
             result = child.getValue();
         }
         // :: Solver for UCT tree
-        if (Math.abs(result) == State.INF) {
+        if (Math.abs(result) == ShotState.INF) {
             boolean solved = solverCheck(result);
-            if (result == -State.INF && !solved) { // Not all arms are losses
+            if (result == -ShotState.INF && !solved) { // Not all arms are losses
                 plStats[0]++;
                 plStats[3 - player]++;
                 updateStats(plStats);
@@ -272,13 +272,13 @@ public class HybridNode {
         for (HybridNode c : C) {
             double nc = c.getVisits();
             // Always select a proven win
-            if (c.getValue() == State.INF)
-                uctValue = State.INF + Options.r.nextDouble();
-            else if (c.getVisits() == 0 && c.getValue() != -State.INF) {
+            if (c.getValue() == ShotState.INF)
+                uctValue = ShotState.INF + Options.r.nextDouble();
+            else if (c.getVisits() == 0 && c.getValue() != -ShotState.INF) {
                 // First, visit all children at least once
                 uctValue = 100. + Options.r.nextDouble();
-            } else if (c.getValue() == -State.INF) {
-                uctValue = -State.INF + Options.r.nextDouble();
+            } else if (c.getValue() == -ShotState.INF) {
+                uctValue = -ShotState.INF + Options.r.nextDouble();
             } else {
                 // Compute the uct value with the (new) average value
                 uctValue = c.getValue() + options.C * Math.sqrt(FastLog.log(np + 1.) / nc);
@@ -326,7 +326,7 @@ public class HybridNode {
             }
             if(!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
                 double npRate = board.npWinrate(player, child.move);
-                child.state.init((int)(npRate * options.npVisits), player, options.npVisits);
+                child.getState().init((int) (npRate * options.npVisits), player, options.npVisits);
             }
             //
             C.add(child);
@@ -392,10 +392,10 @@ public class HybridNode {
         double value;
         double max = Double.NEGATIVE_INFINITY;
         for (HybridNode t : C) {
-            if (t.getValue() == State.INF)
-                value = State.INF + Options.r.nextDouble();
-            else if (t.getValue() == -State.INF)
-                value = -State.INF + t.getVisits() + Options.r.nextDouble();
+            if (t.getValue() == ShotState.INF)
+                value = ShotState.INF + Options.r.nextDouble();
+            else if (t.getValue() == -ShotState.INF)
+                value = -ShotState.INF + t.getVisits() + Options.r.nextDouble();
             else {
                 // Select the child with the highest value
                 value = t.getValue();
@@ -447,6 +447,12 @@ public class HybridNode {
             state.setSolved(player);
     }
 
+    private ShotState getState() {
+        if (state == null)
+            state = tt.getState(hash, false);
+        return state;
+    }
+
     /**
      * @return The value of this node with respect its parent
      */
@@ -478,7 +484,7 @@ public class HybridNode {
     }
 
     private boolean isSolved() {
-        return Math.abs(getValue()) == State.INF;
+        return Math.abs(getValue()) == ShotState.INF;
     }
 
     public int[] getMove() {

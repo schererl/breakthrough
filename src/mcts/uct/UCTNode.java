@@ -147,7 +147,7 @@ public class UCTNode {
                     child.setSolved(false);
                 } else if (options.nodePriors && child.getVisits() == 0) {
                     double npRate = board.npWinrate(player, child.move);
-                    child.state.init((int)(npRate * options.npVisits), options.npVisits);
+                    child.getState().init((int)(npRate * options.npVisits), options.npVisits);
                 }
             }
             children.add(child);

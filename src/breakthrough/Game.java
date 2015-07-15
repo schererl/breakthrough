@@ -24,10 +24,12 @@ public class Game {
         options1.nodePriors = true;
         aiPlayer1.setOptions(options1);
 
-        AIPlayer aiPlayer2 = new UCTPlayer();
+        AIPlayer aiPlayer2 = new SHOTPlayer();
         Options options2 = new Options();
+        options2.solver = true;
         options2.heuristics = true;
-//        options2.earlyTerm = true;
+        options2.earlyTerm = true;
+        options2.nodePriors = true;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;

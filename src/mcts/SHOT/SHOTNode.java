@@ -70,7 +70,8 @@ public class SHOTNode {
             // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
             plStats[0]++;
             plStats[3]++;
-            plStats[(int) result]++;
+            if(result != Board.NONE_WIN)
+                plStats[(int) result]++;
             updateStats(plStats);
             return 0;
         }
@@ -85,7 +86,8 @@ public class SHOTNode {
                 result = n.playOut(tempBoard);
                 //
                 int[] pl = {1, 0, 0, 0};
-                pl[(int) result]++;
+                if(result != Board.NONE_WIN)
+                    pl[(int) result]++;
                 // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                 plStats[0]++;
                 plStats[1] += pl[1];
@@ -284,7 +286,7 @@ public class SHOTNode {
             }
             if(!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
                 double npRate = board.npWinrate(player, child.move);
-                child.state.init((int)(npRate * options.npVisits), player, options.npVisits);
+                child.getState().init((int)(npRate * options.npVisits), player, options.npVisits);
             }
             //
             C.add(child);
