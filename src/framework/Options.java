@@ -11,5 +11,5 @@ public class Options {
     public boolean debug = true, fixSimulations = false,
             heuristics = false, earlyTerm = false, solver = true,
             tt = false, nodePriors = false;
-    public int timeLimit = 10000, termDepth = 4, etT = 25, npVisits = 100;
+    public int timeLimit = 10000, termDepth = 4, etT = 25, npVisits = 150;
 }
