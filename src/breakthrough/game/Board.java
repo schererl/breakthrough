@@ -2,19 +2,29 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
+import mcts.transpos.State;
 
 import java.util.Random;
 
 public class Board {
     public static final int P1 = 1, NONE_WIN = -1, CAPTURED = -1, PIECES = 16;
     private static final String rowLabels = "87654321", colLabels = "abcdefgh";
+    private static final int[] lorentzValues =
+            {5, 15, 15, 5, 5, 15, 15, 5,
+                    2, 3, 3, 3, 3, 3, 3, 2,
+                    4, 6, 6, 6, 6, 6, 6, 4,
+                    7, 10, 10, 10, 10, 10, 10, 7,
+                    11, 15, 15, 15, 15, 15, 15, 11,
+                    16, 21, 21, 21, 21, 21, 21, 16,
+                    20, 28, 28, 28, 28, 28, 28, 20,
+                    36, 36, 36, 36, 36, 36, 36, 36};
     // Zobrist stuff
     private static long[][] zbnums = null;
     private static long blackHash, whiteHash;
     // Board stuff
     public int[] board, pieces[];
     public short nMoves, winner, playerToMove;
-    private int nPieces1, progress1, safeProgress1, nPieces2, progress2, safeProgress2;
+    private int nPieces1, progress1, lorentzPV1, nPieces2, progress2, lorentzPV2;
     private long zbHash = 0;
 
     public void initialize() {
@@ -28,18 +38,20 @@ public class Board {
                     board[r * 8 + c] = 200 + nPieces2; // player 2 is black
                     pieces[1][nPieces2] = r * 8 + c;
                     nPieces2++;
+                    lorentzPV2 += getLorentzPV(2, r * 8 + c);
                 } else if (r == 6 || r == 7) {
                     board[r * 8 + c] = 100 + nPieces1; // player 1 is white
                     pieces[0][nPieces1] = r * 8 + c;
                     nPieces1++;
+                    lorentzPV1 += getLorentzPV(1, r * 8 + c);
                 }
             }
         }
 
         nMoves = 0;
         winner = NONE_WIN;
-        progress1 = safeProgress1 = 1;
-        progress2 = safeProgress2 = 1;
+        progress1 = 1;
+        progress2 = 1;
 
         // initialize the zobrist numbers
         if (zbnums == null) {
@@ -64,7 +76,7 @@ public class Board {
         zbHash ^= whiteHash;
     }
 
-    public void doMove(int[] move, boolean fullProgresss) {
+    public void doMove(int[] move, boolean updateEval) {
         int from = move[0], to = move[1];
 
         zbHash ^= zbnums[from][playerToMove];
@@ -83,6 +95,18 @@ public class Board {
         board[to] = board[from];
         board[from] = 0;
 
+        if (updateEval) {
+            // lorentz piece value updates:
+            // subtract off from where you came, add where you ended up
+            if (playerToMove == 1) {
+                lorentzPV1 -= getLorentzPV(1, from);
+                lorentzPV1 += getLorentzPV(1, to);
+            } else {
+                lorentzPV2 -= getLorentzPV(2, from);
+                lorentzPV2 += getLorentzPV(2, to);
+            }
+        }
+
         int rp = to / 8;
 
         // check for a capture
@@ -91,22 +115,24 @@ public class Board {
                 nPieces2--;
                 pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
-                if (!fullProgresss && ((progress2 == rp
-                        || safeProgress2 == rp) && nPieces2 > 0))
-//                if (((progress2 == rp
-//                        || safeProgress2 == rp) && nPieces2 > 0))
-                    recomputeProgress(2, false);
+
+                if (progress2 == rp && nPieces2 > 0)
+                    recomputeProgress(2);
+                if (updateEval) {
+                    // The player loses the piece's lorentz value
+                    lorentzPV2 -= getLorentzPV(2, to);
+                }
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
-                if (!fullProgresss && ((progress1 == 7 - rp
-                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
-//                if (((progress1 == 7 - rp
-//                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
-                    recomputeProgress(1, false);
+                if (progress1 == 7 - rp && nPieces1 > 0)
+                    recomputeProgress(1);
+                if (updateEval) {
+                    // The player loses the piece's lorentz value
+                    lorentzPV1 -= getLorentzPV(1, to);
+                }
             }
-
         }
 
         // check for a win
@@ -122,11 +148,6 @@ public class Board {
 
         nMoves++;
         playerToMove = (short) (3 - playerToMove);
-
-        if(fullProgresss) {
-            recomputeProgress(playerToMove, true);
-            recomputeProgress(3 - playerToMove, true);
-        }
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -222,16 +243,16 @@ public class Board {
 
     public int evaluate(int player) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
 //        p1eval += (2.5 * progress1) - (2.5 * progress2);
+        p1eval += lorentzPV1 - lorentzPV2;
         //System.out.println(p1eval);
         return (player == 1 ? p1eval : -p1eval);
     }
 
-    private void recomputeProgress(int player, boolean safeProgress) {
+    private void recomputeProgress(int player) {
         int[] playerPieces = pieces[player - 1];
         if (player == 1) {
-            int min = 100, minSafe = 100;
+            int min = 100;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
@@ -239,13 +260,9 @@ public class Board {
                     min = piece / 8;
                     progress1 = 7 - min;
                 }
-                if (safeProgress && piece / 8 < minSafe && isSafe(piece, piece, player)) {
-                    minSafe = piece / 8;
-                    safeProgress1 = 7 - minSafe;
-                }
             }
         } else if (player == 2) {
-            int max = -1, maxSafe = -1;
+            int max = -1;
             for (int piece : playerPieces) {
                 if (piece == CAPTURED)
                     continue;
@@ -253,11 +270,21 @@ public class Board {
                     max = piece / 8;
                     progress2 = max;
                 }
-                if (safeProgress && piece / 8 > maxSafe && isSafe(piece, piece, player)) {
-                    maxSafe = piece / 8;
-                    safeProgress2 = maxSafe;
-                }
             }
+        }
+    }
+
+    private int getLorentzPV(int player, int position) {
+        if (player == 2) {
+            if (isSafe(position, position, player))
+                return lorentzValues[position] + (int) (0.5 * lorentzValues[position]);
+            else
+                return lorentzValues[position];
+        } else {
+            if (isSafe(position, position, player))
+                return lorentzValues[63 - position] + (int) (0.5 * lorentzValues[63 - position]);
+            else
+                return lorentzValues[63 - position];
         }
     }
 
@@ -350,9 +377,9 @@ public class Board {
         }
         sb.append(" ").append(colLabels).append("\n");
         sb.append("\nPieces: (").append(nPieces1).append(", ").append(nPieces2)
-                .append(") nMoves: ").append(nMoves).append("\n").append("Progress: [")
-                .append(safeProgress1).append(",").append(progress1).append("] [")
-                .append(safeProgress2).append(",").append(progress2).append("]");
+                .append(") nMoves: ").append(nMoves).append("\nProgress: ")
+                .append(progress1).append(", ").append(progress2).append("\nLorentz: ")
+                .append(lorentzPV1).append(" ").append(lorentzPV2);
         return sb.toString();
     }
 
@@ -379,8 +406,8 @@ public class Board {
         b.winner = this.winner;
         b.progress1 = this.progress1;
         b.progress2 = this.progress2;
-        b.safeProgress1 = this.safeProgress1;
-        b.safeProgress2 = this.safeProgress2;
+        b.lorentzPV1 = this.lorentzPV1;
+        b.lorentzPV1 = this.lorentzPV2;
         b.playerToMove = this.playerToMove;
         b.zbHash = zbHash;
         return b;
@@ -413,6 +440,30 @@ public class Board {
         }
         return attackers <= defenders;
     }
+
+//    public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
+//        boolean safeMove = isSafe(move[1], move[1], parentPlayer);
+//        int rp = move[1] / 8;
+//        int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
+//        double winRate = 0.3;
+//
+//        if (safeMove) {
+//            if (distToGoal == 0)
+//                winRate = 1.;
+//            else if (distToGoal == 1)
+//                winRate = 0.95;
+//            else if (distToGoal == 2)
+//                winRate = 0.85;
+//            else if (distToGoal == 3)
+//                winRate = 0.7;
+//            else if (distToGoal == 4)
+//                winRate = 0.6;
+//        } else {
+//            if (board[move[1]] != 0)
+//                winRate = 0.6;
+//        }
+//        state.init((int) (winRate * npVisits), npVisits);
+//    }
 
     public static String getMoveString(int[] move) {
         int c = move[0] % 8, cp = move[1] % 8;
