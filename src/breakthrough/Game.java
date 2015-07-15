@@ -16,11 +16,11 @@ public class Game {
         Board b = new Board();
         b.initialize();
 
-        AIPlayer aiPlayer1 = new HybridPlayer();
+        AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
         options1.solver = true;
         options1.heuristics = true;
-//        options1.earlyTerm = true;
+        options1.earlyTerm = true;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();

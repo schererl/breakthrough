@@ -91,19 +91,19 @@ public class Board {
                 nPieces2--;
                 pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
-//                if (!fullProgresss && ((progress2 == rp
-//                        || safeProgress2 == rp) && nPieces2 > 0))
-                if (((progress2 == rp
+                if (!fullProgresss && ((progress2 == rp
                         || safeProgress2 == rp) && nPieces2 > 0))
+//                if (((progress2 == rp
+//                        || safeProgress2 == rp) && nPieces2 > 0))
                     recomputeProgress(2, false);
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
-//                if (!fullProgresss && ((progress1 == 7 - rp
-//                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
-                if (((progress1 == 7 - rp
+                if (!fullProgresss && ((progress1 == 7 - rp
                         || safeProgress1 == 7 - rp) && nPieces1 > 0))
+//                if (((progress1 == 7 - rp
+//                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
                     recomputeProgress(1, false);
             }
 
@@ -123,10 +123,10 @@ public class Board {
         nMoves++;
         playerToMove = (short) (3 - playerToMove);
 
-//        if(fullProgresss) {
-//            recomputeProgress(playerToMove, true);
-//            recomputeProgress(3 - playerToMove, true);
-//        }
+        if(fullProgresss) {
+            recomputeProgress(playerToMove, true);
+            recomputeProgress(3 - playerToMove, true);
+        }
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -222,8 +222,9 @@ public class Board {
 
     public int evaluate(int player) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-//        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
-        p1eval += (2.5 * progress1) - (2.5 * progress2);
+        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
+//        p1eval += (2.5 * progress1) - (2.5 * progress2);
+        System.out.println(p1eval);
         return (player == 1 ? p1eval : -p1eval);
     }
 
