@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/breakthrough/Game.java" afterPath="$PROJECT_DIR$/src/breakthrough/Game.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java" afterPath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Options.java" afterPath="$PROJECT_DIR$/src/framework/Options.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" afterPath="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="breakthrough.iws" />
@@ -49,14 +47,36 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HybridPlayer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="HybridPlayer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.35769656">
+            <state vertical-scroll-proportion="0.0">
               <caret line="29" column="47" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SHOTNode.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="297" column="5" selection-start-line="297" selection-start-column="5" selection-end-line="297" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SHOTPlayer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.41196012">
+              <caret line="28" column="41" selection-start-line="28" selection-start-column="41" selection-end-line="28" selection-end-column="41" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -91,7 +111,6 @@
         <option value="$PROJECT_DIR$/src/framework/MoveList.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/TransposTable.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/ShotTransposTable.java" />
-        <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" />
         <option value="$PROJECT_DIR$/src/framework/util/KeyboardPlayer.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/State.java" />
         <option value="$PROJECT_DIR$/src/experiments/SimGame.java" />
@@ -103,6 +122,7 @@
         <option value="$PROJECT_DIR$/src/breakthrough/Game.java" />
         <option value="$PROJECT_DIR$/src/framework/Options.java" />
         <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java" />
+        <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" />
       </list>
     </option>
   </component>
@@ -523,12 +543,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00035" summary="node priors">
-      <created>1436638456249</created>
-      <option name="number" value="00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1436638456249</updated>
-    </task>
     <task id="LOCAL-00036" summary="tt test">
       <created>1436640735230</created>
       <option name="number" value="00036" />
@@ -817,7 +831,13 @@
       <option name="project" value="LOCAL" />
       <updated>1436991999316</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="node priors">
+      <created>1436992693750</created>
+      <option name="number" value="00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1436992693750</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1195,13 +1215,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.68529075">
-          <caret line="41" column="49" selection-start-line="41" selection-start-column="49" selection-end-line="41" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/util/KeyboardPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1248,16 +1261,6 @@
           <folding>
             <element signature="e#440#441#0" expanded="true" />
             <element signature="e#472#473#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23145072">
-          <caret line="297" column="5" selection-start-line="297" selection-start-column="5" selection-end-line="297" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1311,11 +1314,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35769656">
+        <state vertical-scroll-proportion="0.0">
           <caret line="29" column="47" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="297" column="5" selection-start-line="297" selection-start-column="5" selection-end-line="297" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.41196012">
+          <caret line="28" column="41" selection-start-line="28" selection-start-column="41" selection-end-line="28" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
