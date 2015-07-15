@@ -224,7 +224,7 @@ public class Board {
         int p1eval = 10 * (nPieces1 - nPieces2);
         p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
 //        p1eval += (2.5 * progress1) - (2.5 * progress2);
-        System.out.println(p1eval);
+        //System.out.println(p1eval);
         return (player == 1 ? p1eval : -p1eval);
     }
 
