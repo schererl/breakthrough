@@ -93,6 +93,8 @@ public class SimGame {
             String tag = parts[i];
             if (tag.startsWith("h")) {
                 options.heuristics = true;
+            } else if(tag.equals("ch")) {
+                options.capHeur = true;
             } else if (tag.startsWith("b")) {
                 options.B = Integer.parseInt(tag.substring(1));
             } else if (tag.startsWith("s")) {
