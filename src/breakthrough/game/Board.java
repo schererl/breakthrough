@@ -2,7 +2,6 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
-import mcts.transpos.State;
 
 import java.util.Random;
 
@@ -92,14 +91,18 @@ public class Board {
                 nPieces2--;
                 pieces[1][pieceCap] = CAPTURED;
                 // wiping out this piece could reduce the player's progress
-                if (!fullProgresss && ((progress2 == rp
+//                if (!fullProgresss && ((progress2 == rp
+//                        || safeProgress2 == rp) && nPieces2 > 0))
+                if (((progress2 == rp
                         || safeProgress2 == rp) && nPieces2 > 0))
                     recomputeProgress(2, false);
             } else {
                 nPieces1--;
                 pieces[0][pieceCap] = CAPTURED;
                 //
-                if (!fullProgresss && ((progress1 == 7 - rp
+//                if (!fullProgresss && ((progress1 == 7 - rp
+//                        || safeProgress1 == 7 - rp) && nPieces1 > 0))
+                if (((progress1 == 7 - rp
                         || safeProgress1 == 7 - rp) && nPieces1 > 0))
                     recomputeProgress(1, false);
             }
@@ -120,10 +123,10 @@ public class Board {
         nMoves++;
         playerToMove = (short) (3 - playerToMove);
 
-        if(fullProgresss) {
-            recomputeProgress(playerToMove, true);
-            recomputeProgress(3 - playerToMove, true);
-        }
+//        if(fullProgresss) {
+//            recomputeProgress(playerToMove, true);
+//            recomputeProgress(3 - playerToMove, true);
+//        }
 
         if (playerToMove == Board.P1) {
             zbHash ^= blackHash;
@@ -154,8 +157,8 @@ public class Board {
             // northwest
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
-                if(captures != null && board[to] != 0)
-                    captures.add(from ,to);
+                if (captures != null && board[to] != 0)
+                    captures.add(from, to);
                 if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
@@ -177,8 +180,8 @@ public class Board {
             // northeast
             if (board[to] / 100 != playerToMove) {
                 moveList.add(from, to);
-                if(captures!= null && board[to] != 0)
-                    captures.add(from ,to);
+                if (captures != null && board[to] != 0)
+                    captures.add(from, to);
                 if (heuristics) {
                     // Prefer captures
                     int n = board[to] != 0 ? 1 : 0;
@@ -219,7 +222,8 @@ public class Board {
 
     public int evaluate(int player) {
         int p1eval = 10 * (nPieces1 - nPieces2);
-        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
+//        p1eval += (2.5 * safeProgress1) - (2.5 * safeProgress2);
+        p1eval += (2.5 * progress1) - (2.5 * progress2);
         return (player == 1 ? p1eval : -p1eval);
     }
 
@@ -263,7 +267,7 @@ public class Board {
             MoveList captures = new MoveList(32);
             MoveList moveList = getExpandMoves(captures);
 
-            if(progress1 >= 6 || progress2 >= 6) {
+            if (progress1 >= 6 || progress2 >= 6) {
                 MoveList decisive = new MoveList(32);
                 MoveList antiDecisive = new MoveList(32);
 
@@ -287,7 +291,7 @@ public class Board {
                 }
             }
 
-            if(!captures.isEmpty())
+            if (!captures.isEmpty())
                 return captures;
         }
         // Select a piece uniformly random and generate its moves
