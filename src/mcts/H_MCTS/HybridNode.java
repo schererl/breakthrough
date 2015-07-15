@@ -262,6 +262,12 @@ public class HybridNode {
         double max = Double.NEGATIVE_INFINITY;
         // Use UCT down the tree
         double uctValue, np = getVisits();
+        if(options.nodePriors) {
+            np = 0;
+            for (HybridNode c : C) {
+                np += c.getVisits();
+            }
+        }
         // Select a child according to the UCT Selection policy
         for (HybridNode c : C) {
             double nc = c.getVisits();
@@ -317,6 +323,10 @@ public class HybridNode {
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
                 }
+            }
+            if(!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
+                double npRate = board.npWinrate(player, child.move);
+                child.state.init((int)(npRate * options.npVisits), player, options.npVisits);
             }
             //
             C.add(child);

@@ -27,6 +27,12 @@ public class ShotState {
         this.visits++;
     }
 
+    public void init(int wins, int player, int visits) {
+        this.wins[player - 1] += wins;
+        this.visits += visits;
+        visited = true;
+    }
+
     public void setValue(ShotState s) {
         if (s == null)
             throw new NullPointerException("State is null");

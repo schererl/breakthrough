@@ -282,6 +282,10 @@ public class SHOTNode {
                     child.setSolved(false);
                 }
             }
+            if(!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
+                double npRate = board.npWinrate(player, child.move);
+                child.state.init((int)(npRate * options.npVisits), player, options.npVisits);
+            }
             //
             C.add(child);
             S.add(child);
