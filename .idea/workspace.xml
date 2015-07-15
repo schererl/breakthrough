@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/breakthrough/game/Board.java" afterPath="$PROJECT_DIR$/src/breakthrough/game/Board.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" afterPath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="breakthrough.iws" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="Board.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.33997786">
-              <caret line="409" column="20" selection-start-line="409" selection-start-column="20" selection-end-line="409" selection-end-column="20" />
+            <state vertical-scroll-proportion="0.2635659">
+              <caret line="448" column="30" selection-start-line="448" selection-start-column="30" selection-end-line="448" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -595,12 +594,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00027" summary="node priors&#10;">
-      <created>1436634755810</created>
-      <option name="number" value="00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1436634755810</updated>
-    </task>
     <task id="LOCAL-00028" summary="node priors&#10;">
       <created>1436635691847</created>
       <option name="number" value="00028" />
@@ -889,7 +882,13 @@
       <option name="project" value="LOCAL" />
       <updated>1436984317626</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="node priors">
+      <created>1436985276265</created>
+      <option name="number" value="00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1436985276265</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TodoView">
@@ -950,7 +949,6 @@
     <MESSAGE value="lorentz evaluation" />
     <MESSAGE value="node priors&#10;" />
     <MESSAGE value="test" />
-    <MESSAGE value="node priors" />
     <MESSAGE value="tt test" />
     <MESSAGE value="np" />
     <MESSAGE value="switched decisive/anti-decisive" />
@@ -959,7 +957,8 @@
     <MESSAGE value="shot" />
     <MESSAGE value="safe progress" />
     <MESSAGE value="back to lorentz" />
-    <option name="LAST_COMMIT_MESSAGE" value="back to lorentz" />
+    <MESSAGE value="node priors" />
+    <option name="LAST_COMMIT_MESSAGE" value="node priors" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1388,8 +1387,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.33997786">
-          <caret line="409" column="20" selection-start-line="409" selection-start-column="20" selection-end-line="409" selection-end-column="20" />
+        <state vertical-scroll-proportion="0.2635659">
+          <caret line="448" column="30" selection-start-line="448" selection-start-column="30" selection-end-line="448" selection-end-column="30" />
           <folding />
         </state>
       </provider>

@@ -435,25 +435,39 @@ public class Board {
 
     public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
         boolean safeMove = isSafe(move[1], move[0], parentPlayer);
-        int rp = move[1] / 8;
-        int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
-        double winRate = 0.3;
-
-        if (safeMove) {
-            if (distToGoal == 0)
-                winRate = 1.;
-            else if (distToGoal == 1)
-                winRate = 0.95;
-            else if (distToGoal == 2)
-                winRate = 0.85;
-            else if (distToGoal == 3)
-                winRate = 0.7;
-            else if (distToGoal == 4)
+        double winRate = 0.;
+        if(safeMove) {
+            if(board[move[1]] != 0) {
                 winRate = 0.6;
+            } else {
+                winRate = 0.2;
+            }
         } else {
-            if (board[move[1]] != 0)
-                winRate = 0.6;
+            if(board[move[1]] != 0) {
+                winRate = 0.1;
+            } else {
+                winRate = -0.1;
+            }
         }
+//        int rp = move[1] / 8;
+//        int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
+//        double winRate = 0.3;
+//
+//        if (safeMove) {
+//            if (distToGoal == 0)
+//                winRate = 1.;
+//            else if (distToGoal == 1)
+//                winRate = 0.95;
+//            else if (distToGoal == 2)
+//                winRate = 0.85;
+//            else if (distToGoal == 3)
+//                winRate = 0.7;
+//            else if (distToGoal == 4)
+//                winRate = 0.6;
+//        } else {
+//            if (board[move[1]] != 0)
+//                winRate = 0.6;
+//        }
         state.init((int) (winRate * npVisits), npVisits);
     }
 
