@@ -434,7 +434,7 @@ public class Board {
     }
 
     public void initNodePriors(int parentPlayer, State state, int[] move, int npVisits) {
-        boolean safeMove = isSafe(move[1], move[1], parentPlayer);
+        boolean safeMove = isSafe(move[1], move[0], parentPlayer);
         int rp = move[1] / 8;
         int distToGoal = (parentPlayer == 1 ? rp : (7 - rp));
         double winRate = 0.3;

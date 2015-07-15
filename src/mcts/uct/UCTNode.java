@@ -146,7 +146,7 @@ public class UCTNode {
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
                 } else if (options.nodePriors && child.getVisits() == 0) {
-                    tempBoard.initNodePriors(player, child.getState(), child.move, options.npVisits);
+                    board.initNodePriors(player, child.getState(), child.move, options.npVisits);
                 }
             }
             children.add(child);
