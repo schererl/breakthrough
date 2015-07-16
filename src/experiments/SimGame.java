@@ -17,10 +17,10 @@ public class SimGame {
     private String p1label, p2label;
     private Board board;
     private AIPlayer player1, player2;
-    private int timeLimit;
+    private Options options1, options2;
+    private int timeLimit, timedPlayer;
     private long seed;
-    private boolean printBoard;
-    private boolean mctsDebug;
+    private boolean printBoard, timed, mctsDebug;
 
     public SimGame() {
         p1label = "none specified";
@@ -70,20 +70,15 @@ public class SimGame {
 
         String[] parts = label.split("_");
         Options options = new Options();
+        options.debug = mctsDebug; // false by default
+        options.timeLimit = timeLimit;
 
         if (parts[0].equals("uct")) {
-
             playerRef = new UCTPlayer();
-            options.debug = mctsDebug; // false by default
-            options.timeLimit = timeLimit;
         } else if (parts[0].equals("shot")) {
             playerRef = new SHOTPlayer();
-            options.debug = mctsDebug; // false by default
-            options.timeLimit = timeLimit;
         } else if (parts[0].equals("hmcts")) {
             playerRef = new HybridPlayer();
-            options.debug = mctsDebug; // false by default
-            options.timeLimit = timeLimit;
         } else {
             throw new RuntimeException("Unrecognized player: " + label);
         }
@@ -99,6 +94,11 @@ public class SimGame {
                 options.B = Integer.parseInt(tag.substring(1));
             } else if (tag.startsWith("s")) {
                 options.solver = true;
+            } else if (tag.startsWith("c")) {
+                options.C = Double.parseDouble(tag.substring(1));
+            } else if (tag.equals("t")) {
+                    timed = true;
+                    timedPlayer = player;
             } else if (tag.startsWith("et")) {
                 options.earlyTerm = true;
                 if(tag.length() > 2)
@@ -107,8 +107,6 @@ public class SimGame {
                 options.earlyTerm = true;
                 if(tag.length() > 3)
                     options.etT = Integer.parseInt(tag.substring(3));
-            } else if (tag.startsWith("c")) {
-                options.C = Double.parseDouble(tag.substring(1));
             } else if (tag.equals("tt")) {
                 options.tt = true;
             } else if(tag.startsWith("np")) {
@@ -124,9 +122,11 @@ public class SimGame {
         // Now, set the player
         if (player == 1) {
             player1 = playerRef;
+            options1 = options;
             player1.setOptions(options);
         } else if (player == 2) {
             player2 = playerRef;
+            options2 = options;
             player2.setOptions(options);
         }
     }
@@ -148,6 +148,15 @@ public class SimGame {
         // Initialize the fast... stuff
         FastLog.log(1.);
 
+        int budget = timeLimit;
+        if (timed) {
+            // Initially, both players are assigned the same budget
+            options1.fixSimulations = true;
+            options1.timeLimit = budget;
+            options2.fixSimulations = true;
+            options2.timeLimit = budget;
+        }
+
         int[] m;
         while (board.checkWin() == Board.NONE_WIN) {
 
@@ -158,9 +167,20 @@ public class SimGame {
             AIPlayer aiPlayer = (p == 1 ? player1 : player2);
             System.gc();
 
+            long startTime = System.currentTimeMillis();
             aiPlayer.getMove(board.clone());
+            int time = (int) (System.currentTimeMillis() - startTime);
             m = aiPlayer.getBestMove();
             board.doMove(m, true);
+
+            if (timed && p == timedPlayer) {
+                // Allocate the time spent to the non-fixed player
+                Options opt = (timedPlayer == 1) ? options2 : options1;
+                opt.fixSimulations = false;
+                opt.timeLimit = Math.max(100, time);
+                //
+                // System.out.println("new time set: " + time);
+            }
 
         }
 
