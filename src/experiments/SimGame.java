@@ -148,13 +148,12 @@ public class SimGame {
         // Initialize the fast... stuff
         FastLog.log(1.);
 
-        int budget = timeLimit;
         if (timed) {
             // Initially, both players are assigned the same budget
             options1.fixSimulations = true;
-            options1.timeLimit = budget;
+            options1.timeLimit = 200000;
             options2.fixSimulations = true;
-            options2.timeLimit = budget;
+            options2.timeLimit = 200000;
         }
 
         int[] m;
@@ -178,12 +177,9 @@ public class SimGame {
                 Options opt = (timedPlayer == 1) ? options2 : options1;
                 opt.fixSimulations = false;
                 opt.timeLimit = Math.max(100, time);
-                //
-                // System.out.println("new time set: " + time);
             }
 
         }
-
         // Do not change the format of this line. Used by results aggregator scripts/parseres.perl
         System.out.println("Game over. Winner is " + board.checkWin());
     }

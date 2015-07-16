@@ -19,28 +19,11 @@ public class SHOTPlayer implements AIPlayer {
         if (options == null)
             throw new RuntimeException("MCTS Options not set.");
 
-        int nSimulations = options.timeLimit;
         SHOTNode.totalPlayouts = 0;
-        if (!options.fixSimulations) {
-            // Run some simulations to determine the sims per second
-            root = new SHOTNode(board.getPlayerToMove(), null, options, board.hash(), new ShotTransposTable());
-            int[] pl = {0, 0, 0, 0};
-            long startT = System.currentTimeMillis();
-            root.SHOT(board.clone(), 0, 200000, pl);
-            long endT = System.currentTimeMillis();
-            // Calculate the total number of simulations, based on the measured simulations / second
-            double simsPerSec = ((1000. * SHOTNode.totalPlayouts) / (endT - startT));
-            nSimulations = (int) ((options.timeLimit / 1000.) * simsPerSec);
-            if (options.debug) {
-                System.out.println("Measured " + nSimulations + " at " + ((int) simsPerSec) + " simulations per second.");
-            }
-            SHOTNode.totalPlayouts = 0;
-        }
-        //
         root = new SHOTNode(board.getPlayerToMove(), null, options, board.hash(), tt);
         int[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
-        root.SHOT(board.clone(), 0, nSimulations, pl);
+        root.SHOT(board.clone(), 0, options.timeLimit, pl);
         long endT = System.currentTimeMillis();
         // Return the best move found
         SHOTNode bestChild = root.selectBestMove();

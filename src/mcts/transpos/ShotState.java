@@ -30,7 +30,6 @@ public class ShotState {
     public void init(int wins, int player, int visits) {
         this.wins[player - 1] += wins;
         this.visits += visits;
-        visited = true;
     }
 
     public void setValue(ShotState s) {

@@ -30,7 +30,6 @@ public class State {
     public void init(int wins, int visits) {
         sum += wins;
         this.visits += visits;
-        visited = true;
     }
 
     public float getMean(int player) {

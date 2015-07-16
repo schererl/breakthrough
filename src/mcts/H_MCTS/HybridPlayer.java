@@ -20,27 +20,10 @@ public class HybridPlayer implements AIPlayer {
         if (options == null)
             throw new RuntimeException("MCTS Options not set.");
         HybridNode.totalPlayouts = 0;
-        int nSimulations = options.timeLimit;
-        HybridNode.totalPlayouts = 0;
-        if (!options.fixSimulations) {
-            // Run some simulations to determine the sims per second
-            root = new HybridNode(board.getPlayerToMove(), null, options, board.hash(), new ShotTransposTable());
-            int[] pl = {0, 0, 0, 0};
-            long startT = System.currentTimeMillis();
-            root.HybridMCTS(board.clone(), 0, 200000, pl);
-            long endT = System.currentTimeMillis();
-            // Calculate the total number of simulations, based on the measured simulations / second
-            double simsPerSec = ((1000. * HybridNode.totalPlayouts) / (endT - startT));
-            nSimulations = (int) ((options.timeLimit / 1000.) * simsPerSec);
-            if (options.debug) {
-                System.out.println("Measured " + nSimulations + " at " + ((int) simsPerSec) + " simulations per second.");
-            }
-            HybridNode.totalPlayouts = 0;
-        }
         root = new HybridNode(board.getPlayerToMove(), null, options, board.hash(), tt);
         int[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
-        root.HybridMCTS(board.clone(), 0, nSimulations, pl);
+        root.HybridMCTS(board.clone(), 0, options.timeLimit, pl);
         long endT = System.currentTimeMillis();
         // Return the best move found
         HybridNode bestChild = root.selectBestMove();
