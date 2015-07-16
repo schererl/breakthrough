@@ -23,6 +23,7 @@ public class Game {
         options1.earlyTerm = true;
         options1.nodePriors = true;
         options1.fixSimulations = true;
+        options1.timeLimit = 50000;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new HybridPlayer();
@@ -32,6 +33,7 @@ public class Game {
         options2.earlyTerm = true;
         options2.nodePriors = true;
         options2.fixSimulations = true;
+        options2.timeLimit = 50000;
         aiPlayer2.setOptions(options2);
 
         AIPlayer aiPlayer;

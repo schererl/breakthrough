@@ -28,6 +28,8 @@ public class State {
     }
 
     public void init(int wins, int visits) {
+        if (solvedPlayer != 0)
+            throw new RuntimeException("updateStats called on solved position!");
         sum += wins;
         this.visits += visits;
     }
