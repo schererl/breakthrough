@@ -151,9 +151,9 @@ public class SimGame {
         if (timed) {
             // Initially, both players are assigned the same budget
             options1.fixSimulations = true;
-            options1.timeLimit = 200000;
+            options1.timeLimit = timeLimit;
             options2.fixSimulations = true;
-            options2.timeLimit = 200000;
+            options2.timeLimit = timeLimit;
         }
 
         int[] m;
@@ -168,15 +168,16 @@ public class SimGame {
 
             long startTime = System.currentTimeMillis();
             aiPlayer.getMove(board.clone());
-            int time = (int) (System.currentTimeMillis() - startTime);
+            long time = System.currentTimeMillis() - startTime;
             m = aiPlayer.getBestMove();
             board.doMove(m, true);
+            System.out.println(time);
 
             if (timed && p == timedPlayer) {
                 // Allocate the time spent to the non-fixed player
                 Options opt = (timedPlayer == 1) ? options2 : options1;
                 opt.fixSimulations = false;
-                opt.timeLimit = Math.max(100, time);
+                opt.timeLimit = (int)Math.max(100, time);
             }
 
         }
