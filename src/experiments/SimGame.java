@@ -107,8 +107,6 @@ public class SimGame {
                 options.earlyTerm = true;
                 if(tag.length() > 3)
                     options.etT = Integer.parseInt(tag.substring(3));
-            } else if (tag.equals("tt")) {
-                options.tt = true;
             } else if(tag.startsWith("np")) {
                 options.nodePriors = true;
                 if (tag.length() > 2)
