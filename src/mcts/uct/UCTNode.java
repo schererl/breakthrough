@@ -130,6 +130,7 @@ public class UCTNode {
         // Board is terminal, don't expand
         if (winner != Board.NONE_WIN)
             return null;
+        int best_imVal = Integer.MIN_VALUE;
         // Add all moves as children to the current node
         for (int i = 0; i < moves.size(); i++) {
             Board tempBoard = board.clone();
@@ -150,7 +151,17 @@ public class UCTNode {
                     child.getState().init((int)(npRate * options.npVisits), options.npVisits);
                 }
             }
+            // implicit minimax
+            if (options.imm) {
+                int imVal = tempBoard.evaluate(player);
+                child.setImValue(imVal); // view of parent
+                if (imVal > best_imVal)
+                    best_imVal = imVal;
+            }
             children.add(child);
+        }
+        if (options.imm) {
+            this.setImValue(best_imVal);
         }
         // If one of the nodes is a win, return it.
         return winNode;
@@ -159,12 +170,23 @@ public class UCTNode {
     private UCTNode select() {
         UCTNode selected = null;
         double max = Double.NEGATIVE_INFINITY;
+        int minIm = Integer.MAX_VALUE, maxIm = Integer.MIN_VALUE;
         // Use UCT down the tree
         double uctValue, np = getVisits();
         if(options.nodePriors) {
             np = 0;
             for (UCTNode c : children) {
                 np += c.getVisits();
+            }
+        }
+        if(options.imm) {
+            int val;
+            for (UCTNode c : children) {
+                val = c.getImValue();
+                if(val > maxIm)
+                    maxIm = val;
+                if(val < minIm)
+                    minIm = val;
             }
         }
         // Select a child according to the UCT Selection policy
@@ -179,8 +201,16 @@ public class UCTNode {
             } else if (c.getValue() == -State.INF) {
                 uctValue = -State.INF + Options.r.nextDouble();
             } else {
+                double avgValue = c.getValue();
+                // Implicit minimax
+                if (options.imm && maxIm != minIm) {
+                    // Range normalize the im value
+                    double imVal = (c.getImValue() - minIm) / (double)(maxIm - minIm);
+                    // changed to be consistent with Mark + Nathan
+                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
+                }
                 // Compute the uct value with the (new) average value
-                uctValue = c.getValue() + options.C * Math.sqrt(FastLog.log(np) / nc);
+                uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
             }
             // Remember the highest UCT value
             if (uctValue > max) {
@@ -259,6 +289,14 @@ public class UCTNode {
         if (state == null)
             state = tt.getState(hash, false);
         state.updateStats(value);
+        // implicit minimax backups
+        if (options.imm && children != null) {
+            int bestVal = Integer.MIN_VALUE;
+            for (UCTNode c : children) {
+                if (c.getImValue() > bestVal) bestVal = c.getImValue();
+            }
+            setImValue(-bestVal);       // view of parent
+        }
     }
 
     private void setSolved(boolean win) {
@@ -270,6 +308,18 @@ public class UCTNode {
         } else {
             state.setSolved(player);
         }
+    }
+
+    private void setImValue(int imValue) {
+        if (state == null)
+            state = tt.getState(hash, false);
+        state.setImValue(imValue);
+    }
+
+    private int getImValue() {
+        if (state == null)
+            state = tt.getState(hash, false);
+        return state.imValue;
     }
 
     /**

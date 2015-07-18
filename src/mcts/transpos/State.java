@@ -8,7 +8,7 @@ public class State {
 
     public static float INF = 999999;
     public long hash;
-    public int visits = 0, lastVisit = 0;
+    public int visits = 0, lastVisit = 0, imValue = 0;
     private float sum;
     public short solvedPlayer = 0;
     public boolean visited = false;
@@ -45,6 +45,10 @@ public class State {
             return (player == solvedPlayer) ? INF : -INF;
     }
 
+    public void setImValue(int imValue) {
+        this.imValue = imValue;
+    }
+
     public void setSolved(int player) {
         visited = true;
         if (solvedPlayer > 0 && player != solvedPlayer)
@@ -58,7 +62,7 @@ public class State {
 
     public String toString() {
         if (solvedPlayer == 0)
-            return df2.format(getMean(1)) + "\tn:" + visits; // + "\tKL:" + df2.format(getKL());
+            return df2.format(getMean(1)) + "\tn:" + visits + "\tim: " + imValue; // + "\tKL:" + df2.format(getKL());
         else
             return "solved win P" + solvedPlayer;
     }

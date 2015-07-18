@@ -111,8 +111,12 @@ public class SimGame {
                 options.tt = true;
             } else if(tag.startsWith("np")) {
                 options.nodePriors = true;
-                if(tag.length() > 2)
+                if (tag.length() > 2)
                     options.npVisits = Integer.parseInt(tag.substring(2));
+            } else if(tag.startsWith("imm")) {
+                options.imm = true;
+                if(tag.length() > 3)
+                    options.imAlpha = Double.parseDouble(tag.substring(3));
             } else {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }
