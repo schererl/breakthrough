@@ -206,10 +206,12 @@ public class UCTNode {
         if(options.imm) {
             int val;
             for (UCTNode c : children) {
-                val = c.getImValue();
+                val = Math.abs(c.getImValue());
                 if(val > maxIm)
                     maxIm = val;
             }
+            if(maxIm == 0)
+                maxIm = 2;
         }
         // Select a child according to the UCT Selection policy
         for (UCTNode c : children) {
