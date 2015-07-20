@@ -119,8 +119,6 @@ public class SimGame {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }
         }
-
-
         // Now, set the player
         if (player == 1) {
             player1 = playerRef;

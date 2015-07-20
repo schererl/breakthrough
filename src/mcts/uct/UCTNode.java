@@ -4,6 +4,7 @@ import breakthrough.game.Board;
 import framework.MoveList;
 import framework.Options;
 import framework.util.FastLog;
+import framework.util.FastTanh;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
@@ -93,7 +94,7 @@ public class UCTNode {
             // If I have a win, my parent has a loss.
             setSolved(false);
             return result;
-        } else if (result == -State.INF) {
+        } else if (result == -State.INF && expanded) {
             // (Solver) Check if all children are a loss
             for (UCTNode tn : children) {
                 // Are all children a loss?
@@ -117,7 +118,7 @@ public class UCTNode {
     }
 
     private UCTNode expand(Board board) {
-        expanded = true;
+
         int nextPlayer = (3 - board.getPlayerToMove());
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
@@ -125,18 +126,33 @@ public class UCTNode {
         MoveList moves = board.getExpandMoves(null);
         if (children == null)
             children = new LinkedList<UCTNode>();
+        expanded = children.size() == moves.size();
+        if(expanded)
+            return null;
         //
         int winner = board.checkWin();
         // Board is terminal, don't expand
         if (winner != Board.NONE_WIN)
             return null;
         int best_imVal = Integer.MIN_VALUE;
+        int[] move;
         // Add all moves as children to the current node
         for (int i = 0; i < moves.size(); i++) {
+            move = moves.get(i);
+            // Check if a child with this move already exists
+            boolean exists = false;
+            for(UCTNode n : children) {
+                if (n.move[0] == move[0] && n.move[1] == move[1]) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists)
+                continue;
+
             Board tempBoard = board.clone();
-            // If the game is partial observable, we don't want to do the solver part
-            tempBoard.doMove(moves.get(i), options.earlyTerm);
-            UCTNode child = new UCTNode(nextPlayer, moves.get(i), options, tempBoard, tt);
+            tempBoard.doMove(move, options.earlyTerm);
+            UCTNode child = new UCTNode(nextPlayer, move, options, tempBoard, tt);
 
             if (Math.abs(child.getValue()) != State.INF) {
                 // Check for a winner, (Solver)
@@ -147,7 +163,7 @@ public class UCTNode {
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
                 } else if (options.nodePriors && child.getVisits() == 0) {
-                    double npRate = board.npWinrate(player, child.move);
+                    double npRate = board.npWinrate(player, move);
                     child.getState().init((int)(npRate * options.npVisits), options.npVisits);
                 }
             }
@@ -170,7 +186,7 @@ public class UCTNode {
     private UCTNode select() {
         UCTNode selected = null;
         double max = Double.NEGATIVE_INFINITY;
-        int minIm = Integer.MAX_VALUE, maxIm = Integer.MIN_VALUE;
+        int maxIm = Integer.MIN_VALUE;
         // Use UCT down the tree
         double uctValue, np = getVisits();
         if(options.nodePriors) {
@@ -185,8 +201,6 @@ public class UCTNode {
                 val = c.getImValue();
                 if(val > maxIm)
                     maxIm = val;
-                if(val < minIm)
-                    minIm = val;
             }
         }
         // Select a child according to the UCT Selection policy
@@ -203,11 +217,8 @@ public class UCTNode {
             } else {
                 double avgValue = c.getValue();
                 // Implicit minimax
-                if (options.imm && maxIm != minIm) {
-                    // Range normalize the im value
-                    double imVal = (c.getImValue() - minIm) / (double)(maxIm - minIm);
-                    // changed to be consistent with Mark + Nathan
-                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
+                if (options.imm) {
+                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * FastTanh.tanh(c.getImValue() / (.5 * maxIm)));
                 }
                 // Compute the uct value with the (new) average value
                 uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
