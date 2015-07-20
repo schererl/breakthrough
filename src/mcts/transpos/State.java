@@ -8,7 +8,7 @@ public class State {
 
     public static float INF = 999999;
     public long hash;
-    public int visits = 0, lastVisit = 0, imValue = 0;
+    public int visits = 0, lastVisit = 0, imValue = Integer.MIN_VALUE;
     private float sum;
     public short solvedPlayer = 0;
     public boolean visited = false;

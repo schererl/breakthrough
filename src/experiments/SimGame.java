@@ -15,7 +15,6 @@ import mcts.uct.UCTPlayer;
 public class SimGame {
 
     private String p1label, p2label;
-    private Board board;
     private AIPlayer player1, player2;
     private Options options1, options2;
     private int timeLimit, timedPlayer;
@@ -179,7 +178,6 @@ public class SimGame {
                 opt.fixSimulations = false;
                 opt.timeLimit = (int)Math.max(100, time);
             }
-
         }
         // Do not change the format of this line. Used by results aggregator scripts/parseres.perl
         System.out.println("Game over. Winner is " + board.checkWin());

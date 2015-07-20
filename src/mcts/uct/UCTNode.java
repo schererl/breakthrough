@@ -123,7 +123,8 @@ public class UCTNode {
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
         // Generate all moves
-        MoveList moves = board.getExpandMoves(null);
+        MoveList captures = new MoveList(3);
+        MoveList moves = board.getExpandMoves(captures);
         if (children == null)
             children = new LinkedList<UCTNode>();
         expanded = children.size() == moves.size();
@@ -134,11 +135,15 @@ public class UCTNode {
         // Board is terminal, don't expand
         if (winner != Board.NONE_WIN)
             return null;
-        int best_imVal = Integer.MIN_VALUE;
+        int best_imVal = getImValue(), initC = children.size();
         int[] move;
+        MoveList theMoves = moves;
+        if(captures.size() != 0 && children.size() < captures.size())
+            theMoves = captures;
+
         // Add all moves as children to the current node
-        for (int i = 0; i < moves.size(); i++) {
-            move = moves.get(i);
+        for (int i = 0; i < theMoves.size(); i++) {
+            move = theMoves.get(i);
             // Check if a child with this move already exists
             boolean exists = false;
             for(UCTNode n : children) {
@@ -175,7 +180,10 @@ public class UCTNode {
                     best_imVal = imVal;
             }
             children.add(child);
+            break;
         }
+        if(initC == children.size())
+            throw new RuntimeException("No node added in expand!");
         if (options.imm) {
             this.setImValue(best_imVal);
         }

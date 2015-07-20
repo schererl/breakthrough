@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="§">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Options.java" afterPath="$PROJECT_DIR$/src/framework/Options.java" />
+    <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/experiments/SimGame.java" afterPath="$PROJECT_DIR$/src/experiments/SimGame.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/transpos/State.java" afterPath="$PROJECT_DIR$/src/mcts/transpos/State.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" afterPath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -27,27 +27,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="UCTNode.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UCTNode.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.014333">
-              <caret line="110" column="40" selection-start-line="110" selection-start-column="40" selection-end-line="110" selection-end-column="40" />
-              <folding>
-                <element signature="e#12246#12247#0" expanded="true" />
-                <element signature="e#12309#12310#0" expanded="true" />
-                <element signature="e#12355#12356#0" expanded="true" />
-                <element signature="e#12428#12429#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FastTanh.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/framework/util/FastTanh.java">
-          <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
-              <folding />
+              <caret line="137" column="37" selection-start-line="137" selection-start-column="37" selection-end-line="137" selection-end-column="37" />
+              <folding>
+                <element signature="e#12584#12585#0" expanded="true" />
+                <element signature="e#12647#12648#0" expanded="true" />
+                <element signature="e#12693#12694#0" expanded="true" />
+                <element signature="e#12766#12767#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -56,7 +46,7 @@
         <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTPlayer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+              <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -66,7 +56,7 @@
         <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="93" column="28" selection-start-line="93" selection-start-column="28" selection-end-line="93" selection-end-column="28" />
+              <caret line="143" column="31" selection-start-line="143" selection-start-column="31" selection-end-line="143" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -76,7 +66,7 @@
         <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="168" column="9" selection-start-line="168" selection-start-column="9" selection-end-line="168" selection-end-column="9" />
+              <caret line="160" column="20" selection-start-line="160" selection-start-column="20" selection-end-line="160" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -102,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="State.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="State.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/mcts/transpos/State.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="64" column="80" selection-start-line="64" selection-start-column="80" selection-end-line="64" selection-end-column="80" />
+            <state vertical-scroll-proportion="1.5470852">
+              <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -149,11 +139,11 @@
         <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java" />
         <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/ShotState.java" />
-        <option value="$PROJECT_DIR$/src/mcts/transpos/State.java" />
         <option value="$PROJECT_DIR$/src/breakthrough/Game.java" />
-        <option value="$PROJECT_DIR$/src/experiments/SimGame.java" />
         <option value="$PROJECT_DIR$/src/framework/Options.java" />
+        <option value="$PROJECT_DIR$/src/experiments/SimGame.java" />
         <option value="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
+        <option value="$PROJECT_DIR$/src/mcts/transpos/State.java" />
       </list>
     </option>
   </component>
@@ -259,10 +249,6 @@
               <option name="myItemId" value="mcts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SHOT" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -274,11 +260,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="mcts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="H_MCTS" />
+              <option name="myItemId" value="framework" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -587,12 +569,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00042" summary="np">
-      <created>1436645101041</created>
-      <option name="number" value="00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1436645101041</updated>
-    </task>
     <task id="LOCAL-00043" summary="np">
       <created>1436645522915</created>
       <option name="number" value="00043" />
@@ -881,7 +857,13 @@
       <option name="project" value="LOCAL" />
       <updated>1437249008955</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="add one node at a time&#10;">
+      <created>1437425567898</created>
+      <option name="number" value="00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1437425567898</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TodoView">
@@ -895,7 +877,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32950193" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -913,7 +895,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.58754027" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.7315508" sideWeight="0.49755502" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -953,7 +935,8 @@
     <MESSAGE value="node priors" />
     <MESSAGE value="shot/hmcts" />
     <MESSAGE value="§" />
-    <option name="LAST_COMMIT_MESSAGE" value="§" />
+    <MESSAGE value="add one node at a time&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="add one node at a time&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -967,7 +950,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="65" />
+      <option name="time" value="68" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1277,42 +1260,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTPlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/Options.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/transpos/State.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="64" column="80" selection-start-line="64" selection-start-column="80" selection-end-line="64" selection-end-column="80" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/framework/util/FastTanh.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="93" column="28" selection-start-line="93" selection-start-column="28" selection-end-line="93" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -1325,24 +1276,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/framework/util/FastTanh.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.48180816">
+          <caret line="19" column="32" selection-start-line="19" selection-start-column="32" selection-end-line="19" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="168" column="9" selection-start-line="168" selection-start-column="9" selection-end-line="168" selection-end-column="9" />
+          <caret line="160" column="20" selection-start-line="160" selection-start-column="20" selection-end-line="160" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="143" column="31" selection-start-line="143" selection-start-column="31" selection-end-line="143" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.014333">
-          <caret line="110" column="40" selection-start-line="110" selection-start-column="40" selection-end-line="110" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="137" column="37" selection-start-line="137" selection-start-column="37" selection-end-line="137" selection-end-column="37" />
           <folding>
-            <element signature="e#12246#12247#0" expanded="true" />
-            <element signature="e#12309#12310#0" expanded="true" />
-            <element signature="e#12355#12356#0" expanded="true" />
-            <element signature="e#12428#12429#0" expanded="true" />
+            <element signature="e#12584#12585#0" expanded="true" />
+            <element signature="e#12647#12648#0" expanded="true" />
+            <element signature="e#12693#12694#0" expanded="true" />
+            <element signature="e#12766#12767#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/transpos/State.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5470852">
+          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+          <folding />
         </state>
       </provider>
     </entry>
