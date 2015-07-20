@@ -251,7 +251,7 @@ public class UCTNode {
         return score;
     }
 
-    public UCTNode getBestChild() {
+    public UCTNode getBestChild(boolean print) {
         if (children == null)
             return null;
         double max = Double.NEGATIVE_INFINITY, value;
@@ -269,16 +269,18 @@ public class UCTNode {
                 max = value;
                 bestChild = t;
             }
+            if(print)
+                System.out.println(t);
         }
         return bestChild;
     }
 
     public String getPV() {
-        UCTNode child = getBestChild();
+        UCTNode child = getBestChild(false);
         StringBuilder sb = new StringBuilder();
         while (child != null) {
             sb.append(Board.getMoveString(child.move)).append(" v: ").append(df2.format(child.getValue())).append(" ");
-            child = child.getBestChild();
+            child = child.getBestChild(false);
         }
         if (sb.length() > 0)
             sb.deleteCharAt(sb.length() - 1);

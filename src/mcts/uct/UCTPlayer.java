@@ -53,7 +53,7 @@ public class UCTPlayer implements AIPlayer {
         }
         long endT = System.currentTimeMillis();
         // Return the best move found
-        UCTNode bestChild = root.getBestChild();
+        UCTNode bestChild = root.getBestChild(options.debug);
         bestMove = bestChild.move;
 
         // show information on the best move
