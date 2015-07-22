@@ -194,7 +194,7 @@ public class UCTNode {
     private UCTNode select() {
         UCTNode selected = null;
         double max = Double.NEGATIVE_INFINITY;
-        int maxIm = Integer.MIN_VALUE;
+        int maxIm = Integer.MIN_VALUE, minIm = Integer.MAX_VALUE;
         // Use UCT down the tree
         double uctValue, np = getVisits();
         if(options.nodePriors) {
@@ -206,12 +206,12 @@ public class UCTNode {
         if(options.imm) {
             int val;
             for (UCTNode c : children) {
-                val = Math.abs(c.getImValue());
+                val = c.getImValue();
                 if(val > maxIm)
                     maxIm = val;
+                if(val < minIm)
+                    minIm = val;
             }
-            if(maxIm == 0)
-                maxIm = 2;
         }
         // Select a child according to the UCT Selection policy
         for (UCTNode c : children) {
@@ -228,7 +228,7 @@ public class UCTNode {
                 double avgValue = c.getValue();
                 // Implicit minimax
                 if (options.imm) {
-                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * FastTanh.tanh(c.getImValue() / (20.)));
+                    double imVal = (c.getImValue() - minIm) / (double)(maxIm - minIm);
                 }
                 // Compute the uct value with the (new) average value
                 uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
