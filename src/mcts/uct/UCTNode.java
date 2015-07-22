@@ -228,7 +228,7 @@ public class UCTNode {
                 double avgValue = c.getValue();
                 // Implicit minimax
                 if (options.imm) {
-                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * FastTanh.tanh(c.getImValue() / (.5 * maxIm)));
+                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * FastTanh.tanh(c.getImValue() / (20.)));
                 }
                 // Compute the uct value with the (new) average value
                 uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
