@@ -4,7 +4,6 @@ import breakthrough.game.Board;
 import framework.MoveList;
 import framework.Options;
 import framework.util.FastLog;
-import framework.util.FastTanh;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
@@ -66,12 +65,12 @@ public class UCTNode {
             child = expand(board.clone());
         }
         // Select the best child, if we didn't find a winning position in the expansion
-        if (child == null) {
+        if (child == null)
             if (isTerminal())
                 child = this;
             else
                 child = select();
-        }
+
         double result;
         // (Solver) Check for proven win / loss / draw
         if (Math.abs(child.getValue()) != State.INF) {
@@ -107,7 +106,7 @@ public class UCTNode {
             setSolved(true);
             return result; // always return in view of me
         }
-        if(Math.abs(getValue()) != State.INF)
+        if (Math.abs(getValue()) != State.INF)
             // Update the results for the current node
             updateStats(result);
         else
@@ -122,13 +121,11 @@ public class UCTNode {
         int nextPlayer = (3 - board.getPlayerToMove());
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
-        // Generate all moves
-        MoveList captures = new MoveList(3);
-        MoveList moves = board.getExpandMoves(captures);
+        MoveList moves = board.getExpandMoves(null);
         if (children == null)
             children = new LinkedList<UCTNode>();
         expanded = children.size() == moves.size();
-        if(expanded)
+        if (expanded)
             return null;
         //
         int winner = board.checkWin();
@@ -137,14 +134,11 @@ public class UCTNode {
             return null;
         int best_imVal = getImValue(), initC = children.size();
         int[] move;
-        MoveList theMoves = moves;
-        if(!options.imm && captures.size() != 0 && children.size() < captures.size())
-            theMoves = captures;
 
         // Add all moves as children to the current node
-        for (int i = 0; i < theMoves.size(); i++) {
-            move = theMoves.get(i);
-            if(!options.imm) {
+        for (int i = 0; i < moves.size(); i++) {
+            move = moves.get(i);
+            if (!options.imm) {
                 // Check if a child with this move already exists
                 boolean exists = false;
                 for (UCTNode n : children) {
@@ -170,7 +164,7 @@ public class UCTNode {
                     child.setSolved(false);
                 } else if (options.nodePriors && child.getVisits() == 0) {
                     double npRate = board.npWinrate(player, move);
-                    child.getState().init((int)(npRate * options.npVisits), options.npVisits);
+                    child.getState().init((int) (npRate * options.npVisits), options.npVisits);
                 }
             }
             // implicit minimax
@@ -181,10 +175,10 @@ public class UCTNode {
                     best_imVal = imVal;
             }
             children.add(child);
-            if(!options.imm)
+            if (!options.imm)
                 break;
         }
-        if(initC == children.size())
+        if (initC == children.size())
             throw new RuntimeException("No node added in expand!");
         if (options.imm) {
             this.setImValue(best_imVal);
@@ -199,19 +193,19 @@ public class UCTNode {
         int maxIm = Integer.MIN_VALUE, minIm = Integer.MAX_VALUE;
         // Use UCT down the tree
         double uctValue, np = getVisits();
-        if(options.nodePriors) {
+        if (options.nodePriors) {
             np = 0;
             for (UCTNode c : children) {
                 np += c.getVisits();
             }
         }
-        if(options.imm) {
+        if (options.imm) {
             int val;
             for (UCTNode c : children) {
                 val = c.getImValue();
-                if(val > maxIm)
+                if (val > maxIm)
                     maxIm = val;
-                if(val < minIm)
+                if (val < minIm)
                     minIm = val;
             }
         }
@@ -230,7 +224,8 @@ public class UCTNode {
                 double avgValue = c.getValue();
                 // Implicit minimax
                 if (options.imm) {
-                    double imVal = (c.getImValue() - minIm) / (double)(maxIm - minIm);
+                    double imVal = (c.getImValue() - minIm) / (double) (maxIm - minIm);
+                    // avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
                 }
                 // Compute the uct value with the (new) average value
                 uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
@@ -292,7 +287,7 @@ public class UCTNode {
                 max = value;
                 bestChild = t;
             }
-            if(print)
+            if (print)
                 System.out.println(t);
         }
         return bestChild;
