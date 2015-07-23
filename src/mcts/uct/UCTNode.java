@@ -138,23 +138,24 @@ public class UCTNode {
         int best_imVal = getImValue(), initC = children.size();
         int[] move;
         MoveList theMoves = moves;
-        if(captures.size() != 0 && children.size() < captures.size())
+        if(!options.imm && captures.size() != 0 && children.size() < captures.size())
             theMoves = captures;
 
         // Add all moves as children to the current node
         for (int i = 0; i < theMoves.size(); i++) {
             move = theMoves.get(i);
-            // Check if a child with this move already exists
-            boolean exists = false;
-            for(UCTNode n : children) {
-                if (n.move[0] == move[0] && n.move[1] == move[1]) {
-                    exists = true;
-                    break;
+            if(!options.imm) {
+                // Check if a child with this move already exists
+                boolean exists = false;
+                for (UCTNode n : children) {
+                    if (n.move[0] == move[0] && n.move[1] == move[1]) {
+                        exists = true;
+                        break;
+                    }
                 }
+                if (exists)
+                    continue;
             }
-            if (exists)
-                continue;
-
             Board tempBoard = board.clone();
             tempBoard.doMove(move, options.earlyTerm);
             UCTNode child = new UCTNode(nextPlayer, move, options, tempBoard, tt);
@@ -180,7 +181,8 @@ public class UCTNode {
                     best_imVal = imVal;
             }
             children.add(child);
-            break;
+            if(!options.imm)
+                break;
         }
         if(initC == children.size())
             throw new RuntimeException("No node added in expand!");

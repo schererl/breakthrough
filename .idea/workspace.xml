@@ -28,8 +28,8 @@
       <file leaf-file-name="UCTNode.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.43847486">
-              <caret line="196" column="64" selection-start-line="196" selection-start-column="64" selection-end-line="196" selection-end-column="64" />
+            <state vertical-scroll-proportion="0.25512528">
+              <caret line="129" column="26" selection-start-line="129" selection-start-column="26" selection-end-line="129" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -151,10 +151,10 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2" />
-    <option name="y" value="1" />
-    <option name="width" value="1022" />
-    <option name="height" value="736" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1066" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -414,12 +414,6 @@
       <created>1435938014694</created>
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
-    </task>
-    <task id="LOCAL-00046" summary="np">
-      <created>1436646362308</created>
-      <option name="number" value="00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1436646362308</updated>
     </task>
     <task id="LOCAL-00047" summary="np">
       <created>1436649020125</created>
@@ -709,7 +703,13 @@
       <option name="project" value="LOCAL" />
       <updated>1437548187101</updated>
     </task>
-    <option name="localTasksCounter" value="95" />
+    <task id="LOCAL-00095" summary="lightspeed!!!">
+      <created>1437574221579</created>
+      <option name="number" value="00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1437574221579</updated>
+    </task>
+    <option name="localTasksCounter" value="96" />
     <servers />
   </component>
   <component name="TodoView">
@@ -722,7 +722,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2" y="1" width="1022" height="736" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1165,8 +1165,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.43847486">
-          <caret line="196" column="64" selection-start-line="196" selection-start-column="64" selection-end-line="196" selection-end-column="64" />
+        <state vertical-scroll-proportion="0.25512528">
+          <caret line="129" column="26" selection-start-line="129" selection-start-column="26" selection-end-line="129" selection-end-column="26" />
           <folding />
         </state>
       </provider>
