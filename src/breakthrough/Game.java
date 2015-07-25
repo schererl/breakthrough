@@ -23,7 +23,6 @@ public class Game {
         options1.earlyTerm = true;
         options1.nodePriors = true;
         options1.imm = true;
-        options1.imAlpha = 0.4;
         options1.timeLimit = 5000;
         aiPlayer1.setOptions(options1);
 
