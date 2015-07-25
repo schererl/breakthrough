@@ -170,7 +170,6 @@ public class SimGame {
             long time = System.currentTimeMillis() - startTime;
             m = aiPlayer.getBestMove();
             board.doMove(m, true);
-            System.out.println(time);
 
             if (timed && p == timedPlayer) {
                 // Allocate the time spent to the non-fixed player
