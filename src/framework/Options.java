@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class Options {
     public static final Random r = new Random();
-    public double C = .4, imAlpha = 0.1;
+    public double C = .4, imAlpha = 0.1, etWv = 1.;
     public boolean debug = true, fixSimulations = false,
             heuristics = false, earlyTerm = false, solver = false,
             nodePriors = false, imm = false, test = true;

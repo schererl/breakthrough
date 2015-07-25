@@ -116,6 +116,8 @@ public class SimGame {
                     options.imAlpha = Double.parseDouble(tag.substring(3));
             } else if(tag.startsWith("test")) {
                 options.test = true;
+            } else if(tag.startsWith("wv")) {
+                options.etWv = Double.parseDouble(tag.substring(2));
             } else {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }
