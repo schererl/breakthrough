@@ -23,7 +23,8 @@ public class UCTPlayer implements AIPlayer {
 
         if (options == null)
             throw new RuntimeException("MCTS Options not set.");
-
+        UCTNode.qualityStats[0].reset();
+        UCTNode.qualityStats[1].reset();
         int simulations = 0;
         long startT = System.currentTimeMillis();
         if (!options.fixSimulations) {

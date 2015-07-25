@@ -4,6 +4,8 @@ import breakthrough.game.Board;
 import framework.MoveList;
 import framework.Options;
 import framework.util.FastLog;
+import framework.util.FastSigm;
+import framework.util.StatCounter;
 import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
@@ -20,6 +22,7 @@ public class UCTNode {
     //
     private boolean expanded = false, simulated = false;
     private List<UCTNode> children;
+    public static StatCounter[] qualityStats = {new StatCounter(), new StatCounter()};
     private final TransposTable tt;
     public final int[] move;
     private State state;
@@ -161,7 +164,6 @@ public class UCTNode {
             children.add(child);
         }
         expanded = true;
-
         if (options.imm) {
             this.setImValue(-best_imVal);
         }
@@ -244,6 +246,18 @@ public class UCTNode {
             } else {
                 if (winner == player) score = 1.0;
                 else score = -1.0;
+            }
+
+            // Qualitative bonus
+            if (options.qualityBonus) {
+                int w = winner - 1;
+                // Only compute the quality if QB is active, since it may be costly to do so
+                double q = board.getQuality();
+                if (qualityStats[w].variance() > 0. && qualityStats[w].visits() >= 50) {
+                    double qb = (q - qualityStats[w].mean()) / qualityStats[w].stddev();
+                  score += Math.signum(score) * .25 * FastSigm.sigm(-options.kq * qb);
+                }
+                qualityStats[w].push(q);
             }
         } else {
             double eval = board.evaluate(player, options.test);

@@ -118,6 +118,10 @@ public class SimGame {
                 options.test = true;
             } else if(tag.startsWith("wv")) {
                 options.etWv = Double.parseDouble(tag.substring(2));
+            } else if(tag.startsWith("qb")) {
+                options.qualityBonus = true;
+                if(tag.length() > 2)
+                    options.kq = Double.parseDouble(tag.substring(2));
             } else {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }

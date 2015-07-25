@@ -468,6 +468,14 @@ public class Board {
         return winRate;
     }
 
+    public double getQuality() {
+        if (winner == P1)
+            return ((double) (nPieces1 - nPieces2)) / (double) (16);
+        else if (winner == 2)
+            return ((double) (nPieces2 - nPieces1)) / (double) (16);
+        return 1;
+    }
+
     public static String getMoveString(int[] move) {
         int c = move[0] % 8, cp = move[1] % 8;
         int r = move[0] / 8, rp = move[1] / 8;
