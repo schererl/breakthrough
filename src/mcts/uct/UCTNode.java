@@ -117,39 +117,21 @@ public class UCTNode {
     }
 
     private UCTNode expand(Board board) {
-
         int nextPlayer = (3 - board.getPlayerToMove());
         // If one of the nodes is a win, we don't have to select
         UCTNode winNode = null;
         MoveList moves = board.getExpandMoves(null);
         if (children == null)
             children = new LinkedList<UCTNode>();
-        expanded = children.size() == moves.size();
-        if (expanded)
-            return null;
-        //
         int winner = board.checkWin();
         // Board is terminal, don't expand
         if (winner != Board.NONE_WIN)
             return null;
-        int best_imVal = getImValue(), initC = children.size();
+        int best_imVal = getImValue();
         int[] move;
-
         // Add all moves as children to the current node
         for (int i = 0; i < moves.size(); i++) {
             move = moves.get(i);
-            if (!options.imm) {
-                // Check if a child with this move already exists
-                boolean exists = false;
-                for (UCTNode n : children) {
-                    if (n.move[0] == move[0] && n.move[1] == move[1]) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (exists)
-                    continue;
-            }
             Board tempBoard = board.clone();
             tempBoard.doMove(move, options.earlyTerm);
             UCTNode child = new UCTNode(nextPlayer, move, options, tempBoard, tt);
@@ -175,11 +157,9 @@ public class UCTNode {
                     best_imVal = imVal;
             }
             children.add(child);
-            if (!options.imm)
-                break;
         }
-        if (initC == children.size())
-            throw new RuntimeException("No node added in expand!");
+        expanded = true;
+
         if (options.imm) {
             this.setImValue(best_imVal);
         }
@@ -225,7 +205,7 @@ public class UCTNode {
                 // Implicit minimax
                 if (options.imm) {
                     double imVal = (c.getImValue() - minIm) / (double) (maxIm - minIm);
-                    // avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
+                    avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
                 }
                 // Compute the uct value with the (new) average value
                 uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
