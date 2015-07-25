@@ -62,7 +62,7 @@ public class UCTNode {
         // First add some leafs if required
         if (!expanded) {
             // Expand returns any node that leads to a win
-            child = expand(board.clone());
+            child = expand(board);
         }
         // Select the best child, if we didn't find a winning position in the expansion
         if (child == null)
@@ -145,6 +145,8 @@ public class UCTNode {
                 } else if (winner == nextPlayer) {
                     child.setSolved(false);
                 } else if (options.nodePriors && child.getVisits() == 0) {
+                    // This should be board, in order to "simulate" the result of the move
+                    // otherwise you cannot detect captures
                     double npRate = board.npWinrate(player, move);
                     child.getState().init((int) (npRate * options.npVisits), options.npVisits);
                 }
@@ -203,7 +205,7 @@ public class UCTNode {
             } else {
                 double avgValue = c.getValue();
                 // Implicit minimax
-                if (options.imm) {
+                if (options.imm && minIm != maxIm) {
                     double imVal = (c.getImValue() - minIm) / (double) (maxIm - minIm);
                     avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
                 }
