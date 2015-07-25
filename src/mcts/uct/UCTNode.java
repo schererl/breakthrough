@@ -238,15 +238,15 @@ public class UCTNode {
 
         double score = 0.;
         if (!interrupted) {
-            if (winner == player) score = 1.0;
-            else score = -1;
+            if (winner == player) score = options.etWv;
+            else score = -options.etWv;
         } else {
             double eval = board.evaluate(player, options.test);
             //System.out.println(eval);
             if (eval > options.etT)
-                score = options.etWv;
+                score = 1;
             else if (eval < -options.etT)
-                score = -options.etWv;
+                score = -1;
         }
         return score;
     }
