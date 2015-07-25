@@ -163,7 +163,7 @@ public class UCTNode {
         expanded = true;
 
         if (options.imm) {
-            this.setImValue(best_imVal);
+            this.setImValue(-best_imVal);
         }
         // If one of the nodes is a win, return it.
         return winNode;
