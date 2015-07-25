@@ -241,23 +241,25 @@ public class Board {
         }
     }
 
-    public int evaluate(int player) {
+    public int evaluate(int player, boolean test) {
         int p1eval = 10 * (nPieces1 - nPieces2);
 //        p1eval += (2.5 * progress1) - (2.5 * progress2);
         p1eval += lorentzPV1 - lorentzPV2;
-        // Check for piece safety
-        for(int i = 0; i < pieces[0].length; i++) {
-            if(pieces[0][i] == CAPTURED)
-                continue;
-            if(isSafe(pieces[0][i], pieces[0][i], 1))
-                p1eval += .5 * lorentzValues[63 - pieces[0][i]];
-        }
-        // Player 2 piece safety
-        for(int i = 0; i < pieces[1].length; i++) {
-            if(pieces[1][i] == CAPTURED)
-                continue;
-            if(isSafe(pieces[1][i], pieces[1][i], 2))
-                p1eval -= .5 * lorentzValues[pieces[1][i]];
+        if(test) {
+            // Check for piece safety
+            for (int i = 0; i < pieces[0].length; i++) {
+                if (pieces[0][i] == CAPTURED)
+                    continue;
+                if (isSafe(pieces[0][i], pieces[0][i], 1))
+                    p1eval += .5 * lorentzValues[63 - pieces[0][i]];
+            }
+            // Player 2 piece safety
+            for (int i = 0; i < pieces[1].length; i++) {
+                if (pieces[1][i] == CAPTURED)
+                    continue;
+                if (isSafe(pieces[1][i], pieces[1][i], 2))
+                    p1eval -= .5 * lorentzValues[pieces[1][i]];
+            }
         }
         //System.out.println(p1eval);
         return (player == 1 ? p1eval : -p1eval);

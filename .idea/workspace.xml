@@ -2,6 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a7c88e4a-fbbf-415f-bf47-f06556898f89" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/breakthrough/game/Board.java" afterPath="$PROJECT_DIR$/src/breakthrough/game/Board.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" afterPath="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Options.java" afterPath="$PROJECT_DIR$/src/framework/Options.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" afterPath="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/experiments/SimGame.java" afterPath="$PROJECT_DIR$/src/experiments/SimGame.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" afterPath="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -24,28 +29,7 @@
     <favorites_list name="breakthrough" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="UCTNode.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6523737">
-              <caret line="208" column="84" selection-start-line="208" selection-start-column="84" selection-end-line="208" selection-end-column="84" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Board.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="459" column="26" selection-start-line="459" selection-start-column="26" selection-end-line="459" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -76,17 +60,17 @@
         <option value="$PROJECT_DIR$/src/mcts/transpos/TransposTable.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/ShotTransposTable.java" />
         <option value="$PROJECT_DIR$/src/framework/util/KeyboardPlayer.java" />
-        <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
-        <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" />
         <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java" />
         <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTPlayer.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/ShotState.java" />
         <option value="$PROJECT_DIR$/src/breakthrough/Game.java" />
         <option value="$PROJECT_DIR$/src/mcts/transpos/State.java" />
-        <option value="$PROJECT_DIR$/src/breakthrough/game/Board.java" />
         <option value="$PROJECT_DIR$/src/framework/Options.java" />
+        <option value="$PROJECT_DIR$/src/breakthrough/game/Board.java" />
         <option value="$PROJECT_DIR$/src/experiments/SimGame.java" />
         <option value="$PROJECT_DIR$/src/mcts/uct/UCTNode.java" />
+        <option value="$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java" />
+        <option value="$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java" />
       </list>
     </option>
   </component>
@@ -191,8 +175,22 @@
               <option name="myItemId" value="mcts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="transpos" />
+              <option name="myItemId" value="breakthrough" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="breakthrough" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mcts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SHOT" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -207,6 +205,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="mcts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="H_MCTS" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -511,12 +513,6 @@
       <option name="number" value="Default" />
       <updated>1435938014694</updated>
     </task>
-    <task id="LOCAL-00050" summary="np">
-      <created>1436649978291</created>
-      <option name="number" value="00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1436649978294</updated>
-    </task>
     <task id="LOCAL-00051" summary="switched decisive/anti-decisive">
       <created>1436786120098</created>
       <option name="number" value="00051" />
@@ -805,7 +801,13 @@
       <option name="project" value="LOCAL" />
       <updated>1437820607661</updated>
     </task>
-    <option name="localTasksCounter" value="99" />
+    <task id="LOCAL-00099" summary="safety evaluation">
+      <created>1437820956170</created>
+      <option name="number" value="00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1437820956170</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="TodoView">
@@ -819,7 +821,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="773" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1156,13 +1158,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="228" column="108" selection-start-line="228" selection-start-column="108" selection-end-line="228" selection-end-column="108" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2868217">
@@ -1191,13 +1186,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="177" column="106" selection-start-line="177" selection-start-column="106" selection-end-line="177" selection-end-column="106" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/util/FastTanh.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.48180816">
@@ -1221,26 +1209,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/framework/Options.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34915772">
-          <caret line="12" column="43" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/AIPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.17457886">
           <caret line="6" column="9" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41807044">
-          <caret line="168" column="25" selection-start-line="168" selection-start-column="25" selection-end-line="168" selection-end-column="25" />
           <folding />
         </state>
       </provider>
@@ -1255,16 +1227,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/breakthrough/game/Board.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="459" column="26" selection-start-line="459" selection-start-column="26" selection-end-line="459" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.5053599">
+          <caret line="256" column="38" selection-start-line="256" selection-start-column="38" selection-end-line="256" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/framework/Options.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34915772">
+          <caret line="12" column="58" selection-start-line="12" selection-start-column="58" selection-end-line="12" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/experiments/SimGame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.82542115">
+          <caret line="117" column="36" selection-start-line="117" selection-start-column="36" selection-end-line="117" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/H_MCTS/HybridNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="10.300153">
+          <caret line="365" column="61" selection-start-line="365" selection-start-column="61" selection-end-line="365" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mcts/SHOT/SHOTNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.69831544">
+          <caret line="325" column="61" selection-start-line="325" selection-start-column="61" selection-end-line="325" selection-end-column="61" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/mcts/uct/UCTNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6523737">
-          <caret line="208" column="84" selection-start-line="208" selection-start-column="84" selection-end-line="208" selection-end-column="84" />
+        <state vertical-scroll-proportion="0.34915772">
+          <caret line="243" column="61" selection-start-line="243" selection-start-column="61" selection-end-line="243" selection-end-column="61" />
           <folding />
         </state>
       </provider>

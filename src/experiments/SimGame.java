@@ -112,8 +112,10 @@ public class SimGame {
                     options.npVisits = Integer.parseInt(tag.substring(2));
             } else if(tag.startsWith("imm")) {
                 options.imm = true;
-                if(tag.length() > 3)
+                if (tag.length() > 3)
                     options.imAlpha = Double.parseDouble(tag.substring(3));
+            } else if(tag.startsWith("test")) {
+                options.test = true;
             } else {
                 throw new RuntimeException("Unrecognized tag: " + tag);
             }

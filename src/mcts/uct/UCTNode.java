@@ -153,7 +153,7 @@ public class UCTNode {
             }
             // implicit minimax
             if (options.imm) {
-                int imVal = tempBoard.evaluate(player);
+                int imVal = tempBoard.evaluate(player, options.test);
                 child.setImValue(imVal); // view of parent
                 if (imVal > best_imVal)
                     best_imVal = imVal;
@@ -241,7 +241,7 @@ public class UCTNode {
             if (winner == player) score = 1.0;
             else score = -1;
         } else {
-            double eval = board.evaluate(player);
+            double eval = board.evaluate(player, options.test);
             //System.out.println(eval);
             if (eval > options.etT)
                 score = 1.;

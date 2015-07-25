@@ -323,7 +323,7 @@ public class SHOTNode {
         }
 
         if (interrupted) {
-            double eval = board.evaluate(player);
+            double eval = board.evaluate(player, options.test);
             //System.out.println(eval);
             if (eval > options.etT)
                 winner = player;
