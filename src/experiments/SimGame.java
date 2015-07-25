@@ -4,6 +4,7 @@ import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
 import framework.util.FastLog;
+import framework.util.FastSigm;
 import mcts.H_MCTS.HybridPlayer;
 import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
@@ -154,6 +155,7 @@ public class SimGame {
 
         // Initialize the fast... stuff
         FastLog.log(1.);
+        FastSigm.sigm(1.);
 
         if (timed) {
             // Initially, both players are assigned the same budget
