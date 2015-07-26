@@ -258,7 +258,7 @@ public class Board {
         for (int i = 0; i < pieces[1].length; i++) {
             if (pieces[1][i] == CAPTURED)
                 continue;
-            if (test && pieces[0][i] / 8 < (8 - 3))
+            if (test && pieces[1][i] / 8 <= (8 - 3))
                 continue;
             if (isSafe(pieces[1][i], pieces[1][i], 2))
                 p1eval -= .5 * lorentzValues[pieces[1][i]];
