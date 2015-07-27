@@ -261,7 +261,7 @@ public class Board {
             if ((test && pieces[1][i] / 8 > 5) || isSafe(pieces[1][i], pieces[1][i], 2))
                 p1eval -= .5 * lorentzValues[pieces[1][i]];
         }
-        System.out.println(p1eval);
+//        System.out.println(p1eval);
         return (player == 1 ? p1eval : -p1eval);
     }
 
