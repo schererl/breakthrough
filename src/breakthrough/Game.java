@@ -21,8 +21,10 @@ public class Game {
         options1.heuristics = true;
         options1.earlyTerm = true;
         options1.nodePriors = true;
-        options1.imm = true;
+//        options1.imm = true;
         options1.qualityBonus = true;
+        options1.test = true;
+        options1.etT = 20;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new UCTPlayer();
@@ -30,7 +32,7 @@ public class Game {
         options2.heuristics = true;
         options2.earlyTerm = true;
         options2.nodePriors = true;
-        options2.imm = true;
+//        options2.imm = true;
         options2.qualityBonus = true;
         aiPlayer2.setOptions(options2);
 
