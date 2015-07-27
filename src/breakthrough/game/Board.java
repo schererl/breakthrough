@@ -134,6 +134,7 @@ public class Board {
                 }
             }
         }
+        nMoves++;
 
         // check for a win
         if (playerToMove == 1 && (rp == 0 || nPieces2 == 0)) winner = 1;
@@ -146,7 +147,6 @@ public class Board {
         zbHash ^= zbnums[to][playerToMove];
         zbHash ^= zbnums[from][0];
 
-        nMoves++;
         playerToMove = (short) (3 - playerToMove);
 
         if (playerToMove == Board.P1) {
