@@ -249,18 +249,16 @@ public class Board {
         for (int i = 0; i < pieces[0].length; i++) {
             if (pieces[0][i] == CAPTURED)
                 continue;
-            if (test && pieces[0][i] / 8 < 2)
-                continue;
-            if (isSafe(pieces[0][i], pieces[0][i], 1))
+
+            if ((test && pieces[0][i] / 8 < 2) || isSafe(pieces[0][i], pieces[0][i], 1))
                 p1eval += .5 * lorentzValues[63 - pieces[0][i]];
         }
         // Player 2 piece safety
         for (int i = 0; i < pieces[1].length; i++) {
             if (pieces[1][i] == CAPTURED)
                 continue;
-            if (test && pieces[1][i] / 8 > 5)
-                continue;
-            if (isSafe(pieces[1][i], pieces[1][i], 2))
+
+            if ((test && pieces[1][i] / 8 > 5) || isSafe(pieces[1][i], pieces[1][i], 2))
                 p1eval -= .5 * lorentzValues[pieces[1][i]];
         }
         System.out.println(p1eval);
