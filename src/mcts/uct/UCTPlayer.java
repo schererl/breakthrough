@@ -59,13 +59,11 @@ public class UCTPlayer implements AIPlayer {
 
         // show information on the best move
         if (options.debug) {
-            System.out.println("- PV: " + root.getPV());
-            System.out.println("- Player " + board.getPlayerToMove());
-            System.out.println("- Did " + simulations + " simulations");
-            System.out.println("- Best child: " + bestChild);
-            System.out.println("- " + (int) Math.round((1000. * simulations) / (endT - startT)) + " playouts per sec.");
-            System.out.println(":: Collisions: " + tt.collisions + ", tps: " + tt.positions);
-            System.out.println(":: Recoveries: " + tt.recoveries);
+            System.out.println("Player " + board.getPlayerToMove());
+            System.out.println("Best child: " + bestChild);
+            System.out.println("Play-outs: " + simulations);
+            System.out.println("Searched for: " + ((endT - startT) / 1000.) + " s.");
+            System.out.println((int) Math.round((1000. * simulations) / (endT - startT)) + " playouts per s");
         }
         // Pack the transpositions
         int removed = tt.pack(1);

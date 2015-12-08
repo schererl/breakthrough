@@ -164,9 +164,9 @@ public class UCTNode {
             children.add(child);
         }
         expanded = true;
-        if (options.imm) {
+        if (options.imm)
             this.setImValue(-best_imVal);
-        }
+
         // If one of the nodes is a win, return it.
         return winNode;
     }
@@ -175,6 +175,7 @@ public class UCTNode {
         UCTNode selected = null;
         double max = Double.NEGATIVE_INFINITY;
         int maxIm = Integer.MIN_VALUE, minIm = Integer.MAX_VALUE;
+
         // Use UCT down the tree
         double uctValue, np = getVisits();
         if (options.nodePriors) {
@@ -183,6 +184,7 @@ public class UCTNode {
                 np += c.getVisits();
             }
         }
+
         if (options.imm) {
             int val;
             for (UCTNode c : children) {
@@ -212,7 +214,8 @@ public class UCTNode {
                     avgValue = (1. - options.imAlpha) * avgValue + (options.imAlpha * imVal);
                 }
                 // Compute the uct value with the (new) average value
-                uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc) + (Options.r.nextDouble() * 0.0001);
+                uctValue = avgValue + options.C * Math.sqrt(FastLog.log(np) / nc)
+                        + (Options.r.nextDouble() * 0.0001);
             }
             // Remember the highest UCT value
             if (uctValue > max) {
@@ -259,6 +262,7 @@ public class UCTNode {
                 }
                 qualityStats[w].push(q);
             }
+
         } else {
             double eval = board.evaluate(player, options.test);
             //System.out.println(eval);
@@ -271,10 +275,13 @@ public class UCTNode {
     }
 
     public UCTNode getBestChild(boolean print) {
+
         if (children == null)
             return null;
+
         double max = Double.NEGATIVE_INFINITY, value;
         UCTNode bestChild = null;
+
         for (UCTNode t : children) {
             // If there are children with INF value, choose one of them
             if (t.getValue() == State.INF)
@@ -284,10 +291,12 @@ public class UCTNode {
             else {
                 value = t.getVisits();
             }
+
             if (value > max) {
                 max = value;
                 bestChild = t;
             }
+
             if (print)
                 System.out.println(t);
         }
@@ -334,7 +343,9 @@ public class UCTNode {
     private void setImValue(int imValue) {
         if (state == null)
             state = tt.getState(hash, false);
-        state.setImValue(imValue);
+
+        if (state.imValue == Integer.MIN_VALUE)
+            state.setImValue(imValue);
     }
 
     private int getImValue() {
@@ -377,6 +388,9 @@ public class UCTNode {
 
     @Override
     public String toString() {
-        return Board.getMoveString(move) + " " + state.toString();
+        if(state != null)
+            return Board.getMoveString(move) + " " + state.toString();
+        else
+            return Board.getMoveString(move);
     }
 }

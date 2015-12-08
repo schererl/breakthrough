@@ -277,7 +277,7 @@ public class SHOTNode {
             SHOTNode child = new SHOTNode(nextPlayer, moves.get(i), options, tempBoard.hash(), tt);
             if (options.solver && !child.isSolved()) {
                 // Check for a winner, (Solver)
-                winner = board.checkWin();
+                winner = tempBoard.checkWin();
                 if (winner == player) {
                     winNode = child;
                     child.setSolved(true);
@@ -447,9 +447,8 @@ public class SHOTNode {
 
     @Override
     public String toString() {
-        DecimalFormat df2 = new DecimalFormat("##0.####");
         if (state != null) {
-            return Board.getMoveString(move) + "\t" + state + "\tv:" + df2.format(getValue()) + "\tn: " + state.getBudgetSpent();
+            return Board.getMoveString(move) + " " + state.toString();
         } else {
             return move.toString();
         }

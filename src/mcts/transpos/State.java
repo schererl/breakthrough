@@ -62,7 +62,10 @@ public class State {
 
     public String toString() {
         if (solvedPlayer == 0)
-            return df2.format(getMean(1)) + "\tn:" + visits + "\tim: " + imValue; // + "\tKL:" + df2.format(getKL());
+            if(imValue > Integer.MIN_VALUE)
+                return df2.format(getMean(1)) + "\tn:" + visits + "\tim: " + imValue;
+            else
+                return df2.format(getMean(1)) + "\tn:" + visits;
         else
             return "solved win P" + solvedPlayer;
     }

@@ -1,11 +1,13 @@
 package mcts.transpos;
 
-import java.util.Arrays;
+import java.text.DecimalFormat;
 
 /**
  * Created by Tom Pepels (tpepels@gmail.com) on 13/07/15.
  */
 public class ShotState {
+    private static final DecimalFormat df2 = new DecimalFormat("###,##0.000");
+
     public static double INF = 999999;
     public long hash;
     public int visits = 0, lastVisit = 0, budgetSpent = 0;
@@ -95,7 +97,7 @@ public class ShotState {
 
     public String toString() {
         if (solvedPlayer == 0)
-            return Arrays.toString(wins) + "\tn:" + visits;
+            return df2.format(getMean(1)) + "\tn:" + visits;
         else
             return "solved win P" + solvedPlayer;
     }

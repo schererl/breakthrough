@@ -33,7 +33,6 @@ public class SHOTPlayer implements AIPlayer {
             System.out.println("Player " + board.getPlayerToMove());
             System.out.println("Best child: " + bestChild);
             System.out.println("Play-outs: " + pl[3]);
-            System.out.println("Play-outs check: " + SHOTNode.totalPlayouts);
             System.out.println("Searched for: " + ((endT - startT) / 1000.) + " s.");
             System.out.println((int) ((1000. * SHOTNode.totalPlayouts) / (endT - startT)) + " playouts per s");
         }
