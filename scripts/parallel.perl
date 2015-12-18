@@ -147,7 +147,32 @@ my @jobs = ();
 # a matchup is a string of "playertype1,playertype2"
 # you can also use a loop to fill this with different player types
 my @matchups = (
-  "mcts_sg, mcts"
+#	"uct_h_et_np_qb,uct_h_np_qb_et_test",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert20",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert30",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert40",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert50",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert60",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert70",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert80",
+#	"uct_h_et_np_qb,uct_h_np_qb_ert100",
+
+#	"uct_h_et_np_imm,uct_h_et_np_imm_wv1.2",
+#	"uct_h_et_np_imm,uct_h_et_np_imm_wv1.3",
+#	"uct_h_et_np_imm,uct_h_et_np_imm_wv1.4",
+#	"uct_h_et_np_imm,uct_h_et_np_imm_wv1.5",
+#	"uct_h_et_np_imm,uct_h_et_np_imm_wv2.0",
+
+#	"uct_h_et_np,hmcts_h_et_np_s",
+	"uct_h_et_s,shot_h_et_s_t",
+#	"hmcts_h_et_s,hmcts_h_et_np_s",
+#	"shot_h_et_s,shot_h_et_np_s",
+
+#	"uct_h_np_et_test,uct_h_np_et_imm0.01_test",
+#	"uct_h_np_et_test,uct_h_np_et_imm0.025_test",
+#	"uct_h_np_et_test,uct_h_np_et_imm0.05_test",
+#	"uct_h_np_et_test,uct_h_np_et_imm0.075_test",
+#	"uct_h_np_et_test,uct_h_np_et_imm0.1_test",
 );
 
 my @games = (
