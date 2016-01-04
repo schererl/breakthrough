@@ -16,7 +16,7 @@ public class Game {
         Board b = new Board();
         b.initialize();
 
-        AIPlayer aiPlayer1 = new UCTPlayer();
+        AIPlayer aiPlayer1 = new SHOTPlayer();
         Options options1 = new Options();
         options1.fixSimulations = true;
         options1.solver = true;
@@ -32,7 +32,9 @@ public class Game {
         options2.fixSimulations = true;
         options2.timeLimit = 300000;
         options2.earlyTerm = true;
-        options2.timed = true;
+        options2.shotDiscount = true;
+        options2.shotGamma = 0.8;
+//        options2.timed = true;
         aiPlayer2.setOptions(options2);
 
 

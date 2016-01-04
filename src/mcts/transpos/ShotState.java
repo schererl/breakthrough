@@ -10,8 +10,8 @@ public class ShotState {
 
     public static double INF = 999999;
     public long hash;
-    public int visits = 0, lastVisit = 0, budgetSpent = 0;
-    private int[] wins = {0, 0};
+    public double visits = 0, lastVisit = 0, budgetSpent = 0;
+    private double[] wins = {0, 0};
     private short solvedPlayer = 0;
     public boolean visited = false;
     //
@@ -21,13 +21,13 @@ public class ShotState {
         this.hash = hash;
     }
 
-    public void updateStats(int winner) {
-        visited = true;
-        if (solvedPlayer != 0)
-            throw new RuntimeException("updateStats called on solved position!");
-        this.wins[winner - 1]++;
-        this.visits++;
-    }
+//    public void updateStats(int winner) {
+//        visited = true;
+//        if (solvedPlayer != 0)
+//            throw new RuntimeException("updateStats called on solved position!");
+//        this.wins[winner - 1]++;
+//        this.visits++;
+//    }
 
     public void init(int wins, int player, int visits) {
         this.wins[player - 1] += wins;
@@ -43,7 +43,7 @@ public class ShotState {
         this.wins[1] = s.wins[1];
     }
 
-    public void updateStats(int n, int p1, int p2) {
+    public void updateStats(double n, double p1, double p2) {
         visited = true;
         this.visits += n;
         wins[0] += p1;
@@ -56,18 +56,7 @@ public class ShotState {
         visited = true;
         if (solvedPlayer == 0) { // Position is not solved, return mean
             if (visits > 0)
-                return (wins[player - 1] - wins[(3 - player) - 1]) / (double) visits;
-            else
-                return 0;
-        } else    // Position is solved, return inf
-            return (player == solvedPlayer) ? INF : -INF;
-    }
-
-    public double getWins(int player) {
-        visited = true;
-        if (solvedPlayer == 0) { // Position is not solved, return mean
-            if (visits > 0)
-                return wins[player - 1];
+                return (wins[player - 1] - wins[(3 - player) - 1]) / visits;
             else
                 return 0;
         } else    // Position is solved, return inf
@@ -83,15 +72,15 @@ public class ShotState {
         this.solvedPlayer = (short) player;
     }
 
-    public void incrBudgetSpent(int incr) {
+    public void incrBudgetSpent(double incr) {
         this.budgetSpent += incr;
     }
 
-    public int getBudgetSpent() {
+    public double getBudgetSpent() {
         return budgetSpent;
     }
 
-    public int getVisits() {
+    public double getVisits() {
         return visits;
     }
 

@@ -33,7 +33,7 @@ public class SHOTNode {
     /**
      * Run the MCTS algorithm on the given node
      */
-    public double SHOT(Board board, int depth, int budget, int[] plStats) {
+    public double SHOT(Board board, int depth, int budget, double[] plStats) {
         if (budget <= 0)
             throw new RuntimeException("Budget is " + budget);
         if (board.hash() != hash)
@@ -86,7 +86,7 @@ public class SHOTNode {
                 tempBoard.doMove(n.getMove(), options.earlyTerm);
                 result = n.playOut(tempBoard);
                 //
-                int[] pl = {1, 0, 0, 0};
+                double[] pl = {1, 0, 0, 0};
                 if(result != Board.NONE_WIN)
                     pl[(int) result]++;
                 // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
@@ -106,7 +106,7 @@ public class SHOTNode {
         }
         // Don't start any rounds if there is only 1 child
         if (S.size() == 1) {
-            int[] pl = {0, 0, 0, 0};
+            double[] pl = {0, 0, 0, 0};
             child = S.get(0);
             result = 0;
             if (!child.isSolved()) {
@@ -136,19 +136,19 @@ public class SHOTNode {
             return result;
         }
         int init_s = S.size();
-        int b = getBudget(getBudgetNode(), budget, init_s, init_s);
+        int b = getBudget((int)getBudgetNode(), budget, init_s, init_s);
         // Sort S such that the best node is always the first
-        if (getVisits() > S.size())
+        if (S.size() > 0 && getVisits() > S.size())
             Collections.sort(S, comparator);
         int sSize = S.size();
         // :: Cycle
         do {
             int n = 0, b_s = 0;
+            double[][] pl = new double[s][4];    // This will store the results of the recursion per node
             // :: Round
             while (n < s) {
                 child = S.get(n++);
-                int[] pl = {0, 0, 0, 0};    // This will store the results of the recursion
-                int b_b = 0;                // This is the actual budget assigned to the child
+                int b_b = 0;                    // This is the actual budget assigned to the child
                 result = 0;
                 // :: Solver win
                 if (!child.isSolved()) {
@@ -156,20 +156,13 @@ public class SHOTNode {
                     int b1 = (int) (b - child.getVisits());
                     if (s == 2 && n == 1 && S.size() > 1)
                         b1 = (int) Math.max(b1, budget - plStats[3] - (b - S.get(1).getVisits()));
-                    b_b = Math.min(b1, budget - plStats[3]);
+                    b_b = Math.min(b1, (int)(budget - plStats[3]));
                     if (b_b <= 0)
                         continue;
                     // :: Recursion
                     Board tempBoard = board.clone();
                     tempBoard.doMove(child.getMove(), options.earlyTerm);
-                    result = -child.SHOT(tempBoard, depth + 1, b_b, pl);
-                    // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
-                    plStats[0] += pl[0];
-                    plStats[1] += pl[1];
-                    plStats[2] += pl[2];
-                    plStats[3] += pl[3];
-                    // :: SR Back propagation
-                    updateStats(pl);
+                    result = -child.SHOT(tempBoard, depth + 1, b_b, pl[n-1]);
                 }
                 if (child.isSolved()) {
                     // The node is already solved
@@ -185,7 +178,7 @@ public class SHOTNode {
                         return result;
                     } else {
                         // Redistribute the unspent budget in the next round
-                        b_s += b_b - pl[3];
+                        b_s += b_b - pl[n-1][3];
                     }
                 }
                 // Make sure we don't go over budget
@@ -203,6 +196,23 @@ public class SHOTNode {
             // :: Removal policy: Sorting
             if (S.size() > 0)
                 Collections.sort(S.subList(0, Math.min(s, S.size())), comparator);
+            // :: Discounting
+            if(options.shotDiscount) {
+                for(int i = s / 2; i < s; i++) {
+                    pl[i][1] *= options.shotGamma;
+                    pl[i][2] *= options.shotGamma;
+                }
+            }
+            // :: SR Back propagation
+            for(int i = 0; i < s; i++) {
+                // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
+                plStats[0] += pl[i][0];
+                plStats[1] += pl[i][1];
+                plStats[2] += pl[i][2];
+                plStats[3] += pl[i][3];
+                // Update the stats of the node based on the playouts
+                updateStats(pl[i]);
+            }
             // :: Removal policy: Reduction
             s -= (int) Math.floor(s / 2.);
             // For the solver
@@ -211,7 +221,7 @@ public class SHOTNode {
             if (s == 1)
                 b += budget - plStats[3];
             else {
-                b += getBudget(getBudgetNode(), budget, s, sSize); // Use the original size of S here
+                b += getBudget((int)getBudgetNode(), budget, s, sSize); // Use the original size of S here
                 // Add any skipped budget from this round
                 b += Math.ceil(b_s / (double) s);
             }
@@ -307,6 +317,7 @@ public class SHOTNode {
     public static int totalPlayouts = 0;
 
     private int playOut(Board board) {
+        simulated = true;
         totalPlayouts++;
         int winner = board.checkWin(), nMoves = 0;
         int[] move;
@@ -380,19 +391,19 @@ public class SHOTNode {
         state.setValue(s);
     }
 
-    private void updateBudgetSpent(int n) {
+    private void updateBudgetSpent(double n) {
         if (state == null)
             state = tt.getState(hash, false);
         state.incrBudgetSpent(n);
     }
 
-    private void updateStats(int[] plStats) {
+    private void updateStats(double[] plStats) {
         if (state == null)
             state = tt.getState(hash, false);
         state.updateStats(plStats[0], plStats[1], plStats[2]);
     }
 
-    private int getBudgetNode() {
+    private double getBudgetNode() {
         if (state == null)
             state = tt.getState(hash, true);
         if (state == null)

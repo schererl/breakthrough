@@ -7,9 +7,10 @@ import java.util.Random;
  */
 public class Options {
     public static final Random r = new Random();
-    public double C = .4, imAlpha = 0.1, etWv = 1.3, kq = 2.0;
+    public double C = .4, imAlpha = 0.1, etWv = 1.3, kq = 2.0, shotGamma = .99;
     public boolean debug = true, fixSimulations = false, timed = false,
             heuristics = false, earlyTerm = false, solver = false,
-            nodePriors = false, imm = false, test = false, qualityBonus = false;
+            nodePriors = false, imm = false, test = false, qualityBonus = false,
+            shotDiscount = false;
     public int timeLimit = 10000, termDepth = 4, etT = 20, npVisits = 100, B = 20;
 }

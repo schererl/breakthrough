@@ -69,7 +69,7 @@ public class HybridNode {
         }
         //
         int init_s = S.size();
-        int b = getBudget(getBudgetNode(), budget, init_s, init_s);
+        int b = getBudget((int)getBudgetNode(), budget, init_s, init_s);
         // :: UCT Hybrid
         if (depth > 0 && b < options.B) {
             // Run UCT budget times
@@ -160,7 +160,7 @@ public class HybridNode {
             if (s == 1)
                 b += budget - plStats[3];
             else {
-                b += getBudget(getBudgetNode(), budget, s, init_s); // Use the original size of S here
+                b += getBudget((int)getBudgetNode(), budget, s, init_s); // Use the original size of S here
                 // Add any skipped budget from this round
                 b += Math.ceil(b_s / (double) s);
             }
@@ -427,7 +427,7 @@ public class HybridNode {
         state.updateStats(plStats[0], plStats[1], plStats[2]);
     }
 
-    private int getBudgetNode() {
+    private double getBudgetNode() {
         if (state == null)
             state = tt.getState(hash, true);
         if (state == null)
@@ -459,14 +459,6 @@ public class HybridNode {
         if (state == null)
             return 0.;
         return state.getMean(3 - player);
-    }
-
-    private double getWins() {
-        if (state == null)
-            state = tt.getState(hash, true);
-        if (state == null)
-            return 0.;
-        return state.getWins(3 - player);
     }
 
     /**

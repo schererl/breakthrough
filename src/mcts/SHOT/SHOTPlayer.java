@@ -21,7 +21,7 @@ public class SHOTPlayer implements AIPlayer {
 
         SHOTNode.totalPlayouts = 0;
         root = new SHOTNode(board.getPlayerToMove(), null, options, board.hash(), tt);
-        int[] pl = {0, 0, 0, 0};
+        double[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
         root.SHOT(board.clone(), 0, options.timeLimit, pl);
         long endT = System.currentTimeMillis();
