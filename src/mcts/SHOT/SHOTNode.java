@@ -3,10 +3,10 @@ package mcts.SHOT;
 import breakthrough.game.Board;
 import framework.MoveList;
 import framework.Options;
+import framework.util.FastLog;
 import mcts.transpos.ShotState;
 import mcts.transpos.ShotTransposTable;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class SHOTNode {
@@ -71,7 +71,7 @@ public class SHOTNode {
             // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
             plStats[0]++;
             plStats[3]++;
-            if(result != Board.NONE_WIN)
+            if (result != Board.NONE_WIN)
                 plStats[(int) result]++;
             updateStats(plStats);
             return 0;
@@ -87,7 +87,7 @@ public class SHOTNode {
                 result = n.playOut(tempBoard);
                 //
                 double[] pl = {1, 0, 0, 0};
-                if(result != Board.NONE_WIN)
+                if (result != Board.NONE_WIN)
                     pl[(int) result]++;
                 // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
                 plStats[0]++;
@@ -135,39 +135,60 @@ public class SHOTNode {
             //
             return result;
         }
+        //
         int init_s = S.size();
-        int b = getBudget((int)getBudgetNode(), budget, init_s, init_s);
+
         // Sort S such that the best node is always the first
-        if (S.size() > 0 && getVisits() > S.size())
+        if (init_s > 0 && getVisits() > init_s)
             Collections.sort(S, comparator);
-        int sSize = S.size();
+
+        // :: UBLB
+        if (options.UBLB && init_s > 1) {
+            double ub, lb = S.get(0).getValue() - options.shotC * Math.sqrt(FastLog.log(getVisits()) / S.get(0).getVisits());
+            for (int i = s - 1; i > 0; i--) {
+                ub = S.get(i).getValue() + options.shotC * Math.sqrt(FastLog.log(getVisits()) / S.get(i).getVisits());
+                if (ub < lb)
+                    init_s--;
+                else
+                    // All nodes before this one have overlapping bounds with the best
+                    break;
+            }
+            s = init_s;
+        }
+
+        int b = getBudget((int) getBudgetNode(), budget, init_s, init_s);
         // :: Cycle
         do {
             int n = 0, b_s = 0;
-            double[][] pl = new double[s][4];    // This will store the results of the recursion per node
             // :: Round
             while (n < s) {
                 child = S.get(n++);
                 int b_b = 0;                    // This is the actual budget assigned to the child
-                result = 0;
+                double[] pl = {0, 0, 0, 0};    // This will store the results of the recursion per node
                 // :: Solver win
                 if (!child.isSolved()) {
                     // :: Actual budget
                     int b1 = (int) (b - child.getVisits());
                     if (s == 2 && n == 1 && S.size() > 1)
                         b1 = (int) Math.max(b1, budget - plStats[3] - (b - S.get(1).getVisits()));
-                    b_b = Math.min(b1, (int)(budget - plStats[3]));
+                    b_b = Math.min(b1, (int) (budget - plStats[3]));
                     if (b_b <= 0)
                         continue;
                     // :: Recursion
                     Board tempBoard = board.clone();
                     tempBoard.doMove(child.getMove(), options.earlyTerm);
-                    result = -child.SHOT(tempBoard, depth + 1, b_b, pl[n-1]);
-                }
-                if (child.isSolved()) {
+                    result = -child.SHOT(tempBoard, depth + 1, b_b, pl);
+                    //
+                    plStats[0] += pl[0];
+                    plStats[1] += pl[1];
+                    plStats[2] += pl[2];
+                    plStats[3] += pl[3];
+                    // Update the stats of the node based on the playouts
+                    updateStats(pl);
+                } else
                     // The node is already solved
                     result = child.getValue();
-                }
+
                 // :: Solver
                 if (Math.abs(result) == ShotState.INF) {
                     if (solverCheck(result)) {   // Returns true if node is solved
@@ -178,55 +199,59 @@ public class SHOTNode {
                         return result;
                     } else {
                         // Redistribute the unspent budget in the next round
-                        b_s += b_b - pl[n-1][3];
+                        b_s += b_b - pl[3];
                     }
                 }
+
                 // Make sure we don't go over budget
                 if (plStats[3] >= budget)
                     break;
             }
+            // :: Solver
             if (options.solver) {
                 for (Iterator<SHOTNode> iterator = S.iterator(); iterator.hasNext(); ) {
                     SHOTNode node = iterator.next();
-                    if (node.isSolved()) {
+                    if (node.isSolved())
                         iterator.remove();
-                    }
                 }
             }
             // :: Removal policy: Sorting
             if (S.size() > 0)
                 Collections.sort(S.subList(0, Math.min(s, S.size())), comparator);
-            // :: Discounting
-            if(options.shotDiscount) {
-                for(int i = s / 2; i < s; i++) {
-                    pl[i][1] *= options.shotGamma;
-                    pl[i][2] *= options.shotGamma;
-                }
-            }
-            // :: SR Back propagation
-            for(int i = 0; i < s; i++) {
-                // 0: playouts, 1: player1, 2: player2, 3: budgetUsed
-                plStats[0] += pl[i][0];
-                plStats[1] += pl[i][1];
-                plStats[2] += pl[i][2];
-                plStats[3] += pl[i][3];
-                // Update the stats of the node based on the playouts
-                updateStats(pl[i]);
-            }
+
+            double log2n = Math.max(1, Math.ceil(Math.log(s) / LOG2));
             // :: Removal policy: Reduction
             s -= (int) Math.floor(s / 2.);
+
             // For the solver
             s = Math.min(S.size(), s);
+
+            // :: UBLB
+            if (options.UBLB && s > 1) {
+                int c = 0;
+                double ub, lb = S.get(0).getValue() - options.shotC *
+                        Math.sqrt(FastLog.log(getVisits()) / S.get(0).getVisits());
+                for (int i = s - 1; i > 0; i--) {
+                    ub = S.get(i).getValue() + options.shotC *
+                            Math.sqrt(FastLog.log(getVisits()) / S.get(i).getVisits());
+                    if (ub < lb) {
+                        s--;
+                        c++;
+                    } else
+                        // All nodes before this one have overlapping bounds with the best
+                        break;
+                }
+            }
+            double log2nDiff = log2n - Math.max(1, Math.ceil(Math.log(s) / LOG2));
             //
             if (s == 1)
                 b += budget - plStats[3];
             else {
-                b += getBudget((int)getBudgetNode(), budget, s, sSize); // Use the original size of S here
+                b += log2nDiff * getBudget((int) getBudgetNode(), budget, s, init_s); // Use the original size of S here
                 // Add any skipped budget from this round
                 b += Math.ceil(b_s / (double) s);
             }
         } while (s > 1 && plStats[3] < budget);
-
         // Update the budgetSpent value
         updateBudgetSpent(plStats[3]);
         // :: Final arm selection
@@ -236,7 +261,7 @@ public class SHOTNode {
     }
 
     private int getBudget(int initVis, int budget, int subS, int totS) {
-        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * Math.ceil(Math.log(totS) / LOG2))));
+        return (int) Math.max(1, Math.floor((initVis + budget) / (subS * Math.max(1, Math.ceil(Math.log(totS) / LOG2)))));
     }
 
     private boolean solverCheck(double result) {
@@ -295,9 +320,9 @@ public class SHOTNode {
                     child.setSolved(false);
                 }
             }
-            if(!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
+            if (!child.isSolved() && options.nodePriors && child.getVisits() == 0) {
                 double npRate = board.npWinrate(player, child.move);
-                child.getState().init((int)(npRate * options.npVisits), player, options.npVisits);
+                child.getState().init((int) (npRate * options.npVisits), player, options.npVisits);
             }
             //
             C.add(child);

@@ -32,9 +32,7 @@ public class Game {
         options2.fixSimulations = true;
         options2.timeLimit = 300000;
         options2.earlyTerm = true;
-        options2.shotDiscount = true;
-        options2.shotGamma = 0.8;
-//        options2.timed = true;
+        options2.UBLB = true;
         aiPlayer2.setOptions(options2);
 
 

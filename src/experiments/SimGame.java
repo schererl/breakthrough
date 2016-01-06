@@ -92,12 +92,12 @@ public class SimGame {
                 options.fixSimulations = true;
             } else if (tag.startsWith("b")) {
                 options.B = Integer.parseInt(tag.substring(1));
+            } else if (tag.startsWith("ub")) {
+                options.UBLB = true;
+                if(tag.length() > 2)
+                    options.shotC = Double.parseDouble(tag.substring(2));
             } else if (tag.equals("s")) {
                 options.solver = true;
-            } else if (tag.startsWith("sd")) {
-                options.shotDiscount = true;
-                if(tag.length() > 2)
-                    options.shotGamma = Double.parseDouble(tag.substring(2));
             } else if (tag.startsWith("c")) {
                 options.C = Double.parseDouble(tag.substring(1));
             } else if (tag.equals("t")) {
