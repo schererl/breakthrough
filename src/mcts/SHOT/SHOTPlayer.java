@@ -20,6 +20,7 @@ public class SHOTPlayer implements AIPlayer {
             throw new RuntimeException("MCTS Options not set.");
 
         SHOTNode.totalPlayouts = 0;
+        SHOTNode.removeCount = 0;
         root = new SHOTNode(board.getPlayerToMove(), null, options, board.hash(), tt);
         double[] pl = {0, 0, 0, 0};
         long startT = System.currentTimeMillis();
@@ -35,6 +36,7 @@ public class SHOTPlayer implements AIPlayer {
             System.out.println("Play-outs: " + pl[3]);
             System.out.println("Searched for: " + ((endT - startT) / 1000.) + " s.");
             System.out.println((int) ((1000. * SHOTNode.totalPlayouts) / (endT - startT)) + " playouts per s");
+            System.out.println("UBLB removed " + SHOTNode.removeCount + " nodes");
         }
         total += SHOTNode.totalPlayouts;
         totalTime += endT - startT;

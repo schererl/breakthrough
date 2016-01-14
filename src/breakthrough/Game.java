@@ -23,6 +23,8 @@ public class Game {
         options1.timeLimit = 300000;
         options1.heuristics = true;
         options1.earlyTerm = true;
+        options1.UBLB = true;
+        options1.shotC = 0.5;
         aiPlayer1.setOptions(options1);
 
         AIPlayer aiPlayer2 = new SHOTPlayer();
@@ -32,7 +34,6 @@ public class Game {
         options2.fixSimulations = true;
         options2.timeLimit = 300000;
         options2.earlyTerm = true;
-        options2.UBLB = true;
         aiPlayer2.setOptions(options2);
 
 

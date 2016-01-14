@@ -11,6 +11,7 @@ import java.util.*;
 
 public class SHOTNode {
     private static final double LOG2 = Math.log(2);
+    public static int removeCount = 0;
     private boolean expanded = false, simulated = false;
     private List<SHOTNode> C, S;
     private SHOTNode bestArm;
@@ -139,21 +140,25 @@ public class SHOTNode {
         int init_s = S.size();
 
         // Sort S such that the best node is always the first
-        if (init_s > 0 && getVisits() > init_s)
+        if (init_s > 1 && getVisits() > init_s) {
             Collections.sort(S, comparator);
 
-        // :: UBLB
-        if (options.UBLB && init_s > 1) {
-            double ub, lb = S.get(0).getValue() - options.shotC * Math.sqrt(FastLog.log(getVisits()) / S.get(0).getVisits());
-            for (int i = s - 1; i > 0; i--) {
-                ub = S.get(i).getValue() + options.shotC * Math.sqrt(FastLog.log(getVisits()) / S.get(i).getVisits());
-                if (ub < lb)
-                    init_s--;
-                else
-                    // All nodes before this one have overlapping bounds with the best
-                    break;
-            }
-            s = init_s;
+//            // :: UBLB
+//            if (options.UBLB) {
+//                double ub, lb = S.get(0).getValue() - options.shotC *
+//                        Math.sqrt(FastLog.log(getVisits()) / S.get(0).getVisits());
+//                for (int i = s - 1; i > 0; i--) {
+//                    ub = S.get(i).getValue() + options.shotC *
+//                            Math.sqrt(FastLog.log(getVisits()) / S.get(i).getVisits());
+//                    if (ub < lb) {
+//                        init_s--;
+//                        removeCount++;
+//                    } else
+//                        // All nodes before this one have overlapping bounds with the best
+//                        break;
+//                }
+//                s = init_s;
+//            }
         }
 
         int b = getBudget((int) getBudgetNode(), budget, init_s, init_s);
@@ -207,6 +212,10 @@ public class SHOTNode {
                 if (plStats[3] >= budget)
                     break;
             }
+
+            // Check to see if rounds are being skipped
+            double log2n = Math.max(1, Math.ceil(Math.log(s) / LOG2));
+
             // :: Solver
             if (options.solver) {
                 for (Iterator<SHOTNode> iterator = S.iterator(); iterator.hasNext(); ) {
@@ -219,39 +228,41 @@ public class SHOTNode {
             if (S.size() > 0)
                 Collections.sort(S.subList(0, Math.min(s, S.size())), comparator);
 
-            double log2n = Math.max(1, Math.ceil(Math.log(s) / LOG2));
             // :: Removal policy: Reduction
             s -= (int) Math.floor(s / 2.);
 
             // For the solver
             s = Math.min(S.size(), s);
-
             // :: UBLB
-            if (options.UBLB && s > 1) {
-                int c = 0;
+            if (options.UBLB && s > 1 && b > S.size()) {
                 double ub, lb = S.get(0).getValue() - options.shotC *
                         Math.sqrt(FastLog.log(getVisits()) / S.get(0).getVisits());
+                // int oldS = s;
                 for (int i = s - 1; i > 0; i--) {
                     ub = S.get(i).getValue() + options.shotC *
                             Math.sqrt(FastLog.log(getVisits()) / S.get(i).getVisits());
                     if (ub < lb) {
                         s--;
-                        c++;
+                        removeCount++;
+                        //if(s < 2)
+                        //    System.err.println("Many nodes removed, s: " + s + " old s: " + oldS);
                     } else
                         // All nodes before this one have overlapping bounds with the best
                         break;
                 }
             }
+
             double log2nDiff = log2n - Math.max(1, Math.ceil(Math.log(s) / LOG2));
-            //
+            // Determine the budget for the next round
             if (s == 1)
-                b += budget - plStats[3];
+                b += budget - plStats[3]; // Spend the last bit of budget on the final node
             else {
                 b += log2nDiff * getBudget((int) getBudgetNode(), budget, s, init_s); // Use the original size of S here
                 // Add any skipped budget from this round
                 b += Math.ceil(b_s / (double) s);
             }
-        } while (s > 1 && plStats[3] < budget);
+
+        } while (plStats[3] < budget);
         // Update the budgetSpent value
         updateBudgetSpent(plStats[3]);
         // :: Final arm selection
