@@ -10,6 +10,7 @@ import mcts.transpos.State;
 import mcts.transpos.TransposTable;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,10 +23,11 @@ public class UCTNode {
     //
     private boolean expanded = false, simulated = false;
     private List<UCTNode> children;
+    public ArrayList<Double> timeSeries;
     public static StatCounter[] qualityStats = {new StatCounter(), new StatCounter()};
     private final TransposTable tt;
     public final int[] move;
-    private State state;
+    public State state;
 
     /**
      * Constructor for the root
@@ -49,6 +51,8 @@ public class UCTNode {
         this.tt = tt;
         this.hash = board.hash();
         this.state = tt.getState(hash, true);
+        if(options.debug)
+            timeSeries = new ArrayList<>();
     }
 
     /**
@@ -115,6 +119,9 @@ public class UCTNode {
         else
             // Sometimes the node becomes solved deeper in the tree
             return getValue();
+
+        if(options.debug && depth == 0)
+            child.timeSeries.add(child.getValue());
         // Back-propagate the result always return in view of me
         return result;
     }
@@ -125,7 +132,7 @@ public class UCTNode {
         UCTNode winNode = null;
         MoveList moves = board.getExpandMoves(null);
         if (children == null)
-            children = new LinkedList<UCTNode>();
+            children = new LinkedList<>();
         int winner = board.checkWin();
         // Board is terminal, don't expand
         if (winner != Board.NONE_WIN)
@@ -208,6 +215,14 @@ public class UCTNode {
                 uctValue = -State.INF + Options.r.nextDouble();
             } else {
                 double avgValue = c.getValue();
+
+                // Linear regression TODO Check if player value is correct!
+                if(options.regression && c.getVisits() > 5) {
+                    double regVal = c.getState().getRegressionValue(options.rs, player);
+                    if(!Double.isNaN(regVal))
+                        avgValue = (1. - options.rf) * avgValue +  options.rf * regVal;
+                }
+
                 // Implicit minimax
                 if (options.imm && minIm != maxIm) {
                     double imVal = (c.getImValue() - minIm) / (double) (maxIm - minIm);
@@ -318,7 +333,7 @@ public class UCTNode {
     private void updateStats(double value) {
         if (state == null)
             state = tt.getState(hash, false);
-        state.updateStats(value);
+        state.updateStats(value, options.regression);
         // implicit minimax backups
         if (options.imm && children != null) {
             int bestVal = Integer.MIN_VALUE;

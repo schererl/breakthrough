@@ -1,10 +1,13 @@
 package mcts.transpos;
 
+import org.apache.commons.math3.stat.regression.SimpleRegression;
+
 import java.text.DecimalFormat;
 
 public class State {
 
     private static final DecimalFormat df2 = new DecimalFormat("###,##0.000");
+    public static final int REG_PLAYER = 1;
 
     public static float INF = 999999;
     public long hash;
@@ -12,6 +15,7 @@ public class State {
     private float sum;
     public short solvedPlayer = 0;
     public boolean visited = false;
+    public SimpleRegression simpleRegression;
     //
     public State next = null;
 
@@ -19,12 +23,28 @@ public class State {
         this.hash = hash;
     }
 
-    public void updateStats(double score) {
+    public void updateStats(double score, boolean regression) {
         visited = true;
         if (solvedPlayer != 0)
             throw new RuntimeException("updateStats called on solved position!");
         sum += score;
         this.visits++;
+
+        if (regression) {
+            // Only create a regression model if there are some visits
+            if (simpleRegression == null || visits % 1000 == 0) {
+                simpleRegression = new SimpleRegression();
+            }
+
+            simpleRegression.addData(visits, getMean(REG_PLAYER));
+        }
+    }
+
+    public double getRegressionValue(int steps, int player) {
+        if(player == REG_PLAYER)
+            return simpleRegression.predict(visits + steps);
+        else
+            return -1 * simpleRegression.predict(visits + steps);
     }
 
     public void init(int wins, int visits) {
@@ -62,7 +82,7 @@ public class State {
 
     public String toString() {
         if (solvedPlayer == 0)
-            if(imValue > Integer.MIN_VALUE)
+            if (imValue > Integer.MIN_VALUE)
                 return df2.format(getMean(1)) + "\tn:" + visits + "\tim: " + imValue;
             else
                 return df2.format(getMean(1)) + "\tn:" + visits;

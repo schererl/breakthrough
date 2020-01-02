@@ -2,7 +2,6 @@ package breakthrough.game;
 
 import framework.MoveList;
 import framework.Options;
-import mcts.transpos.State;
 
 import java.util.Random;
 

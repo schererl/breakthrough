@@ -1,7 +1,9 @@
 package framework.util;
 
 import breakthrough.game.Board;
-import framework.*;
+import framework.AIPlayer;
+import framework.MoveList;
+import framework.Options;
 
 import java.util.Scanner;
 

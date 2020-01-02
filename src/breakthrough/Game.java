@@ -3,8 +3,6 @@ package breakthrough;
 import breakthrough.game.Board;
 import framework.AIPlayer;
 import framework.Options;
-import framework.util.KeyboardPlayer;
-import mcts.H_MCTS.HybridPlayer;
 import mcts.SHOT.SHOTPlayer;
 import mcts.uct.UCTPlayer;
 
@@ -16,24 +14,17 @@ public class Game {
         Board b = new Board();
         b.initialize();
 
-        AIPlayer aiPlayer1 = new SHOTPlayer();
+        AIPlayer aiPlayer1 = new UCTPlayer();
         Options options1 = new Options();
         options1.fixSimulations = true;
-        options1.solver = true;
-        options1.timeLimit = 300000;
-        options1.heuristics = true;
-        options1.earlyTerm = true;
-        options1.UBLB = true;
-        options1.shotC = 0.5;
+        options1.timeLimit = 30000;
+        options1.regression = true;
         aiPlayer1.setOptions(options1);
 
-        AIPlayer aiPlayer2 = new SHOTPlayer();
+        AIPlayer aiPlayer2 = new UCTPlayer();
         Options options2 = new Options();
-        options2.solver = true;
-        options2.heuristics = true;
         options2.fixSimulations = true;
-        options2.timeLimit = 300000;
-        options2.earlyTerm = true;
+        options2.timeLimit = 30000;
         aiPlayer2.setOptions(options2);
 
 
@@ -61,8 +52,7 @@ public class Game {
             m = aiPlayer.getBestMove();
             b.doMove(m, true);
 
-            if (m != null)
-                System.out.println("Player " + player + " played " + Arrays.toString(m));
+            System.out.println("Player " + player + " played " + Arrays.toString(m));
 
             if (timed && player == timedPlayer) {
                 // Allocate the time spent to the non-fixed player
